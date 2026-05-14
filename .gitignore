@@ -8,6 +8,7 @@ installers/windows/build/
 installers/windows/*.msi
 installers/windows/*.wixpdb
 installers/windows/*.wixobj
+installers/windows/preferences-reminder.txt
 installers/macos/build/
 installers/macos/*.pkg
 templates-bundle.zip
