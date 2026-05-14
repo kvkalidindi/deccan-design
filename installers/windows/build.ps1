@@ -35,8 +35,9 @@ or via the standalone installer from https://wixtoolset.org/docs/.
 "@
 }
 
-# 2. Ensure WixUI extension is available
-& wix extension add -g WixToolset.UI.wixext 2>&1 | Out-Null
+# 2. Ensure WixUI extension is available — pin to v4.0.6 to match the WiX v4
+#    core. WiX v5/v6/v7 introduced licence changes; v4.0.6 is the last free v4.
+& wix extension add -g WixToolset.UI.wixext/4.0.6 2>&1 | Out-Null
 
 # 3. Generate the preferences reminder file
 Push-Location $PSScriptRoot

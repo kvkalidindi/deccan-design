@@ -12,7 +12,7 @@
       Name="deccan-design"
       Manufacturer="Deccan Fine Chemicals Pvt. Ltd."
       Version="2.0.0"
-      UpgradeCode="A1B27C40-3D71-49AE-9F5A-DECCAN2DESIGN"
+      UpgradeCode="72423D74-5D81-4CC6-8F5A-6AB4FFE65448"
       InstallerVersion="500"
       Scope="perUser"
       Compressed="yes">
@@ -55,55 +55,35 @@
     <Feature Id="OfficeTemplates" Title="Office templates" Level="1">
       <Component Id="cmpDeccanDocumentDotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanDocumentDotx" Source="..\..\templates\word\deccan-document.dotx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="word-document" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanTechnicalSpecDotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanTechnicalSpecDotx" Source="..\..\templates\word\deccan-technical-spec.dotx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="word-technical-spec" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanPolicyDotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanPolicyDotx" Source="..\..\templates\word\deccan-policy.dotx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="word-policy" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanCustomerLetterDotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanCustomerLetterDotx" Source="..\..\templates\word\deccan-customer-letter.dotx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="word-customer-letter" Value="installed" Type="string" KeyPath="yes" />
       </Component>
 
       <Component Id="cmpDeccanWorkbookXltx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanWorkbookXltx" Source="..\..\templates\excel\deccan-workbook.xltx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="excel-workbook" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanComparisonXltx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanComparisonXltx" Source="..\..\templates\excel\deccan-comparison.xltx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="excel-comparison" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanFinancialXltx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanFinancialXltx" Source="..\..\templates\excel\deccan-financial-model.xltx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="excel-financial-model" Value="installed" Type="string" KeyPath="yes" />
       </Component>
 
       <Component Id="cmpDeccanDeckPotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanDeckPotx" Source="..\..\templates\powerpoint\deccan-deck.potx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="ppt-deck" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanCustomerPitchPotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanCustomerPitchPotx" Source="..\..\templates\powerpoint\deccan-customer-pitch.potx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="ppt-customer-pitch" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpDeccanInternalReviewPotx" Directory="TemplatesDir" Guid="*">
         <File Id="fDeccanInternalReviewPotx" Source="..\..\templates\powerpoint\deccan-internal-review.potx" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="ppt-internal-review" Value="installed" Type="string" KeyPath="yes" />
       </Component>
 
       <!-- Point Office at the personal templates folder -->
@@ -121,27 +101,19 @@
       <Component Id="cmpOutlookSigHtm" Directory="SignaturesDir" Guid="*">
         <File Id="fOutlookSigHtm" Source="..\..\templates\outlook\deccan-signature.htm"
               Name="deccan-signature-template.htm" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="outlook-signature" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpOutlookSigTxt" Directory="SignaturesDir" Guid="*">
         <File Id="fOutlookSigTxt" Source="..\..\templates\outlook\deccan-signature.txt"
               Name="deccan-signature-template.txt" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
-                       Name="outlook-signature-txt" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpSetSignaturePs1" Directory="DeccanRootDir" Guid="*">
         <File Id="fSetSignaturePs1" Source="Set-DeccanSignature.ps1" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\helpers"
-                       Name="set-signature" Value="installed" Type="string" KeyPath="yes" />
       </Component>
     </Feature>
 
     <Feature Id="ClaudeSkill" Title="Claude skill" Level="1">
       <Component Id="cmpSkillMd" Directory="DeccanSkillDir" Guid="*">
         <File Id="fSkillMd" Source="..\..\skill\SKILL.md" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\skill"
-                       Name="installed" Value="2.0.0" Type="string" KeyPath="yes" />
       </Component>
       <!-- Skill references and assets are recursively harvested via a separate
            HarvestDirectory step in build.ps1, which generates a fragment that
@@ -151,23 +123,15 @@
     <Feature Id="DocsAndAssets" Title="Documentation and assets" Level="1">
       <Component Id="cmpReadme" Directory="DeccanDocsDir" Guid="*">
         <File Id="fReadme" Source="..\..\README.md" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\docs"
-                       Name="readme" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpPreferencesReminder" Directory="DeccanRootDir" Guid="*">
         <File Id="fPreferencesReminder" Source="preferences-reminder.txt" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\reminders"
-                       Name="personal-preferences" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpLogoPng" Directory="DeccanAssetsDir" Guid="*">
         <File Id="fLogoPng" Source="..\..\skill\assets\logo.png" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\assets"
-                       Name="logo-png" Value="installed" Type="string" KeyPath="yes" />
       </Component>
       <Component Id="cmpLogoSvg" Directory="DeccanAssetsDir" Guid="*">
         <File Id="fLogoSvg" Source="..\..\skill\assets\logo.svg" />
-        <RegistryValue Root="HKCU" Key="Software\deccan-design\assets"
-                       Name="logo-svg" Value="installed" Type="string" KeyPath="yes" />
       </Component>
     </Feature>
 
