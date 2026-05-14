@@ -32,9 +32,18 @@ Live content area on Letter: 6.9" × 9.2".
   @bottom-left  { content: ""; }
   @bottom-right { content: ""; }
 }
+
+@page end-of-doc {
+  @bottom-left  { content: "" !important; }
+  @bottom-right { content: "" !important; }
+}
+
+.end-page { page: end-of-doc; }
 ```
 
-The `@page :first` block suppresses the footer on the cover. The end page is in its own document section with its own footer suppression.
+Three rules. The default `@page` applies to every body page. `@page :first` suppresses the footer on the cover (page 1). The named `@page end-of-doc` rule plus `.end-page { page: end-of-doc; }` suppresses the footer on the end page — wherever it lands.
+
+The `!important` on the named-page margin-box content is defensive: Chromium occasionally applies the default `@page` rule's margin-box content with higher specificity than the named-page rule. The `!important` makes the suppression robust.
 
 ## Running footer
 
@@ -69,6 +78,10 @@ On screen, `.cover { min-height: 100vh; }` makes the cover fill the viewport. In
 The cover uses `display: grid; grid-template-rows: auto 1fr auto;` on screen so the wordmark sits at the top, the title block centres vertically, and the metadata strip pins to the bottom. In print with `min-height: auto`, the `1fr` middle row collapses to zero, but `align-self: center` on `.cover-body` still positions its content visually. Edge then sees the grid section as shorter than the rendered content and inserts a page break at the (wrong) grid boundary — splitting the cover even with `break-inside: avoid` set, because the engine doesn't know the visual height exceeds the grid track.
 
 The cover must therefore drop grid layout in print and use block flow.
+
+### Failure mode — H1 inside the cover forces a page break
+
+The global `h1 { page-break-before: always; }` rule (which gives every body H1 its own page) also fires on the `h1.cover-title` inside `.cover`. Per the CSS Fragmentation spec, a forced break value on a child **overrides** `break-inside: avoid` on an ancestor — so the cover splits regardless of how the parent section is configured. The `h1.cover-title` print rule must explicitly reset its `page-break-before` to `auto`.
 
 ### Required print overrides
 

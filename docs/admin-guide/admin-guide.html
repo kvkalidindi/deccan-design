@@ -25,6 +25,20 @@ body{background:var(--stone-50);color:var(--stone-800);font-family:var(--font-sa
 .cover-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);background:var(--stone-100);padding:5px 11px;display:inline-block;margin-bottom:32px;}
 .cover-title{font-size:clamp(40px,6.4vw,64px);font-weight:350;letter-spacing:-0.024em;line-height:1.04;color:var(--deccan-blue);max-width:22ch;margin-bottom:24px;}
 .cover-subtitle{font-size:22px;font-weight:400;line-height:1.4;color:var(--stone-700);max-width:50ch;}
+      /* H1 inside the cover must NOT page-break-before — global h1 rule has
+         page-break-before:always which would otherwise push the cover-title
+         onto page 2. */
+      .cover h1,
+      h1.cover-title {
+        page-break-before: auto;
+        page-break-after: auto;
+        break-before: auto;
+        break-after: auto;
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-top: 0;
+      }
+
 .cover-meta{display:grid;grid-template-columns:1.1fr 3fr 1.3fr 0.8fr 1.4fr;gap:24px;padding-top:24px;border-top:1px solid var(--stone-200);}
 .cover-meta dt{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);margin-bottom:6px;}
 .cover-meta dd{font-size:14px;color:var(--stone-900);font-weight:600;}
@@ -62,7 +76,15 @@ tbody tr:nth-child(even) td{background:var(--stone-50);}
   @bottom-left{content:"Deccan Fine Chemicals · Confidential";font-family:'Cascadia Mono',Consolas,monospace;font-size:8.5pt;color:#78716C;}
   @bottom-right{content:counter(page);font-family:'Cascadia Mono',Consolas,monospace;font-size:8.5pt;color:#78716C;}
 }
-@page :first{@bottom-left{content:"";}@bottom-right{content:"";}}
+    @page :first {
+      @bottom-left  { content: ""; }
+      @bottom-right { content: ""; }
+    }
+    @page end-of-doc {
+      @bottom-left  { content: "" !important; }
+      @bottom-right { content: "" !important; }
+    }
+    .end-page { page: end-of-doc; }
 @media print{
       /* Print: keep the cover and end page each on exactly one physical page.
          100vh resolves to the full paper height in print (not the live content

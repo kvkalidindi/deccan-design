@@ -169,6 +169,20 @@
       color: var(--stone-700);
       max-width: 50ch;
     }
+      /* H1 inside the cover must NOT page-break-before — global h1 rule has
+         page-break-before:always which would otherwise push the cover-title
+         onto page 2. */
+      .cover h1,
+      h1.cover-title {
+        page-break-before: auto;
+        page-break-after: auto;
+        break-before: auto;
+        break-after: auto;
+        border-bottom: none;
+        padding-bottom: 0;
+        margin-top: 0;
+      }
+
 
     .cover-meta {
       display: grid;
@@ -518,9 +532,14 @@
       }
     }
     @page :first {
-      @bottom-left { content: ""; }
+      @bottom-left  { content: ""; }
       @bottom-right { content: ""; }
     }
+    @page end-of-doc {
+      @bottom-left  { content: "" !important; }
+      @bottom-right { content: "" !important; }
+    }
+    .end-page { page: end-of-doc; }
 
     @media print {
       /* Print: keep the cover and end page each on exactly one physical page.
