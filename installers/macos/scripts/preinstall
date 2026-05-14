@@ -1,0 +1,15 @@
+#!/bin/bash
+# deccan-design v2.0 — macOS preinstall
+# Ensures destination directories exist before payload installation.
+
+set -e
+
+USER_HOME="${HOME:-$(eval echo "~$USER")}"
+
+mkdir -p "$USER_HOME/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized"
+mkdir -p "$USER_HOME/Library/Containers/com.microsoft.Outlook/Data/Library/Signatures"
+mkdir -p "$USER_HOME/Library/Application Support/deccan-design/docs"
+mkdir -p "$USER_HOME/Library/Application Support/deccan-design/assets"
+mkdir -p "$USER_HOME/Library/Application Support/Anthropic/Claude/skills/deccan-design"
+
+exit 0

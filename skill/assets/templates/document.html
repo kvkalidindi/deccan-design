@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{TITLE}}</title>
+  <style>
+    /* ================================================================
+       deccan-design v2.0 — slot-fill document template
+       ================================================================ */
+    :root {
+      --deccan-blue:     #164999;
+      --deccan-blue-90:  rgba(22, 73, 153, 0.90);
+      --deccan-blue-60:  rgba(22, 73, 153, 0.60);
+      --deccan-blue-30:  rgba(22, 73, 153, 0.30);
+      --deccan-blue-15:  rgba(22, 73, 153, 0.15);
+      --deccan-green:    #71BF4D;
+
+      --stone-50:        #FAFAF9;
+      --stone-100:       #F5F5F4;
+      --stone-200:       #E7E5E4;
+      --stone-300:       #D6D3D1;
+      --stone-400:       #A8A29E;
+      --stone-500:       #78716C;
+      --stone-600:       #57534E;
+      --stone-700:       #44403C;
+      --stone-800:       #292524;
+      --stone-900:       #1C1917;
+      --paper:           #FFFFFF;
+      --ink:             var(--stone-900);
+
+      --font-sans:
+        'Segoe UI Variable Display', 'Segoe UI Variable Text',
+        'Segoe UI Variable', 'Segoe UI',
+        system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono:
+        'Cascadia Mono', 'Cascadia Code', Consolas,
+        'SF Mono', Menlo, 'DejaVu Sans Mono', 'Liberation Mono',
+        ui-monospace, monospace;
+
+      --fs-tiny:     11px;
+      --fs-small:    14px;
+      --fs-body:     17px;
+      --fs-lead:     21px;
+      --fs-h4:       19px;
+      --fs-h3:       24px;
+      --fs-h2:       32px;
+      --fs-h1:       44px;
+      --fs-display:  64px;
+
+      --lh-tight:    1.15;
+      --lh-snug:     1.30;
+      --lh-base:     1.65;
+      --lh-loose:    1.85;
+
+      --s-1:  4px;  --s-2: 8px;  --s-3: 12px; --s-4: 16px; --s-5: 24px;
+      --s-6: 32px;  --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+
+      --measure:     70ch;
+      --content-max: 1180px;
+      --gutter:      24px;
+      --side-pad:    clamp(20px, 4vw, 64px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: var(--stone-50);
+      color: var(--stone-800);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: var(--lh-base);
+      font-optical-sizing: auto;
+      font-feature-settings: "kern", "liga", "calt";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    img, table, th, td, pre, blockquote, hr,
+    .cover, .end-page, .callout, .swatch, .badge,
+    .toc, .pullquote, .figure { border-radius: 0; }
+    .shell { max-width: var(--content-max); margin: 0 auto; padding: 0 var(--side-pad); }
+
+    /* Cover */
+    .cover {
+      background: var(--paper);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: var(--s-9) var(--side-pad) var(--s-7);
+      page-break-after: always;
+      border-bottom: 1px solid var(--stone-200);
+    }
+    .mark { display: flex; align-items: center; gap: var(--s-3); }
+    .mark-rule { width: 56px; height: 3px; background: var(--deccan-blue); }
+    .mark-text { font-weight: 600; font-size: 18px; letter-spacing: -0.005em; color: var(--stone-900); }
+    .mark-logo { height: 36px; width: auto; }
+    .cover-body { align-self: center; padding: var(--s-8) 0 var(--s-6); }
+    .cover-eyebrow {
+      font-family: var(--font-mono); font-size: var(--fs-tiny);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--stone-600); background: var(--stone-100);
+      padding: 5px 11px; display: inline-block; margin-bottom: var(--s-6);
+    }
+    .cover-title {
+      font-size: clamp(40px, 6.4vw, var(--fs-display));
+      font-weight: 350; letter-spacing: -0.024em; line-height: 1.04;
+      color: var(--deccan-blue); max-width: 22ch; margin-bottom: var(--s-5);
+    }
+    .cover-subtitle {
+      font-size: 22px; font-weight: 400; line-height: 1.4;
+      color: var(--stone-700); max-width: 50ch;
+    }
+    .cover-meta {
+      display: grid;
+      grid-template-columns: 1.1fr 3fr 1.3fr 0.8fr 1.4fr;
+      gap: var(--gutter);
+      padding-top: var(--s-5);
+      border-top: 1px solid var(--stone-200);
+    }
+    @media (max-width: 760px) { .cover-meta { grid-template-columns: 1fr 1fr; } }
+    .cover-meta dt {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--stone-500); margin-bottom: 6px;
+    }
+    .cover-meta dd { font-size: var(--fs-small); color: var(--stone-900); font-weight: 600; }
+
+    /* Body */
+    main.body { padding: var(--s-8) 0 var(--s-6); }
+    section.section { margin-bottom: var(--s-8); }
+    section.section:first-of-type h1 { page-break-before: auto; }
+
+    h1 {
+      font-family: var(--font-sans); font-size: var(--fs-h1); font-weight: 350;
+      letter-spacing: -0.022em; line-height: var(--lh-tight); color: var(--stone-900);
+      margin: var(--s-5) 0 var(--s-5); padding-bottom: var(--s-4);
+      border-bottom: 2px solid var(--stone-900);
+      page-break-before: always; page-break-after: avoid;
+    }
+    h1 .num {
+      font-family: var(--font-mono); font-size: 13px; font-weight: 500;
+      letter-spacing: 0.06em; color: var(--stone-500);
+      display: block; margin-bottom: var(--s-3);
+    }
+    h2 {
+      font-size: var(--fs-h2); font-weight: 500; letter-spacing: -0.012em;
+      line-height: var(--lh-snug); color: var(--stone-900);
+      margin: var(--s-7) 0 var(--s-4); page-break-after: avoid;
+    }
+    h3 {
+      font-size: var(--fs-h3); font-weight: 600; letter-spacing: -0.005em;
+      line-height: 1.2; color: var(--stone-900);
+      margin: var(--s-6) 0 var(--s-3); page-break-after: avoid;
+    }
+    h4 {
+      font-size: var(--fs-h4); font-weight: 600; line-height: 1.25;
+      color: var(--stone-900); margin: var(--s-5) 0 var(--s-2); page-break-after: avoid;
+    }
+    p {
+      font-size: var(--fs-body); line-height: var(--lh-base);
+      color: var(--stone-800); margin-bottom: var(--s-4); max-width: var(--measure);
+    }
+    .lead {
+      font-size: var(--fs-lead); line-height: 1.5; color: var(--stone-700);
+      font-weight: 400; max-width: 60ch; margin-bottom: var(--s-5);
+    }
+    a {
+      color: var(--deccan-blue); text-decoration-line: underline;
+      text-decoration-color: var(--deccan-blue-30); text-decoration-thickness: 1px;
+      text-underline-offset: 3px; transition: text-decoration-color 0.15s;
+    }
+    a:hover { text-decoration-color: var(--deccan-blue); }
+    a:focus-visible { outline: 2px solid var(--deccan-blue-30); outline-offset: 2px; }
+
+    ul, ol { margin: var(--s-3) 0 var(--s-4) 28px; max-width: var(--measure); color: var(--stone-800); }
+    li { margin-bottom: var(--s-2); line-height: var(--lh-base); }
+    li::marker { color: var(--stone-500); }
+    ul ul, ol ol, ul ol, ol ul { margin-top: var(--s-2); }
+
+    dl.def { max-width: var(--measure); margin: var(--s-4) 0; }
+    dl.def dt { font-weight: 600; color: var(--stone-900); margin-top: var(--s-3); }
+    dl.def dd {
+      color: var(--stone-700); margin-left: 0; padding-left: var(--s-4);
+      border-left: 2px solid var(--stone-200); margin-bottom: var(--s-3);
+    }
+
+    code {
+      font-family: var(--font-mono); font-size: 0.92em;
+      background: var(--stone-100); color: var(--stone-900);
+      padding: 1px 6px; font-feature-settings: "kern", "liga" 0;
+    }
+    strong { font-weight: 600; color: var(--stone-900); }
+    em { font-style: italic; color: var(--stone-800); }
+
+    pre.code-block {
+      background: var(--stone-100); padding: var(--s-4) var(--s-5);
+      margin: var(--s-4) 0; font-family: var(--font-mono);
+      font-size: 13px; line-height: 1.55; color: var(--stone-900);
+      overflow-x: auto; page-break-inside: avoid; max-width: var(--measure);
+    }
+
+    .callout {
+      background: var(--stone-100); padding: var(--s-4) var(--s-5);
+      margin: var(--s-5) 0; border-left: 3px solid var(--deccan-blue);
+      max-width: var(--measure); page-break-inside: avoid;
+    }
+    .callout .label {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--stone-500); margin-bottom: var(--s-2);
+    }
+    .callout p { font-size: var(--fs-body); color: var(--stone-800); margin-bottom: var(--s-2); }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.muted { border-left-color: var(--stone-700); }
+
+    .pullquote {
+      margin: var(--s-7) 0; padding: 0 0 0 var(--s-6);
+      border-left: 3px solid var(--deccan-blue); max-width: 60ch;
+    }
+    .pullquote p {
+      font-size: 22px; line-height: 1.4; color: var(--stone-700);
+      font-weight: 400; letter-spacing: -0.005em; margin: 0;
+    }
+
+    table {
+      width: 100%; max-width: var(--measure);
+      border-collapse: collapse; font-size: var(--fs-small);
+      margin: var(--s-5) 0; background: var(--paper);
+      page-break-inside: avoid;
+    }
+    thead th {
+      text-align: left; padding: var(--s-3) var(--s-4);
+      font-family: var(--font-mono); font-size: 11px;
+      font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--stone-700);
+      background: var(--stone-100); border-bottom: 2px solid var(--stone-900);
+      vertical-align: bottom;
+    }
+    tbody td {
+      padding: var(--s-3) var(--s-4); color: var(--stone-800);
+      border-bottom: 1px solid var(--stone-200); vertical-align: top;
+    }
+    tbody tr:nth-child(even) td { background: var(--stone-50); }
+
+    .toc {
+      background: var(--paper); border: 1px solid var(--stone-200);
+      padding: var(--s-5) var(--s-6); margin: var(--s-6) 0 var(--s-7);
+      max-width: 720px; page-break-inside: avoid;
+    }
+    .toc-label {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone-700);
+      margin-bottom: var(--s-3); padding-bottom: var(--s-3);
+      border-bottom: 1px solid var(--stone-200);
+    }
+    .toc ol { list-style: none; margin: 0; counter-reset: tocnum; }
+    .toc li {
+      counter-increment: tocnum; display: grid;
+      grid-template-columns: 36px 1fr; gap: var(--s-3);
+      padding: 7px 0; font-size: var(--fs-small); color: var(--stone-800);
+      border-bottom: 1px solid var(--stone-100);
+    }
+    .toc li:last-child { border-bottom: none; }
+    .toc li::before {
+      content: counter(tocnum, decimal-leading-zero);
+      font-family: var(--font-mono); font-size: 11px;
+      color: var(--stone-500); font-weight: 500; letter-spacing: 0.04em;
+    }
+
+    .end-page {
+      background: var(--paper); min-height: 60vh;
+      display: grid; gap: var(--s-3);
+      align-content: center; justify-items: center;
+      padding: var(--s-9) var(--side-pad);
+      page-break-before: always;
+      border-top: 1px solid var(--stone-200);
+      text-align: center;
+    }
+    .end-rule { width: 56px; height: 3px; background: var(--deccan-blue); }
+    .end-mark { font-size: 21px; font-weight: 600; color: var(--stone-900); }
+    .end-contact { font-size: var(--fs-small); color: var(--stone-600); }
+    .end-classification {
+      font-family: var(--font-mono); font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--stone-500); margin-top: var(--s-2);
+    }
+
+    @page {
+      size: Letter;
+      margin: 0.8in 0.8in 1in 0.8in;
+      @bottom-left {
+        content: "Deccan Fine Chemicals · Confidential";
+        font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+        font-size: 8.5pt; color: #78716C;
+      }
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+        font-size: 8.5pt; color: #78716C;
+      }
+    }
+    @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+    @media print {
+      body { background: var(--paper); font-size: 10.5pt; line-height: 1.5; }
+      .shell { padding: 0; max-width: 100%; }
+      h1 { font-size: 24pt; }
+      h2 { font-size: 16pt; }
+      h3 { font-size: 13pt; }
+      h4 { font-size: 11pt; }
+      p { font-size: 10.5pt; max-width: 100%; }
+      .lead { font-size: 12pt; max-width: 100%; }
+      pre.code-block, .callout, .pullquote, table, ul, ol { max-width: 100%; }
+      a { color: var(--deccan-blue); text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="mark">
+    <div class="mark-rule"></div>
+    <div class="mark-text">Deccan Fine Chemicals</div>
+  </div>
+  <div class="cover-body">
+    <span class="cover-eyebrow">{{DOCUMENT_TYPE}}</span>
+    <h1 class="cover-title">{{TITLE}}</h1>
+    <p class="cover-subtitle">{{SUBTITLE}}</p>
+  </div>
+  <dl class="cover-meta">
+    <div><dt>Document type</dt><dd>{{DOCUMENT_TYPE}}</dd></div>
+    <div><dt>Prepared by</dt><dd>{{PREPARED_BY}}</dd></div>
+    <div><dt>Date</dt><dd>{{DATE}}</dd></div>
+    <div><dt>Version</dt><dd>{{VERSION}}</dd></div>
+    <div><dt>Classification</dt><dd>{{CLASSIFICATION}}</dd></div>
+  </dl>
+</section>
+
+<main class="shell body">
+{{BODY_HTML}}
+</main>
+
+<section class="end-page">
+  <div class="end-mark">Deccan Fine Chemicals</div>
+  <div class="end-rule"></div>
+  <div class="end-contact">deccanchemicals.com · Hyderabad, India</div>
+  <div class="end-classification">{{CLASSIFICATION}} · Internal use</div>
+</section>
+
+</body>
+</html>

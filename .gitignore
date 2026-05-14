@@ -1,0 +1,36 @@
+# deccan-design — repository ignore list
+
+# Handoff materials — internal staging only, never committed.
+_handoff/
+
+# Build outputs
+installers/windows/build/
+installers/windows/*.msi
+installers/windows/*.wixpdb
+installers/windows/*.wixobj
+installers/macos/build/
+installers/macos/*.pkg
+templates-bundle.zip
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.tmp
+
+# Python build noise (if any helper scripts leave it)
+__pycache__/
+*.pyc
+
+# Office lock files (in case a template is opened during build)
+~$*.dotx
+~$*.xltx
+~$*.potx
+~$*.docx
+~$*.xlsx
+~$*.pptx

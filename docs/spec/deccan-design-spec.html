@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>deccan-design v2.0 — design specification</title>
+  <style>
+    /* ================================================================
+       swiss_design_at_deccan v2.0 — design tokens
+       ================================================================ */
+    :root {
+      /* Color */
+      --deccan-blue:     #164999;
+      --deccan-blue-90:  rgba(22, 73, 153, 0.90);
+      --deccan-blue-60:  rgba(22, 73, 153, 0.60);
+      --deccan-blue-30:  rgba(22, 73, 153, 0.30);
+      --deccan-blue-15:  rgba(22, 73, 153, 0.15);
+
+      --deccan-green:    #71BF4D;        /* RESERVED — logo + sustainability only */
+
+      --stone-50:        #FAFAF9;
+      --stone-100:       #F5F5F4;
+      --stone-200:       #E7E5E4;
+      --stone-300:       #D6D3D1;
+      --stone-400:       #A8A29E;
+      --stone-500:       #78716C;
+      --stone-600:       #57534E;
+      --stone-700:       #44403C;
+      --stone-800:       #292524;
+      --stone-900:       #1C1917;
+
+      --paper:           #FFFFFF;
+      --ink:             var(--stone-900);
+
+      /* Type */
+      --font-sans:
+        'Segoe UI Variable Display', 'Segoe UI Variable Text',
+        'Segoe UI Variable', 'Segoe UI',
+        system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono:
+        'Cascadia Mono', 'Cascadia Code', Consolas,
+        'SF Mono', Menlo, 'DejaVu Sans Mono', 'Liberation Mono',
+        ui-monospace, monospace;
+
+      /* Scale — 1.25 minor third */
+      --fs-tiny:     11px;
+      --fs-small:    14px;
+      --fs-body:     17px;
+      --fs-lead:     21px;
+      --fs-h4:       19px;
+      --fs-h3:       24px;
+      --fs-h2:       32px;
+      --fs-h1:       44px;
+      --fs-display:  64px;
+
+      /* Line heights */
+      --lh-tight:    1.15;
+      --lh-snug:     1.30;
+      --lh-base:     1.65;
+      --lh-loose:    1.85;
+
+      /* Spacing — 8px base */
+      --s-1:  4px;
+      --s-2:  8px;
+      --s-3:  12px;
+      --s-4:  16px;
+      --s-5:  24px;
+      --s-6:  32px;
+      --s-7:  48px;
+      --s-8:  64px;
+      --s-9:  96px;
+      --s-10: 128px;
+
+      /* Layout */
+      --measure:      70ch;
+      --content-max:  1180px;
+      --gutter:       24px;
+      --side-pad:     clamp(20px, 4vw, 64px);
+    }
+
+    /* ================================================================
+       Reset and base
+       ================================================================ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 16px; }
+
+    body {
+      background: var(--stone-50);
+      color: var(--stone-800);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: var(--lh-base);
+      font-optical-sizing: auto;
+      font-feature-settings: "kern", "liga", "calt";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    /* No rounded structural corners */
+    img, table, th, td, pre, blockquote, hr,
+    .cover, .end-page, .callout, .swatch, .badge,
+    .toc, .pullquote, .figure { border-radius: 0; }
+
+    .shell {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 0 var(--side-pad);
+    }
+
+    /* ================================================================
+       Cover
+       ================================================================ */
+    .cover {
+      background: var(--paper);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: var(--s-9) var(--side-pad) var(--s-7);
+      page-break-after: always;
+      border-bottom: 1px solid var(--stone-200);
+    }
+    .mark {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+    }
+    .mark-rule {
+      width: 56px;
+      height: 3px;
+      background: var(--deccan-blue);
+    }
+    .mark-text {
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.005em;
+      color: var(--stone-900);
+    }
+
+    .cover-body {
+      align-self: center;
+      padding: var(--s-8) 0 var(--s-6);
+    }
+    .cover-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-600);
+      background: var(--stone-100);
+      padding: 5px 11px;
+      display: inline-block;
+      margin-bottom: var(--s-6);
+    }
+    .cover-title {
+      font-size: clamp(40px, 6.4vw, var(--fs-display));
+      font-weight: 350;
+      letter-spacing: -0.024em;
+      line-height: 1.04;
+      color: var(--deccan-blue);
+      max-width: 22ch;
+      margin-bottom: var(--s-5);
+    }
+    .cover-subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--stone-700);
+      max-width: 50ch;
+    }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: 1.1fr 3fr 1.3fr 0.8fr 1.4fr;
+      gap: var(--gutter);
+      padding-top: var(--s-5);
+      border-top: 1px solid var(--stone-200);
+    }
+    @media (max-width: 760px) {
+      .cover-meta { grid-template-columns: 1fr 1fr; }
+    }
+    .cover-meta dt {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+      margin-bottom: 6px;
+    }
+    .cover-meta dd {
+      font-size: var(--fs-small);
+      color: var(--stone-900);
+      font-weight: 600;
+    }
+
+    /* ================================================================
+       Body
+       ================================================================ */
+    main.body { padding: var(--s-8) 0 var(--s-6); }
+
+    section.section { margin-bottom: var(--s-8); }
+    section.section:first-of-type h1 { page-break-before: auto; }
+
+    h1 {
+      font-family: var(--font-sans);
+      font-size: var(--fs-h1);
+      font-weight: 350;
+      letter-spacing: -0.022em;
+      line-height: var(--lh-tight);
+      color: var(--stone-900);
+      margin: var(--s-5) 0 var(--s-5);
+      padding-bottom: var(--s-4);
+      border-bottom: 2px solid var(--stone-900);
+      page-break-before: always;
+      page-break-after: avoid;
+    }
+    h1 .num {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--stone-500);
+      display: block;
+      margin-bottom: var(--s-3);
+    }
+
+    h2 {
+      font-size: var(--fs-h2);
+      font-weight: 500;
+      letter-spacing: -0.012em;
+      line-height: var(--lh-snug);
+      color: var(--stone-900);
+      margin: var(--s-7) 0 var(--s-4);
+      page-break-after: avoid;
+    }
+
+    h3 {
+      font-size: var(--fs-h3);
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      line-height: 1.2;
+      color: var(--stone-900);
+      margin: var(--s-6) 0 var(--s-3);
+      page-break-after: avoid;
+    }
+
+    h4 {
+      font-size: var(--fs-h4);
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--stone-900);
+      margin: var(--s-5) 0 var(--s-2);
+      page-break-after: avoid;
+    }
+
+    p {
+      font-size: var(--fs-body);
+      line-height: var(--lh-base);
+      color: var(--stone-800);
+      margin-bottom: var(--s-4);
+      max-width: var(--measure);
+    }
+
+    .lead {
+      font-size: var(--fs-lead);
+      line-height: 1.5;
+      color: var(--stone-700);
+      font-weight: 400;
+      max-width: 60ch;
+      margin-bottom: var(--s-5);
+    }
+
+    p + p { margin-top: 0; }
+
+    a {
+      color: var(--deccan-blue);
+      text-decoration-line: underline;
+      text-decoration-color: var(--deccan-blue-30);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      transition: text-decoration-color 0.15s;
+    }
+    a:hover { text-decoration-color: var(--deccan-blue); }
+    a:focus-visible {
+      outline: 2px solid var(--deccan-blue-30);
+      outline-offset: 2px;
+    }
+
+    /* Lists */
+    ul, ol {
+      margin: var(--s-3) 0 var(--s-4) 28px;
+      max-width: var(--measure);
+      color: var(--stone-800);
+    }
+    li {
+      margin-bottom: var(--s-2);
+      line-height: var(--lh-base);
+    }
+    li::marker { color: var(--stone-500); }
+    ul ul, ol ol, ul ol, ol ul { margin-top: var(--s-2); }
+
+    dl.def {
+      max-width: var(--measure);
+      margin: var(--s-4) 0;
+    }
+    dl.def dt {
+      font-weight: 600;
+      color: var(--stone-900);
+      margin-top: var(--s-3);
+    }
+    dl.def dd {
+      color: var(--stone-700);
+      margin-left: 0;
+      padding-left: var(--s-4);
+      border-left: 2px solid var(--stone-200);
+      margin-bottom: var(--s-3);
+    }
+
+    /* Inline elements */
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      background: var(--stone-100);
+      color: var(--stone-900);
+      padding: 1px 6px;
+      font-feature-settings: "kern", "liga" 0;
+    }
+
+    strong { font-weight: 600; color: var(--stone-900); }
+    em { font-style: italic; color: var(--stone-800); }
+
+    /* Code block */
+    pre.code-block {
+      background: var(--stone-100);
+      padding: var(--s-4) var(--s-5);
+      margin: var(--s-4) 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--stone-900);
+      overflow-x: auto;
+      page-break-inside: avoid;
+      max-width: var(--measure);
+    }
+
+    /* Callouts */
+    .callout {
+      background: var(--stone-100);
+      padding: var(--s-4) var(--s-5);
+      margin: var(--s-5) 0;
+      border-left: 3px solid var(--deccan-blue);
+      max-width: var(--measure);
+      page-break-inside: avoid;
+    }
+    .callout .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+      margin-bottom: var(--s-2);
+    }
+    .callout p {
+      font-size: var(--fs-body);
+      color: var(--stone-800);
+      margin-bottom: var(--s-2);
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.muted { border-left-color: var(--stone-700); }
+
+    /* Pull quote */
+    .pullquote {
+      margin: var(--s-7) 0;
+      padding: 0 0 0 var(--s-6);
+      border-left: 3px solid var(--deccan-blue);
+      max-width: 60ch;
+    }
+    .pullquote p {
+      font-size: 22px;
+      line-height: 1.4;
+      color: var(--stone-700);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+      margin: 0;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      max-width: var(--measure);
+      border-collapse: collapse;
+      font-size: var(--fs-small);
+      margin: var(--s-5) 0;
+      background: var(--paper);
+      page-break-inside: avoid;
+    }
+    thead th {
+      text-align: left;
+      padding: var(--s-3) var(--s-4);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--stone-700);
+      background: var(--stone-100);
+      border-bottom: 2px solid var(--stone-900);
+      vertical-align: bottom;
+    }
+    tbody td {
+      padding: var(--s-3) var(--s-4);
+      color: var(--stone-800);
+      border-bottom: 1px solid var(--stone-200);
+      vertical-align: top;
+    }
+    tbody tr:nth-child(even) td { background: var(--stone-50); }
+
+    /* TOC */
+    .toc {
+      background: var(--paper);
+      border: 1px solid var(--stone-200);
+      padding: var(--s-5) var(--s-6);
+      margin: var(--s-6) 0 var(--s-7);
+      max-width: 720px;
+      page-break-inside: avoid;
+    }
+    .toc-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-700);
+      margin-bottom: var(--s-3);
+      padding-bottom: var(--s-3);
+      border-bottom: 1px solid var(--stone-200);
+    }
+    .toc ol {
+      list-style: none;
+      margin: 0;
+      counter-reset: tocnum;
+    }
+    .toc li {
+      counter-increment: tocnum;
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: var(--s-3);
+      padding: 7px 0;
+      font-size: var(--fs-small);
+      color: var(--stone-800);
+      border-bottom: 1px solid var(--stone-100);
+    }
+    .toc li:last-child { border-bottom: none; }
+    .toc li::before {
+      content: counter(tocnum, decimal-leading-zero);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--stone-500);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+    }
+
+    /* End page */
+    .end-page {
+      background: var(--paper);
+      min-height: 60vh;
+      display: grid;
+      gap: var(--s-3);
+      align-content: center;
+      justify-items: center;
+      padding: var(--s-9) var(--side-pad);
+      page-break-before: always;
+      border-top: 1px solid var(--stone-200);
+      text-align: center;
+    }
+    .end-rule {
+      width: 56px;
+      height: 3px;
+      background: var(--deccan-blue);
+    }
+    .end-mark {
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--stone-900);
+    }
+    .end-contact {
+      font-size: var(--fs-small);
+      color: var(--stone-600);
+    }
+    .end-classification {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+      margin-top: var(--s-2);
+    }
+
+    /* ================================================================
+       Print rules
+       ================================================================ */
+    @page {
+      size: Letter;
+      margin: 0.8in 0.8in 1in 0.8in;
+      @bottom-left {
+        content: "Deccan Fine Chemicals · Confidential";
+        font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+        font-size: 8.5pt;
+        color: #78716C;
+      }
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+        font-size: 8.5pt;
+        color: #78716C;
+      }
+    }
+    @page :first {
+      @bottom-left { content: ""; }
+      @bottom-right { content: ""; }
+    }
+
+    @media print {
+      body { background: var(--paper); font-size: 10.5pt; line-height: 1.5; }
+      .shell { padding: 0; max-width: 100%; }
+      h1 { font-size: 24pt; }
+      h2 { font-size: 16pt; }
+      h3 { font-size: 13pt; }
+      h4 { font-size: 11pt; }
+      p { font-size: 10.5pt; max-width: 100%; }
+      .lead { font-size: 12pt; max-width: 100%; }
+      pre.code-block, .callout, .pullquote, table, ul, ol { max-width: 100%; }
+      a { color: var(--deccan-blue); text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     Cover
+     ============================================================ -->
+<section class="cover">
+  <div class="mark">
+    <div class="mark-rule"></div>
+    <div class="mark-text">Deccan Fine Chemicals</div>
+  </div>
+
+  <div class="cover-body">
+    <span class="cover-eyebrow">Standard · IT &amp; Digital Transformation</span>
+    <h1 class="cover-title">deccan-design v2.0</h1>
+    <p class="cover-subtitle">A document standard for Deccan Fine Chemicals: editorial-quality typography on the OS-native font stack, swiss discipline, single accent.</p>
+  </div>
+
+  <dl class="cover-meta">
+    <div><dt>Document type</dt><dd>Standard</dd></div>
+    <div><dt>Prepared by</dt><dd>Office of the SVP, IT &amp; Digital Transformation</dd></div>
+    <div><dt>Date</dt><dd>May 2026</dd></div>
+    <div><dt>Version</dt><dd>2.0</dd></div>
+    <div><dt>Classification</dt><dd>Confidential</dd></div>
+  </dl>
+</section>
+
+
+<main class="shell body">
+
+<!-- ============================================================
+     01 Premise
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">01</span>Premise</h1>
+
+  <p class="lead">A document standard exists to settle questions in advance, so that the next forty Deccan documents do not relitigate the same decisions about font, colour, page furniture, and tone. Version 2.0 settles those questions on the OS-native font stack, the swiss_design_at_deccan colour tokens, and an editorial register.</p>
+
+  <p>Version 1.0, the Aptos-first plan, was correct in principle: standardise on a single, well-engineered face that resolves on every endpoint. In practice, the Aptos plan introduced two costs that did not pay back. It made every Deccan document depend on a Microsoft 365 license, by way of the Office Font Service. It required an MSI deployment to install Aptos system-wide on machines whose Office version did not auto-bundle the face, and an Intune compliance lane to confirm the install. Neither cost is large. Both compound across every contractor laptop, partner workstation, and external reviewer that touches a Deccan document.</p>
+
+  <p>Version 2.0 takes a different position. The primary face is whatever the operating system provides. On Windows 11 — the bulk of the Deccan fleet — that resolves to Segoe UI Variable, a well-engineered variable font with optical sizing that ships with the OS and renders cleanly from 8 points to 64. On macOS — the M-series Studios in plant labs and the MacBooks in field roles — <code>system-ui</code> resolves to San Francisco. On any browser or email client on either platform, the chain falls back through documented stops without requiring an install. No MSI, no font binary in the artifact, no M365 dependency.</p>
+
+  <p>The aesthetic this produces is not a compromise. Segoe UI Variable was designed for screen reading at corporate-monitor density, and it carries the same swiss discipline the original swiss_design_at_deccan system was built around — clean, neutral, geometric, optically corrected. The non-deccan-design endpoint variation in the v0.1 brief specimen, which fell through to Segoe UI by accident of font absence, demonstrated this. Version 2.0 makes that fallback the deliberate primary.</p>
+
+  <div class="toc">
+    <div class="toc-label">Sections</div>
+    <ol>
+      <li>Premise</li>
+      <li>What changes from v1.0</li>
+      <li>Type system</li>
+      <li>Colour tokens</li>
+      <li>Spatial system</li>
+      <li>Components</li>
+      <li>Print rules</li>
+      <li>Screen rules</li>
+      <li>Tone and voice</li>
+      <li>Banned and prohibited</li>
+      <li>Migration</li>
+      <li>Brand voice</li>
+      <li>Logo usage</li>
+      <li>File naming and classification</li>
+      <li>Revision cycle</li>
+    </ol>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     02 What changes from v1.0
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">02</span>What changes from v1.0</h1>
+
+  <p>Three things change. Everything else carries forward.</p>
+
+  <table>
+    <thead>
+      <tr><th>Decision</th><th>v1.0 (deccan-design, deferred)</th><th>v2.0 (current)</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Sans face</td>
+        <td>Aptos primary, Inter fallback</td>
+        <td>Segoe UI Variable primary, system-ui fallback</td>
+      </tr>
+      <tr>
+        <td>Mono face</td>
+        <td>Aptos Mono primary, Cascadia fallback</td>
+        <td>Cascadia Mono primary, ui-monospace fallback</td>
+      </tr>
+      <tr>
+        <td>Distribution mechanism</td>
+        <td>MSI bundle, Intune compliance, OOXML embedding</td>
+        <td>None. OS-resident.</td>
+      </tr>
+      <tr>
+        <td>Colour tokens</td>
+        <td>Deccan Blue, stone, confined green</td>
+        <td>Identical</td>
+      </tr>
+      <tr>
+        <td>Spatial system</td>
+        <td>12-col 8px grid, opacity hierarchy</td>
+        <td>Identical</td>
+      </tr>
+      <tr>
+        <td>Components</td>
+        <td>Cover, end page, callouts, code, tables</td>
+        <td>Identical, with editorial refinements</td>
+      </tr>
+      <tr>
+        <td>Tone and voice rules</td>
+        <td>Direct, declarative, third-person</td>
+        <td>Identical</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The Aptos-first plan and its delivery scaffolding are retired. No documents are issued under v1.0; documents in flight at the time of this revision migrate to v2.0 as part of normal revision cycles.</p>
+</section>
+
+
+<!-- ============================================================
+     03 Type system
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">03</span>Type system</h1>
+
+  <p class="lead">Two faces, both resolved through OS-native chains, both selected for their behaviour at the densities that matter — corporate-fleet 1080p and 1440p screens, and 300+ DPI print.</p>
+
+  <h2>Sans</h2>
+
+  <p>Body, heading, and UI text resolve through the chain below. The first installed family wins.</p>
+
+  <pre class="code-block">font-family:
+  'Segoe UI Variable Display',
+  'Segoe UI Variable Text',
+  'Segoe UI Variable',
+  'Segoe UI',
+  system-ui,
+  -apple-system,
+  BlinkMacSystemFont,
+  sans-serif;</pre>
+
+  <p>On Windows 11 the chain resolves to Segoe UI Variable, a variable font with an optical-sizing axis. With <code>font-optical-sizing: auto</code> set on <code>body</code>, the rendering engine selects the Display variant for headings, the Text variant for body copy, and the Small variant for legal-sized labels. The result is type that holds its rhythm across the full scale of a document without manual intervention. Earlier Windows versions resolve to the static Segoe UI faces, which are visually compatible.</p>
+
+  <p>On macOS the chain resolves to San Francisco via <code>system-ui</code>, with <code>-apple-system</code> and <code>BlinkMacSystemFont</code> as Webkit and Chromium-on-Mac belt-and-braces. San Francisco carries its own optical-sizing behaviour through SF Pro Text and SF Pro Display.</p>
+
+  <p>The terminal fallback is the generic <code>sans-serif</code>, which any browser will resolve. The chain contains no Helvetica, no Arial, no Calibri, no Verdana — the generic fallback is preferred over a worse-than-default named family.</p>
+
+  <h2>Mono</h2>
+
+  <p>Code blocks, code chips, mono labels, and tabular numerals resolve through:</p>
+
+  <pre class="code-block">font-family:
+  'Cascadia Mono',
+  'Cascadia Code',
+  Consolas,
+  'SF Mono',
+  Menlo,
+  'DejaVu Sans Mono',
+  'Liberation Mono',
+  ui-monospace,
+  monospace;</pre>
+
+  <p>On Windows 11, Cascadia Mono ships with the Windows Terminal and is the natural pair for Segoe UI Variable. Cascadia Code is the same face with programming ligatures enabled — appropriate for code-heavy documents, but Mono is the document default to keep ligatures from inserting themselves into prose. Consolas is the Windows 7/8/10 fallback. On macOS the chain resolves to SF Mono via the named entry. The terminal fallback is <code>ui-monospace</code>, then the generic.</p>
+
+  <h2>Scale</h2>
+
+  <p>The type scale is a 1.25 minor third, with one larger jump at the cover and end-page display size.</p>
+
+  <table>
+    <thead>
+      <tr><th>Token</th><th>Pixels (screen)</th><th>Points (print)</th><th>Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>--fs-tiny</code></td><td>11</td><td>8.5</td><td>Mono caps labels, folio numbers, captions</td></tr>
+      <tr><td><code>--fs-small</code></td><td>14</td><td>9.5</td><td>Captions, footnotes, table cells, metadata</td></tr>
+      <tr><td><code>--fs-body</code></td><td>17</td><td>10.5</td><td>Body copy, list items, callout body</td></tr>
+      <tr><td><code>--fs-lead</code></td><td>21</td><td>13</td><td>Lead paragraph at section opening</td></tr>
+      <tr><td><code>--fs-h4</code></td><td>19</td><td>11</td><td>Inline subsection heading</td></tr>
+      <tr><td><code>--fs-h3</code></td><td>24</td><td>13</td><td>H3</td></tr>
+      <tr><td><code>--fs-h2</code></td><td>32</td><td>16</td><td>H2</td></tr>
+      <tr><td><code>--fs-h1</code></td><td>44</td><td>24</td><td>H1</td></tr>
+      <tr><td><code>--fs-display</code></td><td>64</td><td>—</td><td>Cover and end-page display only</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Weight and the size–weight relationship</h2>
+
+  <p>Variable-font systems make weight a continuous axis. The convention here is to lighten weight as size grows, so that large type does not overwhelm the page.</p>
+
+  <ul>
+    <li><strong>Body and lists.</strong> 400 (regular).</li>
+    <li><strong>Lead paragraph.</strong> 400 (regular), held at <code>--stone-700</code> for tonal contrast against body.</li>
+    <li><strong>H4.</strong> 600 (semibold) — small-format heading needs weight to register as heading.</li>
+    <li><strong>H3.</strong> 600 (semibold).</li>
+    <li><strong>H2.</strong> 500 (medium) — at 32px, semibold becomes too dense.</li>
+    <li><strong>H1.</strong> 350 (light-medium) — at 44px, anything heavier shouts.</li>
+    <li><strong>Display (cover, end page).</strong> 350 (light-medium).</li>
+    <li><strong>Inline emphasis.</strong> 600 for <code>&lt;strong&gt;</code>; italic for <code>&lt;em&gt;</code>.</li>
+    <li><strong>Mono labels.</strong> 600 — at 11px, semibold is the only weight legible on 1080p Windows.</li>
+  </ul>
+
+  <h2>Line height</h2>
+
+  <p>Line-height tokens, used consistently:</p>
+
+  <dl class="def">
+    <dt><code>--lh-tight</code> · 1.15</dt>
+    <dd>H1, display</dd>
+    <dt><code>--lh-snug</code> · 1.30</dt>
+    <dd>H2, H3, table headers</dd>
+    <dt><code>--lh-base</code> · 1.65</dt>
+    <dd>Body copy, list items, callouts</dd>
+    <dt><code>--lh-loose</code> · 1.85</dt>
+    <dd>Generous-air contexts: pull quotes, large lead paragraphs in editorial pieces</dd>
+  </dl>
+
+  <h2>Measure</h2>
+
+  <p>Body prose is held to a <code>70ch</code> measure on screen — roughly 70 characters per line, the editorial sweet spot at which the reader's eye does not lose its place tracking from line end to line beginning. Print follows the live content area, which on Letter at 0.8" margins gives roughly the same character count at the print body size.</p>
+
+  <p>Tables, callouts, code blocks, and pull quotes all inherit the same measure on screen and break to full content width in print, where margins already provide the constraint.</p>
+</section>
+
+
+<!-- ============================================================
+     04 Colour tokens
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">04</span>Colour tokens</h1>
+
+  <p class="lead">One accent. One reserved colour. Ten stones. The discipline is in what is left out.</p>
+
+  <h2>Deccan Blue</h2>
+
+  <p>The single accent. Used for: primary headings on the cover and end page; left-rule on callouts and pull quotes; underline on links; focus rings; section accent rules; the wordmark mark; the table-header underline. Used at four opacity stops so that one hue carries the full weight of hierarchy without introducing a second hue.</p>
+
+  <table>
+    <thead>
+      <tr><th>Token</th><th>Value</th><th>Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>--deccan-blue</code></td><td>#164999</td><td>Primary accent — headings, rules, emphasis</td></tr>
+      <tr><td><code>--deccan-blue-90</code></td><td>rgba(22, 73, 153, 0.90)</td><td>Active hover state</td></tr>
+      <tr><td><code>--deccan-blue-60</code></td><td>rgba(22, 73, 153, 0.60)</td><td>Secondary structural use</td></tr>
+      <tr><td><code>--deccan-blue-30</code></td><td>rgba(22, 73, 153, 0.30)</td><td>Link underline, focus ring</td></tr>
+      <tr><td><code>--deccan-blue-15</code></td><td>rgba(22, 73, 153, 0.15)</td><td>Subtle wash, chart series fills</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Deccan Green — confined use only</h2>
+
+  <p>The Deccan Green <code>#71BF4D</code> is the secondary brand colour. It appears only in two contexts: as a constituent of the Deccan logo where the official mark is reproduced, and as a colour token in content explicitly about sustainability — environmental reporting, BRSR submissions, ESG disclosures, plant emissions narratives. Outside those contexts, it does not appear. It is not a UI accent. It is not a button colour. It is not a "secondary brand colour" available to designers. It is a flag for one thing.</p>
+
+  <div class="callout muted">
+    <div class="label">Discipline rule</div>
+    <p>Documents that introduce <code>#71BF4D</code> outside the logo or sustainability content fail review. The reviewer's question: "Where in this document does this colour signal sustainability?" If the answer is "nowhere," remove it.</p>
+  </div>
+
+  <h2>Stone — neutral grayscale</h2>
+
+  <p>Ten stops, identical to the swiss_design_at_deccan v1 set, providing the full hierarchy from page background through ink.</p>
+
+  <table>
+    <thead>
+      <tr><th>Token</th><th>Value</th><th>Typical use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>--stone-50</code></td><td>#FAFAF9</td><td>Page background (screen); banded table row</td></tr>
+      <tr><td><code>--stone-100</code></td><td>#F5F5F4</td><td>Code chip / block fill; callout fill; mono-caps eyebrow chip</td></tr>
+      <tr><td><code>--stone-200</code></td><td>#E7E5E4</td><td>Hairline rules; cell borders; section dividers</td></tr>
+      <tr><td><code>--stone-300</code></td><td>#D6D3D1</td><td>Disabled element; chart axis</td></tr>
+      <tr><td><code>--stone-400</code></td><td>#A8A29E</td><td>Decorative — folio numbers, watermarks</td></tr>
+      <tr><td><code>--stone-500</code></td><td>#78716C</td><td>Mono caps labels; secondary captions</td></tr>
+      <tr><td><code>--stone-600</code></td><td>#57534E</td><td>Tertiary body text</td></tr>
+      <tr><td><code>--stone-700</code></td><td>#44403C</td><td>Lead paragraph; subtitle</td></tr>
+      <tr><td><code>--stone-800</code></td><td>#292524</td><td>Body copy default</td></tr>
+      <tr><td><code>--stone-900</code></td><td>#1C1917</td><td>Headings; ink colour; <code>--ink</code> alias</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Paper</h2>
+
+  <p><code>--paper</code> resolves to <code>#FFFFFF</code>. It is the cover background, the end-page background, the table cell background, and the print page background. It is not aliased to a stone. White is white.</p>
+</section>
+
+
+<!-- ============================================================
+     05 Spatial system
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">05</span>Spatial system</h1>
+
+  <h2>Grid</h2>
+
+  <p>The screen layout is a 12-column grid with a 24-pixel gutter, contained at <code>1180px</code> maximum and side-padded with <code>clamp(20px, 4vw, 64px)</code>. The grid is implicit — content uses CSS Grid where structure benefits from it (cover meta, comparison tables, masthead-style blocks) and prose flows in a single column at the body measure of <code>70ch</code>.</p>
+
+  <h2>Spacing scale</h2>
+
+  <p>Spacing follows an 8-pixel base unit with a Fibonacci-ish progression for the larger steps. Components use the tokens directly so that revisions adjust globally.</p>
+
+  <table>
+    <thead><tr><th>Token</th><th>Value</th><th>Notional use</th></tr></thead>
+    <tbody>
+      <tr><td><code>--s-1</code></td><td>4px</td><td>Inline padding inside chips</td></tr>
+      <tr><td><code>--s-2</code></td><td>8px</td><td>List item bottom margin; small label margin</td></tr>
+      <tr><td><code>--s-3</code></td><td>12px</td><td>Cell padding (vertical); subhead bottom margin</td></tr>
+      <tr><td><code>--s-4</code></td><td>16px</td><td>Paragraph bottom margin; callout vertical padding</td></tr>
+      <tr><td><code>--s-5</code></td><td>24px</td><td>Section-level vertical rhythm</td></tr>
+      <tr><td><code>--s-6</code></td><td>32px</td><td>H3 top margin; eyebrow-to-title</td></tr>
+      <tr><td><code>--s-7</code></td><td>48px</td><td>H2 top margin; pull-quote vertical air</td></tr>
+      <tr><td><code>--s-8</code></td><td>64px</td><td>Top-of-page padding for body</td></tr>
+      <tr><td><code>--s-9</code></td><td>96px</td><td>Cover top padding; end-page padding</td></tr>
+      <tr><td><code>--s-10</code></td><td>128px</td><td>Reserved for future use</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Margins, print</h2>
+
+  <p>Letter and A4 paper, 0.8-inch outside margins, 1-inch bottom margin to clear the running footer. The live content area on Letter is 6.9" × 9.2", which delivers the editorial measure at the print body size without further constraint. Long tables, code blocks, and figures break to full content width.</p>
+</section>
+
+
+<!-- ============================================================
+     06 Components
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">06</span>Components</h1>
+
+  <p class="lead">The component set is small. Each component has one reason to exist and one rule about when to use it.</p>
+
+  <h2>Cover page</h2>
+
+  <p>Three regions, top to bottom: a wordmark (3-pixel Deccan Blue rule, 56px wide, paired with the company name in semibold); a centred title block (eyebrow chip on stone-100, large light-weight title in Deccan Blue, subtitle at stone-700); a five-column metadata strip across the bottom (document type, prepared by, date, version, classification — each label in mono uppercase at <code>--fs-tiny</code>, each value in semibold at <code>--fs-small</code>).</p>
+
+  <p>The cover is mandatory. It carries no header, no footer, no page number. The first body section starts on the page after.</p>
+
+  <h2>End page</h2>
+
+  <p>Self-contained: centred wordmark, centred Deccan Blue rule, centred contact line, optional classification reminder in mono caps. No header, no footer, no page number. Exists to bookend the document and signal "this is where it ends."</p>
+
+  <h2>Heading hierarchy</h2>
+
+  <p>Four levels. Each level has a defined typographic identity. H1 carries an eyebrow with the section number (decimal-leading-zero), and a 2-pixel solid bottom rule in stone-900 — the most assertive structural element in the document, used sparingly.</p>
+
+  <h3>An H3 looks like this</h3>
+
+  <p>H3 is semibold at <code>--fs-h3</code>, intended for the second level of structural division within a section. H4 is also semibold but at <code>--fs-h4</code>, intended for inline emphasis within a long H3 block — the level at which a sub-topic earns a heading rather than a topic sentence.</p>
+
+  <h2>Lead paragraph</h2>
+
+  <p class="lead">A lead paragraph opens a section at <code>--fs-lead</code>, weight 400, colour <code>--stone-700</code>, line-height 1.5, measure 60 characters. It states the claim of the section in one sentence (or two, if necessary) before the body argues it.</p>
+
+  <p>The lead is optional. Use it when a section needs a thesis statement; skip it when the H1 plus the first body paragraph carry the section without one.</p>
+
+  <h2>Callouts</h2>
+
+  <p>Stone-100 fill, three-pixel Deccan Blue left rule, uppercase mono label in stone-500, body in body type. Used for: rules ("Provisioning rule"); warnings that need to register without shouting ("Non-negotiable"); editorial asides that interrupt the main argument deliberately. The variant <code>.callout.muted</code> uses a stone-700 left rule for asides that should not draw the eye to a brand colour — discipline notes about the system itself, for instance.</p>
+
+  <h2>Code chip and code block</h2>
+
+  <p>Inline code chip — <code>like this</code> — is mono on stone-100 with light horizontal padding. A code block is the same colour pair at scale, full measure, no border. The discipline rule: <strong>mono and stone always travel together</strong>. Mono on a white background reads as a typo; stone-100 on sans body reads as a callout. Together they read as code, which is the only thing they should ever read as.</p>
+
+  <h2>Pull quote</h2>
+
+  <p>Used to break editorial rhythm in a long section. Indented with a Deccan Blue left rule (3 pixels), held at 60 characters, set at 22 pixels in stone-700. Carries no quote marks — the rule and the type treatment do the work.</p>
+
+  <h2>Tables</h2>
+
+  <p>Headers in mono uppercase at 11 pixels, on stone-100 fill, with a 2-pixel solid stone-900 underline. Body cells in body type, banded by alternating between paper and stone-50, with 1-pixel stone-200 row separators. Borders are kept off the columns; the eye uses the band and the separator to track. Tables hold their measure on screen and expand to full content width in print.</p>
+
+  <h2>Lists</h2>
+
+  <p>Bulleted lists use the default disc marker tinted to stone-500. Numbered lists use decimal markers in the same tint. Definition lists pair a semibold term with a stone-200-bordered description block — the most legible treatment for short glossaries and rule sets.</p>
+
+  <h2>Links</h2>
+
+  <p>Deccan Blue text with a 1-pixel underline at <code>--deccan-blue-30</code>, offset 3 pixels below the baseline. On hover, the underline strengthens to full Deccan Blue. On focus, a 2-pixel <code>--deccan-blue-30</code> outline at 2-pixel offset — visible, accessible, brand-aligned.</p>
+</section>
+
+
+<!-- ============================================================
+     07 Print rules
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">07</span>Print rules</h1>
+
+  <p>Print is the high-fidelity end of the medium and the medium with the strictest rules. The system carries a single <code>@page</code> stylesheet that handles every print case: PDF export from a browser, PDF print from Word, and direct browser print to a hardware printer. Documents do not need per-document print stylesheets; if one is needed, the system needs the rule, not the document.</p>
+
+  <h2>Page format</h2>
+
+  <p>Letter paper, portrait, 0.8-inch outside margins, 1-inch bottom margin. A4 follows the same proportions and renders without alteration on European-paper printers because the live content area scales with the paper.</p>
+
+  <h2>Running footer</h2>
+
+  <p>Mono, 8.5pt, stone-500. Left: <code>Deccan Fine Chemicals · Confidential</code>. Right: bare-integer page number. Bare integer, not "Page 12" and not "Page 12 of 47." The integer is the convention; explanatory wrappers add noise. The footer is suppressed on the cover (<code>@page :first</code>) and on the end page (which is in its own document section with no footer).</p>
+
+  <h2>Page breaks</h2>
+
+  <p>Every H1 forces a page break before, by default. Cover page-breaks after itself. End page page-breaks before itself. Within a section, the rendering engine uses standard widow/orphan handling with <code>page-break-inside: avoid</code> on callouts, code blocks, pull quotes, tables, and TOC entries — these are the elements that look broken when split across pages, and the cost of forcing them onto a single page is acceptable.</p>
+
+  <h2>Print background</h2>
+
+  <p>Body background is <code>#FFFFFF</code> in print, regardless of the screen background. Stone-50 is a screen-only convenience that softens the page in a browser; it is not a print convention. Stone tints in print appear only inside callouts, code blocks, banded table rows, and chips — the contexts where the tint is the point.</p>
+
+  <h2>Print body size</h2>
+
+  <p>Body type drops from 17px on screen to 10.5pt in print. The reduction is not arithmetic — print pixels-to-points conversion does not work cleanly because the rendering engine uses a different metric for print. The 10.5pt body is the size that produces 70-character lines on Letter at 0.8-inch margins, which is the editorial target.</p>
+</section>
+
+
+<!-- ============================================================
+     08 Screen rules
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">08</span>Screen rules</h1>
+
+  <p class="lead">The corporate fleet runs primarily on 1080p (1920×1080) and 1440p (2560×1440) external monitors, with a smaller fraction of laptop-internal panels at 1080p or 1200p. The system optimises for these densities, not for retina-class displays where almost any treatment looks good.</p>
+
+  <h2>Body size on screen</h2>
+
+  <p>17 pixels at the root size of 16. The system does not rely on user font-size preferences scaling the document — it sets <code>--fs-body</code> at 17px directly. The reasoning: a 16px body, the typical web default, sits at the lower bound of comfortable reading on 1080p Windows where Segoe UI Variable is the rendered face. 17px lifts it into the editorial-comfortable range without overshooting the 18px point at which mono code chips begin to look oversized in line with the body.</p>
+
+  <h2>Optical sizing</h2>
+
+  <p>The body has <code>font-optical-sizing: auto</code> set globally. This activates Segoe UI Variable's optical-sizing axis on Windows and SF Pro's equivalent on macOS. The effect is mostly invisible — letterforms thicken slightly at small sizes and thin slightly at large sizes — but cumulative across a document, it produces the rhythm that distinguishes editorial from corporate-deck typography.</p>
+
+  <h2>Subpixel rendering</h2>
+
+  <p>The body has <code>-webkit-font-smoothing: antialiased</code> and <code>-moz-osx-font-smoothing: grayscale</code> set. On macOS this disables sub-pixel positioning, which makes type slightly thinner but visually consistent across regions of the screen. On Windows (Chromium and Edge), antialiased rendering is the default already; the rule is harmless. Removing the rule causes macOS Safari/Chromium to render type heavier, which fights the editorial weight discipline.</p>
+
+  <h2>Hover and focus</h2>
+
+  <p>Links carry a Deccan Blue underline at 30% opacity by default; hover deepens to full Deccan Blue. Focus produces a 2-pixel outline at 30% opacity with 2-pixel offset — visible against any document background, accessible to keyboard navigation, brand-aligned. Hover styles do not exist in print and do not exist on touch interfaces; the focus state covers the accessibility case.</p>
+
+  <h2>Reduced motion</h2>
+
+  <p>The system has no animation. <code>prefers-reduced-motion</code> is therefore moot for this version. Future versions that introduce motion components must respect it.</p>
+</section>
+
+
+<!-- ============================================================
+     09 Tone and voice
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">09</span>Tone and voice</h1>
+
+  <p>Documents issued under this system are corporate communications — internal standards, technical guides, audit-grade specifications, policy briefs. They are read by engineers, auditors, customers, and regulators. The register matches.</p>
+
+  <h2>Required register</h2>
+
+  <p>Direct, declarative, third-person. State the position, then the rationale. Active voice for actions; passive only when the actor is irrelevant or an established corporate process. Specific over generic — version numbers, dates, file paths, policy clauses, named systems.</p>
+
+  <h2>Banned patterns</h2>
+
+  <p>The patterns below are not acceptable. They appear in machine-generated draft text and in junior business writing; they do not appear in Deccan documents.</p>
+
+  <ul>
+    <li>Conversational subtitles in headings (": in plain English", ": the EOL clock is the deciding factor"). Use plain noun-phrase headings.</li>
+    <li>First-person narrator asides ("Let me walk you through…", "I want to show you…"). State the content directly.</li>
+    <li>Filler openings ("Here's the thing:", "It's worth noting that…", "Let's start by…"). Start with the substantive sentence.</li>
+    <li>Casual transitions ("That said,", "With that out of the way,", "Now, let's…"). Use a section break or a topic-sentence transition.</li>
+    <li>Decorative emoji in body content. Use words: "Required", "Prohibited", "Note".</li>
+    <li>Exclamation marks in body prose. Use a period.</li>
+    <li>"Deep dive", "let's dive in", "rabbit hole", "TL;DR". Use plain language.</li>
+    <li>Mental-exercise framings ("A useful way to think about this is…", "Imagine if…", "Think of X as Y"). State the idea. If a comparison is genuinely needed, label it: "Analogy:".</li>
+    <li>Self-reference to the document ("This guide will teach you…", "By the end of this section you'll know…"). The document's existence implies its purpose.</li>
+    <li>Em-dash narrator interjections ("— and here's the kicker —"). State the consequence directly.</li>
+  </ul>
+
+  <h2>The read-aloud test</h2>
+
+  <p>If a sentence would feel out of place in a board paper, an audit response, or a regulator submission, rewrite it. The corporate-document register is unambiguous; the test is fast.</p>
+</section>
+
+
+<!-- ============================================================
+     10 Banned and prohibited
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">10</span>Banned and prohibited</h1>
+
+  <h2>Banned faces</h2>
+
+  <p>The following sans-serif faces do not appear in any Deccan document, regardless of context:</p>
+
+  <ul>
+    <li><strong>Helvetica</strong> and <strong>Helvetica Neue</strong> — off-discipline; visually heavy; licensing complexity.</li>
+    <li><strong>Univers</strong> — same.</li>
+    <li><strong>Arial</strong> — Microsoft's Helvetica clone; the textbook tired-default face.</li>
+    <li><strong>Calibri</strong> — Office 2007–2023 default; replaced upstream by Aptos; legacy connotation.</li>
+    <li><strong>Verdana</strong> — designed for low-resolution CRT screens; over-wide, over-spaced; out of place on modern displays.</li>
+    <li><strong>Times</strong>, <strong>Times New Roman</strong>, <strong>Garamond</strong>, <strong>Georgia</strong> — serif faces; the system is a sans-serif system.</li>
+  </ul>
+
+  <p>The CSS chain in §03 explicitly excludes all of these. Documents that introduce them by overriding the chain fail review.</p>
+
+  <h2>Banned monospace faces</h2>
+
+  <ul>
+    <li><strong>Courier</strong> and <strong>Courier New</strong> — visually heavy; typewriter connotation; out of place in modern technical writing.</li>
+    <li><strong>Lucida Console</strong> — legacy Windows; replaced by Cascadia Mono.</li>
+  </ul>
+
+  <h2>Banned visual elements</h2>
+
+  <ul>
+    <li>Rounded structural corners on cards, callouts, code blocks, tables, page edges. Corners are sharp.</li>
+    <li>Decorative full-width coloured bars at the top or bottom of pages or slides. The system has no banner band.</li>
+    <li>Drop shadows on body content. Shadows do not appear at all.</li>
+    <li>Gradients. The system is flat.</li>
+    <li>Multiple accent hues. Deccan Blue is the only accent. Hierarchy uses opacity.</li>
+    <li>Deccan Green outside the logo or sustainability content (see §04).</li>
+    <li>Stone-tinted page backgrounds in print (see §07).</li>
+    <li>Accent rules under titles in slides (the AI-slop tell). Title hierarchy comes from type, not decoration.</li>
+  </ul>
+
+  <h2>Banned content patterns</h2>
+
+  <p>See §09. The tone-and-voice ban list is part of the document standard.</p>
+</section>
+
+
+<!-- ============================================================
+     11 Migration
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">11</span>Migration</h1>
+
+  <p>Documents in flight under earlier conventions migrate to v2.0 on the next regular revision. Three concrete moves:</p>
+
+  <h3>For documents written under deccan-design v1.0 (Aptos-first)</h3>
+
+  <p>Replace the font-family declaration with the v2.0 chain. The colour tokens, spatial system, components, and tone rules are unchanged; no body content needs revision. Any explicit Aptos override in inline styles or per-document CSS is removed. The cover and end-page composition is preserved as-is.</p>
+
+  <h3>For documents written under swiss_design_at_deccan v1.0 (IBM Plex)</h3>
+
+  <p>Replace the font-family declaration with the v2.0 chain. Remove any inline references to the IBM Plex font binaries, the Hanken Grotesk fallback chain, and the Fira Code mono fallback chain. The colour tokens are identical. Components and spatial rules carry forward. The cover and end-page composition is preserved.</p>
+
+  <h3>For documents written ad-hoc (no system)</h3>
+
+  <p>Migrate to v2.0 by adopting the spec wholesale. The transition is from "Word default" or "PowerPoint default" to a deliberate system; the cost is the time to re-style, the value is the next forty documents not relitigating the same decisions.</p>
+
+  <h2>Template availability</h2>
+
+  <p>The v2.0 HTML template lives at the same URL as the v1.0 swiss template (<code>github.com/kvkalidindi/swiss_design_at_deccan</code>) and supersedes it. Slot variables are unchanged: <code>{{TITLE}}</code>, <code>{{SUBTITLE}}</code>, <code>{{DOCUMENT_TYPE}}</code>, <code>{{PREPARED_BY}}</code>, <code>{{DATE}}</code>, <code>{{VERSION}}</code>, <code>{{CLASSIFICATION}}</code>, <code>{{BODY_HTML}}</code>. A Word and PowerPoint template emitted from the same tokens will follow.</p>
+
+  <div class="callout">
+    <div class="label">Adoption test</div>
+    <p>The system is adopted when the next forty Deccan documents — internal standards, technical specifications, customer-facing briefs, policy memos, audit responses — issue under v2.0 without per-document deviation, and any document that does deviate fails review and is sent back. If that does not happen, the system has not been adopted; it has merely been documented.</p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     12 Brand voice
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">12</span>Brand voice</h1>
+
+  <p class="lead">Documents issued under this system speak in Deccan Fine Chemicals' corporate register — direct, declarative, third-person, specific over generic. The register matches the public marketing surface at <a href="https://www.deccanchemicals.com">deccanchemicals.com</a>.</p>
+
+  <h2>The Deccan register</h2>
+
+  <p>Deccan describes itself as "a privately owned globally operating company" and the "trusted, transparent and dependable partner" of its customers. The register that produces this is third-person, present-tense, capability-led. The company is the subject; "we" appears sparingly and only on the primary marketing surface.</p>
+
+  <p>Two representative sentences from the public site:</p>
+
+  <div class="pullquote">
+    <p>Technology and Engineering is our core competency that helps us deliver innovative technological solutions.</p>
+  </div>
+
+  <div class="pullquote">
+    <p>Deccan Fine Chemicals makes every product exclusively for a specific customer and does not sell the same product to competitors.</p>
+  </div>
+
+  <p>Documents under this system match this register. Sustainability is framed as operational discipline and risk management, not aspiration. Capability is framed as competence — "manufactured by Deccan", "core competency", "delivery" — not aspiration.</p>
+
+  <h2>Canonical phrasing</h2>
+
+  <p>The vocabulary below is corporate-canonical and does not need to be re-invented per document:</p>
+
+  <ul>
+    <li><strong>Custom chemical manufacturing</strong> — the primary positioning.</li>
+    <li><strong>Exclusive partnership</strong> — the customer-engagement model (one product per customer).</li>
+    <li><strong>Active ingredients</strong> — manufactured by Deccan, supplied to formulation plants.</li>
+    <li><strong>Formulation plants</strong> — the customer-side counterpart to Deccan's intermediates.</li>
+    <li><strong>Privately owned globally operating company</strong> — the corporate descriptor.</li>
+    <li><strong>QHSE</strong> — Quality, Health, Safety, Environment.</li>
+    <li><strong>AEO-T1</strong> — Authorized Economic Operator – T1 (the customs designation).</li>
+  </ul>
+
+  <h2>Banned patterns</h2>
+
+  <p>The patterns listed in §09 are not acceptable in any Deccan document. The most common violations — conversational subtitles in headings, first-person narrator asides, filler openings, "deep dive" / "TL;DR", decorative emoji, exclamation marks, mental-exercise framings — appear in machine-generated draft text and are removed at review.</p>
+
+  <div class="callout">
+    <div class="label">The read-aloud test</div>
+    <p>If a sentence would feel out of place in a board paper, an audit response, or a regulator submission, rewrite it. The corporate-document register is unambiguous; the test is fast.</p>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     13 Logo usage
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">13</span>Logo usage</h1>
+
+  <p class="lead">The Deccan Fine Chemicals wordmark identifies every document under this system. Three rules govern its use: clear space, minimum size, and colour variant.</p>
+
+  <h2>Clear space</h2>
+
+  <p>The wordmark carries a minimum of 0.5× its own height as clear space on all sides. Within this clear space no other element — type, rule, image, edge — appears. The clear space rule applies in print and on screen.</p>
+
+  <h2>Minimum size</h2>
+
+  <p>The wordmark is never rendered smaller than 12 mm wide in print or 80 px wide on screen. Below these thresholds the wordmark loses legibility on standard corporate output devices.</p>
+
+  <h2>Colour variants</h2>
+
+  <ul>
+    <li><strong>Full colour</strong> — the default. Deccan Blue rule + Deccan Green sustainability mark + stone-900 wordmark text on a paper background.</li>
+    <li><strong>Monochrome black on paper</strong> — single-colour print contexts (faxes, low-end printers, plain-paper photocopies).</li>
+    <li><strong>Monochrome white on Deccan Blue</strong> — single-colour print on dark stock; the cover-variant reverse.</li>
+    <li><strong>Sustainability-context</strong> — full colour, with the Deccan Green retained per §04.</li>
+  </ul>
+
+  <h2>Banned uses</h2>
+
+  <ul>
+    <li>Rotating, skewing, or distorting the wordmark.</li>
+    <li>Recolouring the rule or text to any colour other than the variants above.</li>
+    <li>Placing the wordmark over photographic backgrounds where contrast falls below WCAG AA.</li>
+    <li>Adding drop shadows, glows, bevels, or other ornament.</li>
+    <li>Rendering the wordmark in a face other than Segoe UI Variable / Segoe UI semibold.</li>
+    <li>Cropping or partially obscuring the wordmark.</li>
+  </ul>
+
+  <h2>Assets</h2>
+
+  <p>Wordmark assets live in <code>skill/assets/</code>:</p>
+
+  <ul>
+    <li><code>logo.svg</code> — vector wordmark (preferred for print and high-DPI screen).</li>
+    <li><code>logo.png</code> — 1024×1024 raster fallback.</li>
+    <li><code>logo.b64.txt</code> — base64-encoded PNG for inline embedding in HTML.</li>
+  </ul>
+
+  <p>The retrieval cascade is: bundled skill asset → project file → stable raw GitHub URL → base64 fallback. The wordmark is <strong>not fetched from <code>deccanchemicals.com</code></strong>; the marketing-site asset is not authoritative for system use.</p>
+</section>
+
+
+<!-- ============================================================
+     14 File naming and classification
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">14</span>File naming and classification</h1>
+
+  <h2>File naming convention</h2>
+
+  <p>Documents follow:</p>
+
+  <pre class="code-block">&lt;owner&gt;-&lt;doc-type&gt;-&lt;topic&gt;-&lt;yyyy-mm&gt;.&lt;ext&gt;</pre>
+
+  <p>Lowercase. Hyphenated. ISO-style date. Examples:</p>
+
+  <ul>
+    <li><code>it-policy-acceptable-use-2026-04.docx</code></li>
+    <li><code>rd-spec-process-intensification-pilot-2026-05.docx</code></li>
+    <li><code>sales-brief-customer-q2-pricing-2026-06.docx</code></li>
+    <li><code>qhse-report-emissions-monthly-2026-04.xlsx</code></li>
+  </ul>
+
+  <h2>Classification levels</h2>
+
+  <table>
+    <thead>
+      <tr><th>Level</th><th>Definition</th><th>Cover chip wording</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Public</strong></td><td>Free to share with anyone, inside or outside Deccan, without restriction.</td><td>Public</td></tr>
+      <tr><td><strong>Internal</strong></td><td>For Deccan employees and named contractors. Not for distribution outside the company.</td><td>Internal</td></tr>
+      <tr><td><strong>Confidential</strong></td><td>For named recipients only. Includes commercial terms, customer-confidential information, and any document that could prejudice a Deccan position if disclosed.</td><td>Confidential</td></tr>
+      <tr><td><strong>Restricted</strong></td><td>For named individuals on a need-to-know basis. Includes M&amp;A material, sensitive HR information, security-incident detail.</td><td>Restricted</td></tr>
+    </tbody>
+  </table>
+
+  <p>The cover classification chip and the footer "Deccan Fine Chemicals · Confidential" together signal handling. Documents at Restricted classification carry an explicit handling-instruction page after the cover, listing the named recipients and the procedure for sharing.</p>
+</section>
+
+
+<!-- ============================================================
+     15 Revision cycle
+     ============================================================ -->
+<section class="section">
+  <h1><span class="num">15</span>Revision cycle</h1>
+
+  <h2>This document</h2>
+
+  <p>This specification is reviewed annually. The owning office (the Office of the SVP, IT &amp; Digital Transformation) re-issues the document with version number incremented on any material change.</p>
+
+  <ul>
+    <li><strong>Annual full review</strong> — every May. The owner re-validates each section against the current state of the corporate fleet, the type-stack OS distribution, and the public marketing surface. Material changes increment the major version.</li>
+    <li><strong>Quarterly token review</strong> — every January, April, July, October. The owner re-validates the colour and type tokens against the marketing site and any updated brand guidelines. Token changes increment the minor version.</li>
+    <li><strong>Ad-hoc revision</strong> — issued when a discovered defect, a new OS-native font release, or a corporate decision warrants out-of-cycle change.</li>
+  </ul>
+
+  <h2>Documents issued under this system</h2>
+
+  <p>Documents written against this specification carry their own version, date, and revision history. They migrate to a new version of the system at their next regular revision per §11.</p>
+
+  <p>The adoption test stated in §11 is the canonical measure: the system is adopted when the next forty Deccan documents issue under v2.0 without per-document deviation, and any document that does deviate fails review and is sent back.</p>
+</section>
+
+</main>
+
+
+<!-- ============================================================
+     End page
+     ============================================================ -->
+<section class="end-page">
+  <div class="end-mark">Deccan Fine Chemicals</div>
+  <div class="end-rule"></div>
+  <div class="end-contact">deccanchemicals.com · Hyderabad, India</div>
+  <div class="end-classification">Confidential · Internal use</div>
+</section>
+
+</body>
+</html>

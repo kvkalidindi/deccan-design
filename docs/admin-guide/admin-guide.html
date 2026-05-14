@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>deccan-design v2.0 — administration guide</title>
+<style>
+:root {
+  --deccan-blue:#164999; --deccan-blue-30:rgba(22,73,153,0.30);
+  --stone-50:#FAFAF9; --stone-100:#F5F5F4; --stone-200:#E7E5E4;
+  --stone-500:#78716C; --stone-700:#44403C; --stone-800:#292524; --stone-900:#1C1917;
+  --paper:#FFFFFF;
+  --font-sans:'Segoe UI Variable Display','Segoe UI Variable Text','Segoe UI Variable','Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-mono:'Cascadia Mono','Cascadia Code',Consolas,'SF Mono',Menlo,ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;}
+body{background:var(--stone-50);color:var(--stone-800);font-family:var(--font-sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+.shell{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,64px);}
+.cover{background:var(--paper);min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:96px clamp(20px,4vw,64px) 48px;page-break-after:always;border-bottom:1px solid var(--stone-200);}
+.mark{display:flex;align-items:center;gap:12px;}
+.mark-rule{width:56px;height:3px;background:var(--deccan-blue);}
+.mark-text{font-weight:600;font-size:18px;color:var(--stone-900);}
+.cover-body{align-self:center;padding:64px 0 32px;}
+.cover-eyebrow{font-family:var(--font-mono);font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);background:var(--stone-100);padding:5px 11px;display:inline-block;margin-bottom:32px;}
+.cover-title{font-size:clamp(40px,6.4vw,64px);font-weight:350;letter-spacing:-0.024em;line-height:1.04;color:var(--deccan-blue);max-width:22ch;margin-bottom:24px;}
+.cover-subtitle{font-size:22px;font-weight:400;line-height:1.4;color:var(--stone-700);max-width:50ch;}
+.cover-meta{display:grid;grid-template-columns:1.1fr 3fr 1.3fr 0.8fr 1.4fr;gap:24px;padding-top:24px;border-top:1px solid var(--stone-200);}
+.cover-meta dt{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);margin-bottom:6px;}
+.cover-meta dd{font-size:14px;color:var(--stone-900);font-weight:600;}
+main.body{padding:64px 0 32px;}
+section.section{margin-bottom:64px;}
+section.section:first-of-type h1{page-break-before:auto;}
+h1{font-size:44px;font-weight:350;letter-spacing:-0.022em;line-height:1.15;color:var(--stone-900);margin:24px 0;padding-bottom:16px;border-bottom:2px solid var(--stone-900);page-break-before:always;}
+h1 .num{font-family:var(--font-mono);font-size:13px;font-weight:500;letter-spacing:0.06em;color:var(--stone-500);display:block;margin-bottom:12px;}
+h2{font-size:32px;font-weight:500;letter-spacing:-0.012em;line-height:1.30;color:var(--stone-900);margin:48px 0 16px;}
+h3{font-size:24px;font-weight:600;letter-spacing:-0.005em;line-height:1.2;color:var(--stone-900);margin:32px 0 12px;}
+h4{font-size:19px;font-weight:600;color:var(--stone-900);margin:24px 0 8px;}
+p{margin-bottom:16px;max-width:70ch;}
+.lead{font-size:21px;line-height:1.5;color:var(--stone-700);font-weight:400;max-width:60ch;margin-bottom:24px;}
+a{color:var(--deccan-blue);text-decoration:underline;text-decoration-color:var(--deccan-blue-30);text-underline-offset:3px;}
+a:hover{text-decoration-color:var(--deccan-blue);}
+ul,ol{margin:12px 0 16px 28px;max-width:70ch;}
+li{margin-bottom:8px;}
+li::marker{color:var(--stone-500);}
+code{font-family:var(--font-mono);font-size:0.92em;background:var(--stone-100);color:var(--stone-900);padding:1px 6px;}
+pre.code-block{background:var(--stone-100);padding:16px 24px;margin:16px 0;font-family:var(--font-mono);font-size:13px;line-height:1.55;color:var(--stone-900);overflow-x:auto;max-width:70ch;page-break-inside:avoid;}
+strong{font-weight:600;color:var(--stone-900);}
+.callout{background:var(--stone-100);padding:16px 24px;margin:24px 0;border-left:3px solid var(--deccan-blue);max-width:70ch;page-break-inside:avoid;}
+.callout .label{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);margin-bottom:8px;}
+.callout.warn{border-left-color:#A8A29E;}
+table{width:100%;max-width:70ch;border-collapse:collapse;font-size:14px;margin:24px 0;background:var(--paper);page-break-inside:avoid;}
+thead th{text-align:left;padding:12px 16px;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--stone-700);background:var(--stone-100);border-bottom:2px solid var(--stone-900);}
+tbody td{padding:12px 16px;color:var(--stone-800);border-bottom:1px solid var(--stone-200);vertical-align:top;}
+tbody tr:nth-child(even) td{background:var(--stone-50);}
+.end-page{background:var(--paper);min-height:60vh;display:grid;gap:12px;align-content:center;justify-items:center;padding:96px clamp(20px,4vw,64px);page-break-before:always;border-top:1px solid var(--stone-200);text-align:center;}
+.end-rule{width:56px;height:3px;background:var(--deccan-blue);}
+.end-mark{font-size:21px;font-weight:600;color:var(--stone-900);}
+.end-contact{font-size:14px;color:var(--stone-700);}
+.end-classification{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);margin-top:8px;}
+@page{size:Letter;margin:0.8in 0.8in 1in 0.8in;
+  @bottom-left{content:"Deccan Fine Chemicals · Confidential";font-family:'Cascadia Mono',Consolas,monospace;font-size:8.5pt;color:#78716C;}
+  @bottom-right{content:counter(page);font-family:'Cascadia Mono',Consolas,monospace;font-size:8.5pt;color:#78716C;}
+}
+@page :first{@bottom-left{content:"";}@bottom-right{content:"";}}
+@media print{body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="mark"><div class="mark-rule"></div><div class="mark-text">Deccan Fine Chemicals</div></div>
+  <div class="cover-body">
+    <span class="cover-eyebrow">Standard · IT &amp; Digital Transformation</span>
+    <h1 class="cover-title">deccan-design v2.0 — administration guide</h1>
+    <p class="cover-subtitle">Enterprise rollout, deployment, support, and known-issue reference for IT operations.</p>
+  </div>
+  <dl class="cover-meta">
+    <div><dt>Document type</dt><dd>Guide</dd></div>
+    <div><dt>Prepared by</dt><dd>Office of the SVP, IT &amp; Digital Transformation</dd></div>
+    <div><dt>Date</dt><dd>May 2026</dd></div>
+    <div><dt>Version</dt><dd>2.0</dd></div>
+    <div><dt>Classification</dt><dd>Internal</dd></div>
+  </dl>
+</section>
+
+<main class="shell body">
+
+<section class="section">
+  <h1><span class="num">01</span>Premise</h1>
+  <p class="lead">This guide is the IT operations reference for deploying, supporting, and maintaining the deccan-design v2.0 system across the Deccan Fine Chemicals fleet — Windows endpoints managed via ManageEngine Endpoint Central and Microsoft Intune, macOS endpoints managed via Jamf, plus the Google Workspace tenant and the Claude.ai accounts of individual users.</p>
+  <p>The system is documented in <a href="../spec/deccan-design-spec.html">deccan-design-spec.html</a> and demonstrated in <a href="../specimen/deccan-design-specimen.html">deccan-design-specimen.html</a>. This guide is operational: who, what, when, and how to respond when something does not work.</p>
+</section>
+
+<section class="section">
+  <h1><span class="num">02</span>Rollout plan</h1>
+  <p class="lead">Four waves. Each wave's entry criteria are the previous wave's exit criteria. Rollback is reversible at every stage — the installer is per-user and removable via standard MSI / pkgutil uninstall.</p>
+  <table>
+    <thead><tr><th>Wave</th><th>Cohort</th><th>Size</th><th>Entry criteria</th><th>Exit criteria</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Pilot</strong></td><td>IT users</td><td>5</td><td>Repository released; MSI and PKG built.</td><td>All five report templates in Word/Excel/PowerPoint Personal gallery; Outlook signature visible after helper script; Claude skill enumerated; no blocker tickets.</td></tr>
+      <tr><td><strong>Wave 1</strong></td><td>Engineering &amp; R&amp;D</td><td>50</td><td>Pilot exit criteria met. Help-desk runbook posted (this guide).</td><td>≥ 90% of cohort installed successfully without escalation. SmartScreen / Gatekeeper FAQ used by ≤ 20%. Zero P0 / P1 incidents.</td></tr>
+      <tr><td><strong>Wave 2</strong></td><td>Office users</td><td>300</td><td>Wave 1 exit criteria met. Comms email sent (preferences + admin-guide link).</td><td>≥ 95% of cohort installed. Outlook signature configured by ≥ 80%. Personal preferences set by ≥ 60%.</td></tr>
+      <tr><td><strong>Full</strong></td><td>Remaining fleet</td><td>~1,800</td><td>Wave 2 exit criteria met. Onboarding documentation updated for new hires.</td><td>≥ 95% of fleet installed. The next forty Deccan documents issue under v2.0 without per-document deviation.</td></tr>
+    </tbody>
+  </table>
+  <h2>Rollback</h2>
+  <p>Per-wave rollback procedure:</p>
+  <ol>
+    <li>Pause distribution in Endpoint Central / Intune / Jamf for the cohort.</li>
+    <li>Push an uninstall command to the cohort (<code>msiexec /x &lt;ProductCode&gt; /qn</code> on Windows; <code>pkgutil --forget</code> + filesystem removal on macOS).</li>
+    <li>Notify the cohort via email with the rollback rationale and the timeline for re-deployment.</li>
+    <li>Document the rollback trigger in the incident log; review against waves before resuming.</li>
+  </ol>
+</section>
+
+<section class="section">
+  <h1><span class="num">03</span>Deployment via ManageEngine Endpoint Central</h1>
+  <p>Endpoint Central handles the majority of the Deccan Windows fleet. The MSI is per-user, so the package definition runs in the user context rather than system context.</p>
+  <h2>Configuration repository</h2>
+  <ul>
+    <li>Upload <code>deccan-design-2.0.0.msi</code> to the Endpoint Central package repository.</li>
+    <li>Tag with: <code>deccan-design</code>, <code>v2.0.0</code>, <code>user-context</code>, <code>unsigned</code>.</li>
+    <li>Set a checksum (SHA-256) on upload — verify the same checksum is published on the GitHub release.</li>
+  </ul>
+  <h2>Package definition</h2>
+  <ul>
+    <li><strong>Install command:</strong> <code>msiexec /i deccan-design-2.0.0.msi /qn</code></li>
+    <li><strong>Uninstall command:</strong> <code>msiexec /x {ProductCode} /qn</code> (where <code>{ProductCode}</code> is the value emitted at MSI build time).</li>
+    <li><strong>Detection rule:</strong> registry key <code>HKCU\Software\deccan-design\Version</code> equals <code>2.0.0</code>.</li>
+    <li><strong>Reboot:</strong> not required.</li>
+    <li><strong>Elevation:</strong> not required (per-user install).</li>
+  </ul>
+  <h2>Distribution rules</h2>
+  <ul>
+    <li>Pilot: target by username, five named users.</li>
+    <li>Wave 1: target by AD group <code>cn=eng-rd,ou=groups</code>.</li>
+    <li>Wave 2: target by AD group <code>cn=office-users,ou=groups</code>.</li>
+    <li>Full: target by AD group <code>cn=domain-users,ou=groups</code> minus the previous waves.</li>
+  </ul>
+  <h2>Self-service portal</h2>
+  <p>Add the package to the Endpoint Central self-service portal under the "Productivity tools" category for the pilot wave, so pilot users can opt-in rather than have the install pushed silently. Wave 1 onwards uses the silent push.</p>
+</section>
+
+<section class="section">
+  <h1><span class="num">04</span>Deployment via Microsoft Intune</h1>
+  <p>For endpoints managed via Intune (typically the laptop-mobile fleet), the MSI is wrapped as a Win32 app via <code>IntuneWinAppUtil</code>.</p>
+  <h2>Wrapping</h2>
+  <pre class="code-block">IntuneWinAppUtil.exe `
+  -c &lt;source-folder-containing-msi&gt; `
+  -s deccan-design-2.0.0.msi `
+  -o &lt;output-folder&gt;</pre>
+  <p>Produces <code>deccan-design-2.0.0.intunewin</code>.</p>
+  <h2>Win32 app registration</h2>
+  <ul>
+    <li><strong>App information:</strong> name "deccan-design v2.0"; publisher "Deccan Fine Chemicals"; description sourced from the repository README.</li>
+    <li><strong>Program — install command:</strong> <code>msiexec /i deccan-design-2.0.0.msi /qn</code></li>
+    <li><strong>Program — uninstall command:</strong> <code>msiexec /x {ProductCode} /qn</code></li>
+    <li><strong>Install behaviour:</strong> <strong>User</strong> (per Decision 4 in PRD §1.4).</li>
+    <li><strong>Device restart behaviour:</strong> No specific action.</li>
+  </ul>
+  <h2>Detection rules</h2>
+  <p>Use two rules in an AND combination:</p>
+  <ol>
+    <li><strong>MSI product code</strong> — the product code emitted at MSI build time (read from the WiX output).</li>
+    <li><strong>File existence</strong> — <code>%APPDATA%\Microsoft\Templates\deccan-document.dotx</code> exists.</li>
+  </ol>
+  <h2>Assignment groups</h2>
+  <ul>
+    <li>Pilot: Azure AD group <code>deccan-design-pilot</code>.</li>
+    <li>Wave 1: <code>deccan-design-wave1</code>.</li>
+    <li>Wave 2: <code>deccan-design-wave2</code>.</li>
+    <li>Full: <code>deccan-design-all</code>, minus previous waves.</li>
+  </ul>
+  <h2>Supersedence</h2>
+  <p>When v2.0.1 (or later) ships, mark v2.0.0 as superseded in Intune. Intune handles the in-place upgrade — the MSI's <code>MajorUpgrade</code> element does the actual work of removing v2.0.0 before installing the new version.</p>
+</section>
+
+<section class="section">
+  <h1><span class="num">05</span>Deployment via Jamf for macOS</h1>
+  <p>The Jamf-managed macOS fleet receives the <code>.pkg</code> via policy.</p>
+  <h2>Policy configuration</h2>
+  <ul>
+    <li>Upload <code>deccan-design-2.0.0.pkg</code> to the Jamf distribution point.</li>
+    <li>Create a policy <em>Install deccan-design v2.0</em> with the package, install action "install", and frequency "once per computer".</li>
+    <li>Set the trigger: "Recurring check-in" for the silent-deploy waves; "Self Service" for the pilot.</li>
+    <li>Add a maintenance action: "Update inventory" after install.</li>
+  </ul>
+  <h2>Smart group</h2>
+  <p>Create a smart group <em>deccan-design installed</em> with criterion "Application Title is deccan-design" or "File exists at <code>~/Library/Application Support/deccan-design</code>". Use the smart group for inventory.</p>
+  <h2>Scope</h2>
+  <p>Expand scope across waves as on Windows: pilot users → engineering / R&amp;D smart group → office-user smart group → all-Mac smart group.</p>
+</section>
+
+<section class="section">
+  <h1><span class="num">06</span>Unsigned-installer support runbook</h1>
+  <p class="lead">This is the single most likely source of pilot help-desk tickets. The MSI and PKG ship unsigned per PRD §1.4 Decision 5. Three concrete user-symptom sequences with diagnostic and remedy steps.</p>
+
+  <h2>Windows SmartScreen — "Windows protected your PC"</h2>
+  <p><strong>Symptom.</strong> User double-clicks the MSI from File Explorer or a Teams download. SmartScreen appears with the wording above and a single visible button "Don't run". A subtle "More info" link is present but easy to miss.</p>
+  <p><strong>Diagnostic.</strong> No diagnostic needed — this is expected behaviour for an unsigned installer.</p>
+  <p><strong>Remedy.</strong></p>
+  <ol>
+    <li>Tell the user: "Click the <em>More info</em> link in the dialog."</li>
+    <li>A new button <em>Run anyway</em> appears under the program name.</li>
+    <li>Click <em>Run anyway</em>. The installer proceeds normally.</li>
+  </ol>
+  <p><strong>Escalation.</strong> If the user is reluctant to dismiss the warning, IT can pre-stage the MSI via Intune in silent mode (<code>msiexec /i ... /qn</code>), which bypasses SmartScreen for the user entirely. This is the recommended path for Wave 1 onwards.</p>
+
+  <h2>Windows Defender Application Control quarantine</h2>
+  <p><strong>Symptom.</strong> On endpoints with stricter WDAC policies (typically Restricted-classification machines and lab workstations), the MSI is quarantined silently — the user reports "nothing happened when I double-clicked."</p>
+  <p><strong>Diagnostic.</strong> Check Defender for Endpoint's quarantine view filtered by the user's endpoint and the MSI's SHA-256. If the MSI is present, this is the cause.</p>
+  <p><strong>Remedy.</strong></p>
+  <ul>
+    <li>Release the file from quarantine via Defender for Endpoint (admin action), <strong>or</strong></li>
+    <li>Add the MSI hash to the WDAC allowlist for the duration of the rollout, then remove it post-deployment.</li>
+  </ul>
+
+  <h2>macOS Gatekeeper — "cannot be opened because Apple cannot check it for malicious software"</h2>
+  <p><strong>Symptom.</strong> User double-clicks the <code>.pkg</code> from Finder. Gatekeeper blocks with the wording above.</p>
+  <p><strong>Diagnostic.</strong> No diagnostic needed — expected behaviour for an unsigned <code>.pkg</code>.</p>
+  <p><strong>Remedy.</strong></p>
+  <ol>
+    <li>Right-click the <code>.pkg</code> in Finder → <em>Open</em> → confirm in the secondary dialog.</li>
+    <li><strong>Or:</strong> System Settings → <em>Privacy &amp; Security</em>. Scroll to the bottom and click <em>Open Anyway</em> next to the blocked-app notice. The user is prompted for their password.</li>
+  </ol>
+  <p><strong>Escalation.</strong> For Jamf-managed endpoints, the silent policy push bypasses Gatekeeper entirely. This is the recommended path for Wave 1 onwards.</p>
+</section>
+
+<section class="section">
+  <h1><span class="num">07</span>Outlook signature configuration</h1>
+  <p>The installer drops the unconfigured signature template into <code>%APPDATA%\Microsoft\Signatures\deccan-signature-template.htm</code> (Windows) or the equivalent macOS path. A helper script configures it.</p>
+  <h2>Windows</h2>
+  <pre class="code-block">&amp; "$env:APPDATA\deccan-design\Set-DeccanSignature.ps1"</pre>
+  <p>The script prompts for Name, Role, Email, and Phone. Writes <code>Deccan.htm</code> and <code>Deccan.txt</code> into the Signatures folder.</p>
+  <h2>macOS</h2>
+  <pre class="code-block">~/Library/Application Support/deccan-design/set-deccan-signature.sh</pre>
+  <p>Same four prompts; writes the configured signature to the Outlook signatures directory in the new Outlook for Mac container.</p>
+  <h2>Selecting the signature in new Outlook</h2>
+  <ol>
+    <li>Open new Outlook.</li>
+    <li>Settings (gear icon) → Accounts → Signatures.</li>
+    <li>Confirm "Deccan" appears in the list.</li>
+    <li>Set as default for "New messages" and "Replies/forwards".</li>
+  </ol>
+  <h2>Troubleshooting</h2>
+  <ul>
+    <li>Signature missing from compose dropdown → check <code>%APPDATA%\Microsoft\Signatures\Deccan.htm</code> exists. If not, the helper script was not run.</li>
+    <li>Placeholders ({{NAME}} etc.) appear in the sent email → the helper was not run, or it ran against the template instead of writing <code>Deccan.htm</code>. Re-run the helper.</li>
+    <li>Signature renders without colour in Gmail recipients → expected; some recipient mail clients strip background colour. The fallback plain-text signature is in <code>Deccan.txt</code>.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <h1><span class="num">08</span>Personal preferences rollout</h1>
+  <p>The installer cannot push Claude.ai preferences server-side. Each user pastes the text from <a href="../../claude/personal-preferences.md">claude/personal-preferences.md</a> into Claude.ai → Settings → Profile → Preferences.</p>
+  <h2>IT operations checklist</h2>
+  <ul>
+    <li>Send a comms email to each rollout cohort 24 hours before the silent install. Include: the preferences text, the URL <a href="https://claude.ai/settings">https://claude.ai/settings</a>, and a sentence on why the step is manual (Claude.ai accounts are user-authenticated; the server has no API for IT to push).</li>
+    <li>Update the new-hire onboarding documentation to include the preferences step in the first-day Claude.ai setup.</li>
+    <li>Add a tile to the IT self-service portal: "Configure my Claude.ai preferences" with the text and the link.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <h1><span class="num">09</span>Support runbook (general)</h1>
+
+  <h2>Symptom → diagnostics → fix</h2>
+
+  <h3>Template not appearing in Word's New → Personal gallery</h3>
+  <ul>
+    <li><strong>Diagnostic:</strong> check <code>HKCU\Software\Microsoft\Office\16.0\Common\General\PersonalTemplates</code>. Should equal <code>%APPDATA%\Microsoft\Templates</code>.</li>
+    <li><strong>Diagnostic:</strong> confirm <code>%APPDATA%\Microsoft\Templates\deccan-document.dotx</code> exists.</li>
+    <li><strong>Fix:</strong> repair the MSI via Settings → Apps → deccan-design → Modify → Repair. Or reinstall.</li>
+  </ul>
+
+  <h3>Outlook signature missing</h3>
+  <ul>
+    <li><strong>Diagnostic:</strong> check <code>%APPDATA%\Microsoft\Signatures\Deccan.htm</code> exists.</li>
+    <li><strong>Fix:</strong> if missing, the helper script was not run. Run <code>Set-DeccanSignature.ps1</code>.</li>
+  </ul>
+
+  <h3>Claude Code does not enumerate the deccan-design skill</h3>
+  <ul>
+    <li><strong>Diagnostic:</strong> confirm <code>%APPDATA%\Anthropic\Claude\skills\deccan-design\SKILL.md</code> exists.</li>
+    <li><strong>Diagnostic:</strong> run the Claude Code skill enumeration command. If the skill is listed but does not activate, check the SKILL.md frontmatter.</li>
+    <li><strong>Fix:</strong> reinstall, or copy the skill directory from the repository manually if local-only override is preferred.</li>
+  </ul>
+
+  <h3>Fonts appear wrong on Windows 10</h3>
+  <ul>
+    <li><strong>Diagnostic:</strong> expected behaviour. Segoe UI Variable's Display axis does not resolve on Windows 10; the chain falls back to static Segoe UI.</li>
+    <li><strong>Fix:</strong> none required. The fallback is metric-compatible and visually acceptable.</li>
+  </ul>
+
+  <h3>Document looks correct in Word but wrong in emailed PDF</h3>
+  <ul>
+    <li><strong>Diagnostic:</strong> user is printing to PDF via a non-standard driver (Adobe PDF Printer, Microsoft Print to PDF with custom settings, etc.) that substitutes fonts.</li>
+    <li><strong>Fix:</strong> instruct File → Export → Create PDF/XPS Document. This embeds the OS-resident font and produces a faithful PDF.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <h1><span class="num">10</span>Known issues</h1>
+  <ul>
+    <li><strong>Segoe UI Variable Display axis on Windows 10.</strong> Does not resolve; falls back to static Segoe UI. Visually acceptable. Not a defect.</li>
+    <li><strong>Cascadia Mono programming ligatures.</strong> Off by document default to keep ligatures out of prose. Documents that want ligatures can enable them per-document with <code>font-feature-settings: "calt", "liga";</code>.</li>
+    <li><strong>DOCX end-page vertical centring.</strong> Uses a spacer-paragraph workaround because Word's <em>vertical alignment center</em> at section level affects only the running pages, not the section's last page. The visual effect is identical.</li>
+    <li><strong>Unsigned installer triggers SmartScreen / Gatekeeper on every first install.</strong> Per Decision 5. Silent-deploy via Intune / Jamf bypasses the warning. See §06.</li>
+    <li><strong>New Outlook for Mac signature folder location varies.</strong> Microsoft has changed the location twice since the Outlook-on-Mac rewrite. The helper script targets the current location as of May 2026; if Microsoft moves the folder again, update <code>set-deccan-signature.sh</code>.</li>
+  </ul>
+</section>
+
+<section class="section">
+  <h1><span class="num">11</span>FAQ</h1>
+
+  <h3>Why is the installer unsigned?</h3>
+  <p>The cost of code-signing was traded against the cost of per-endpoint dismissal friction. Signing requires certificate procurement, ongoing PKCS#12 management, and a per-build signing step. The trade is documented in PRD §1.4 Decision 5; the dismissal procedure is in §06 above.</p>
+
+  <h3>Why is the type stack OS-native instead of a bundled font?</h3>
+  <p>To avoid an MSI font deployment to every endpoint, an Intune compliance lane to verify the install, an M365 Office Font Service dependency, and a commercial font-licensing programme. The OS-native chain resolves to Segoe UI Variable on Windows 11 and San Francisco on macOS — both editorial-quality variable fonts.</p>
+
+  <h3>Why no PDFs in the repository?</h3>
+  <p>PDFs sandbox-rendered without the resident corporate fonts would substitute typefaces and confuse readers. PDF production is shifted to the user, who renders on a managed endpoint with the resident fonts available. The README documents the two methods.</p>
+
+  <h3>What if I want to use a different font for a specific document?</h3>
+  <p>You do not. The system is the contract — documents that override the type stack fail review. If the system needs to change, raise the request with the design-system owner per the escalation matrix.</p>
+
+  <h3>What about classic Outlook?</h3>
+  <p>Out of scope per PRD §1.4 Decision 6. New Outlook only.</p>
+
+  <h3>Does this work on Google Workspace?</h3>
+  <p>Yes. The Workspace templates in <code>templates/gworkspace/</code> are <code>.docx</code> / <code>.xlsx</code> / <code>.pptx</code> mirrors of the native Office templates. Workflow: upload + open with Google Docs/Sheets/Slides, then save as Google native. The Gmail signature is a separate paste-into-settings snippet.</p>
+
+  <h3>How do I uninstall?</h3>
+  <p>Windows: Settings → Apps → deccan-design → Uninstall. macOS: see <code>installers/macos/README.md</code> — runs <code>pkgutil --forget</code> plus filesystem removal.</p>
+
+  <h3>How do I migrate a document written under swiss_design_at_deccan v1.0 (IBM Plex)?</h3>
+  <p>Replace the font-family declaration with the v2.0 chain. Colour tokens, spatial system, components, and tone rules are unchanged. See §11 of the spec.</p>
+
+  <h3>How do I migrate a document written under deccan-design v1.0 (Aptos)?</h3>
+  <p>Replace the font-family declaration with the v2.0 chain. Remove any Aptos override. See §11 of the spec.</p>
+
+  <h3>What if Microsoft changes the new Outlook signature folder again?</h3>
+  <p>Update <code>installers/windows/Set-DeccanSignature.ps1</code> and <code>installers/macos/set-deccan-signature.sh</code> with the new path, increment the system version to <code>2.0.x</code>, and re-deploy. The helper scripts isolate this concern from the rest of the system.</p>
+</section>
+
+<section class="section">
+  <h1><span class="num">12</span>Escalation matrix</h1>
+  <table>
+    <thead><tr><th>Tier</th><th>Owner</th><th>Scope</th></tr></thead>
+    <tbody>
+      <tr><td>Tier 1 — help-desk</td><td>IT help-desk</td><td>SmartScreen / Gatekeeper dismissal, install repair, signature-helper rerun, template-gallery visibility issues. Resolution target: same day.</td></tr>
+      <tr><td>Tier 2 — IT operations</td><td>IT operations</td><td>WDAC quarantine release, Intune package errors, Jamf policy debugging, MSI repair beyond repair-via-Apps. Resolution target: 48 hours.</td></tr>
+      <tr><td>Tier 3 — design system owner</td><td>Office of the SVP, IT &amp; Digital Transformation</td><td>System-level questions: should the spec change? Is this a defect? Token corrections, type-stack revisions, repository tag for a new release. Resolution target: per the revision cycle in spec §15.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<section class="end-page">
+  <div class="end-mark">Deccan Fine Chemicals</div>
+  <div class="end-rule"></div>
+  <div class="end-contact">deccanchemicals.com · IT &amp; Digital Transformation</div>
+  <div class="end-classification">Internal · Operations reference</div>
+</section>
+
+</body>
+</html>

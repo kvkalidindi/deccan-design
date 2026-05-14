@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  deccan-design v2.0 — Windows MSI definition
+
+  Per-user install (no admin elevation). Unsigned.
+  Build with WiX Toolset v4: see installers/windows/build.ps1.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
+
+  <Package
+      Name="deccan-design"
+      Manufacturer="Deccan Fine Chemicals Pvt. Ltd."
+      Version="2.0.0"
+      UpgradeCode="A1B27C40-3D71-49AE-9F5A-DECCAN2DESIGN"
+      InstallerVersion="500"
+      Scope="perUser"
+      Compressed="yes">
+
+    <SummaryInformation Description="deccan-design v2.0 — corporate design system for Deccan Fine Chemicals." />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of deccan-design is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <ui:WixUI Id="WixUI_Minimal" />
+
+    <Property Id="ARPPRODUCTICON" Value="deccan.ico" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/kvkalidindi/deccan-design" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/kvkalidindi/deccan-design" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+
+    <!-- Standard per-user folders -->
+    <StandardDirectory Id="AppDataFolder">
+      <!-- Office personal templates -->
+      <Directory Id="MicrosoftDir" Name="Microsoft">
+        <Directory Id="TemplatesDir" Name="Templates" />
+        <Directory Id="SignaturesDir" Name="Signatures" />
+      </Directory>
+      <!-- Anthropic Claude skill location -->
+      <Directory Id="AnthropicDir" Name="Anthropic">
+        <Directory Id="ClaudeDir" Name="Claude">
+          <Directory Id="ClaudeSkillsDir" Name="skills">
+            <Directory Id="DeccanSkillDir" Name="deccan-design" />
+          </Directory>
+        </Directory>
+      </Directory>
+      <!-- deccan-design root (helpers, docs, assets) -->
+      <Directory Id="DeccanRootDir" Name="deccan-design">
+        <Directory Id="DeccanDocsDir" Name="docs" />
+        <Directory Id="DeccanAssetsDir" Name="assets" />
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="OfficeTemplates" Title="Office templates" Level="1">
+      <Component Id="cmpDeccanDocumentDotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanDocumentDotx" Source="..\..\templates\word\deccan-document.dotx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="word-document" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanTechnicalSpecDotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanTechnicalSpecDotx" Source="..\..\templates\word\deccan-technical-spec.dotx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="word-technical-spec" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanPolicyDotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanPolicyDotx" Source="..\..\templates\word\deccan-policy.dotx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="word-policy" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanCustomerLetterDotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanCustomerLetterDotx" Source="..\..\templates\word\deccan-customer-letter.dotx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="word-customer-letter" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+
+      <Component Id="cmpDeccanWorkbookXltx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanWorkbookXltx" Source="..\..\templates\excel\deccan-workbook.xltx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="excel-workbook" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanComparisonXltx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanComparisonXltx" Source="..\..\templates\excel\deccan-comparison.xltx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="excel-comparison" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanFinancialXltx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanFinancialXltx" Source="..\..\templates\excel\deccan-financial-model.xltx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="excel-financial-model" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+
+      <Component Id="cmpDeccanDeckPotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanDeckPotx" Source="..\..\templates\powerpoint\deccan-deck.potx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="ppt-deck" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanCustomerPitchPotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanCustomerPitchPotx" Source="..\..\templates\powerpoint\deccan-customer-pitch.potx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="ppt-customer-pitch" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpDeccanInternalReviewPotx" Directory="TemplatesDir" Guid="*">
+        <File Id="fDeccanInternalReviewPotx" Source="..\..\templates\powerpoint\deccan-internal-review.potx" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="ppt-internal-review" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+
+      <!-- Point Office at the personal templates folder -->
+      <Component Id="cmpOfficePersonalTemplatesReg" Directory="TemplatesDir" Guid="*">
+        <RegistryValue Root="HKCU"
+                       Key="Software\Microsoft\Office\16.0\Common\General"
+                       Name="PersonalTemplates"
+                       Type="string"
+                       Value="[%APPDATA]\Microsoft\Templates"
+                       KeyPath="yes" />
+      </Component>
+    </Feature>
+
+    <Feature Id="OutlookSignature" Title="Outlook signature template" Level="1">
+      <Component Id="cmpOutlookSigHtm" Directory="SignaturesDir" Guid="*">
+        <File Id="fOutlookSigHtm" Source="..\..\templates\outlook\deccan-signature.htm"
+              Name="deccan-signature-template.htm" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="outlook-signature" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpOutlookSigTxt" Directory="SignaturesDir" Guid="*">
+        <File Id="fOutlookSigTxt" Source="..\..\templates\outlook\deccan-signature.txt"
+              Name="deccan-signature-template.txt" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\templates"
+                       Name="outlook-signature-txt" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpSetSignaturePs1" Directory="DeccanRootDir" Guid="*">
+        <File Id="fSetSignaturePs1" Source="Set-DeccanSignature.ps1" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\helpers"
+                       Name="set-signature" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+    </Feature>
+
+    <Feature Id="ClaudeSkill" Title="Claude skill" Level="1">
+      <Component Id="cmpSkillMd" Directory="DeccanSkillDir" Guid="*">
+        <File Id="fSkillMd" Source="..\..\skill\SKILL.md" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\skill"
+                       Name="installed" Value="2.0.0" Type="string" KeyPath="yes" />
+      </Component>
+      <!-- Skill references and assets are recursively harvested via a separate
+           HarvestDirectory step in build.ps1, which generates a fragment that
+           is linked in at build time. See build.ps1 for the heat invocation. -->
+    </Feature>
+
+    <Feature Id="DocsAndAssets" Title="Documentation and assets" Level="1">
+      <Component Id="cmpReadme" Directory="DeccanDocsDir" Guid="*">
+        <File Id="fReadme" Source="..\..\README.md" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\docs"
+                       Name="readme" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpPreferencesReminder" Directory="DeccanRootDir" Guid="*">
+        <File Id="fPreferencesReminder" Source="preferences-reminder.txt" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\reminders"
+                       Name="personal-preferences" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpLogoPng" Directory="DeccanAssetsDir" Guid="*">
+        <File Id="fLogoPng" Source="..\..\skill\assets\logo.png" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\assets"
+                       Name="logo-png" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+      <Component Id="cmpLogoSvg" Directory="DeccanAssetsDir" Guid="*">
+        <File Id="fLogoSvg" Source="..\..\skill\assets\logo.svg" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design\assets"
+                       Name="logo-svg" Value="installed" Type="string" KeyPath="yes" />
+      </Component>
+    </Feature>
+
+    <Feature Id="VersionMarker" Title="Version marker" Level="1">
+      <Component Id="cmpVersionReg" Directory="DeccanRootDir" Guid="*">
+        <RegistryValue Root="HKCU" Key="Software\deccan-design"
+                       Name="Version" Value="2.0.0" Type="string" KeyPath="yes" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design"
+                       Name="InstallPath" Type="string"
+                       Value="[%APPDATA]\deccan-design" />
+      </Component>
+    </Feature>
+
+  </Package>
+</Wix>

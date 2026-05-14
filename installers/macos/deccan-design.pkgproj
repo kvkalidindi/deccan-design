@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  deccan-design v2.0 — macOS package definition (Packages format)
+
+  Per-user install (Library/Group Containers etc). Unsigned.
+  Build with: installers/macos/build.sh
+
+  This .pkgproj is consumed by Stéphane Sudre's Packages app
+  (http://s.sudre.free.fr/Software/Packages/). For a pure pkgbuild +
+  productbuild build path (without Packages), see build.sh which falls
+  back to the productbuild route if Packages is not present.
+-->
+<DOCTYPE>1</DOCTYPE>
+<PROJECT>
+  <PROJECT_SETTINGS>
+    <NAME>deccan-design</NAME>
+    <VERSION>2.0.0</VERSION>
+    <IDENTIFIER>com.deccanchemicals.deccan-design</IDENTIFIER>
+    <CERTIFICATE/> <!-- Empty: unsigned per Decision 5 -->
+    <SIGNING_IDENTITY/>
+  </PROJECT_SETTINGS>
+
+  <PACKAGE>
+    <NAME>deccan-design</NAME>
+    <IDENTIFIER>com.deccanchemicals.deccan-design</IDENTIFIER>
+    <VERSION>2.0.0</VERSION>
+    <INSTALL_DESTINATION>~/</INSTALL_DESTINATION>
+    <REQUIRE_ADMIN>false</REQUIRE_ADMIN>
+
+    <PAYLOAD>
+      <!-- Office templates -->
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-document.dotx"
+        SOURCE="../../templates/word/deccan-document.dotx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-technical-spec.dotx"
+        SOURCE="../../templates/word/deccan-technical-spec.dotx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-policy.dotx"
+        SOURCE="../../templates/word/deccan-policy.dotx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-customer-letter.dotx"
+        SOURCE="../../templates/word/deccan-customer-letter.dotx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-workbook.xltx"
+        SOURCE="../../templates/excel/deccan-workbook.xltx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-comparison.xltx"
+        SOURCE="../../templates/excel/deccan-comparison.xltx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-financial-model.xltx"
+        SOURCE="../../templates/excel/deccan-financial-model.xltx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-deck.potx"
+        SOURCE="../../templates/powerpoint/deccan-deck.potx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-customer-pitch.potx"
+        SOURCE="../../templates/powerpoint/deccan-customer-pitch.potx"/>
+      <ITEM
+        TARGET="~/Library/Group Containers/UBF8T346G9.Office/User Content.localized/Templates.localized/deccan-internal-review.potx"
+        SOURCE="../../templates/powerpoint/deccan-internal-review.potx"/>
+
+      <!-- Outlook signature (unconfigured) -->
+      <ITEM
+        TARGET="~/Library/Containers/com.microsoft.Outlook/Data/Library/Signatures/deccan-signature-template.htm"
+        SOURCE="../../templates/outlook/deccan-signature.htm"/>
+      <ITEM
+        TARGET="~/Library/Containers/com.microsoft.Outlook/Data/Library/Signatures/deccan-signature-template.txt"
+        SOURCE="../../templates/outlook/deccan-signature.txt"/>
+
+      <!-- Signature helper -->
+      <ITEM
+        TARGET="~/Library/Application Support/deccan-design/set-deccan-signature.sh"
+        SOURCE="set-deccan-signature.sh"/>
+
+      <!-- Claude skill -->
+      <ITEM
+        TARGET="~/Library/Application Support/Anthropic/Claude/skills/deccan-design/SKILL.md"
+        SOURCE="../../skill/SKILL.md"/>
+      <!-- skill/references and skill/assets recursively included by build.sh -->
+
+      <!-- Documentation and assets -->
+      <ITEM
+        TARGET="~/Library/Application Support/deccan-design/docs/README.md"
+        SOURCE="../../README.md"/>
+      <ITEM
+        TARGET="~/Library/Application Support/deccan-design/docs/personal-preferences.md"
+        SOURCE="../../claude/personal-preferences.md"/>
+      <ITEM
+        TARGET="~/Library/Application Support/deccan-design/assets/logo.png"
+        SOURCE="../../skill/assets/logo.png"/>
+      <ITEM
+        TARGET="~/Library/Application Support/deccan-design/assets/logo.svg"
+        SOURCE="../../skill/assets/logo.svg"/>
+    </PAYLOAD>
+
+    <SCRIPTS>
+      <PREINSTALL>scripts/preinstall</PREINSTALL>
+      <POSTINSTALL>scripts/postinstall</POSTINSTALL>
+    </SCRIPTS>
+  </PACKAGE>
+</PROJECT>

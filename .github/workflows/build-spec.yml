@@ -1,0 +1,52 @@
+name: build-spec
+
+# Optional HTML validation on push to main. No PDF generation in CI.
+# PDFs are produced on demand by the user per PRD §1.4 Decision 7.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/spec/**'
+      - 'docs/specimen/**'
+      - 'docs/admin-guide/**'
+      - 'skill/assets/templates/**'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'docs/spec/**'
+      - 'docs/specimen/**'
+      - 'docs/admin-guide/**'
+      - 'skill/assets/templates/**'
+  workflow_dispatch:
+
+jobs:
+  html-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install html5validator
+        run: pip install html5validator
+
+      - name: Validate HTML deliverables
+        run: |
+          html5validator \
+            --root docs/ \
+            --match '*.html' \
+            --ignore-re 'Element .* not allowed as child of element' || true
+          html5validator \
+            --root skill/assets/templates/ \
+            --match '*.html' \
+            --ignore-re 'Element .* not allowed as child of element' || true
+
+      - name: Confirm slot template placeholders
+        run: |
+          for slot in TITLE SUBTITLE DOCUMENT_TYPE PREPARED_BY DATE VERSION CLASSIFICATION BODY_HTML; do
+            if ! grep -q "{{$slot}}" skill/assets/templates/document.html; then
+              echo "Missing slot: {{$slot}}"
+              exit 1
+            fi
+          done
+          echo "All eight slot placeholders present."

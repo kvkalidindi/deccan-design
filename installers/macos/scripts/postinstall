@@ -1,0 +1,35 @@
+#!/bin/bash
+# deccan-design v2.0 — macOS postinstall
+# Sets executable bit on the signature helper and writes the preferences reminder.
+
+set -e
+
+USER_HOME="${HOME:-$(eval echo "~$USER")}"
+HELPER="$USER_HOME/Library/Application Support/deccan-design/set-deccan-signature.sh"
+REMINDER="$USER_HOME/Library/Application Support/deccan-design/preferences-reminder.txt"
+
+if [ -f "$HELPER" ]; then
+    chmod +x "$HELPER"
+fi
+
+cat > "$REMINDER" <<'EOF'
+Action required: configure Claude.ai personal preferences.
+
+deccan-design v2.0 is installed. Claude.ai personal preferences cannot be
+configured server-side by the installer. Please paste the text from:
+
+  https://github.com/kvkalidindi/deccan-design/blob/main/claude/personal-preferences.md
+
+into Claude.ai -> Settings -> Profile -> Preferences. One-click navigation:
+
+  https://claude.ai/settings
+
+The local copy lives at:
+  ~/Library/Application Support/deccan-design/docs/personal-preferences.md
+
+This is a one-time configuration per Claude.ai account.
+
+deccan-design v2.0  ·  Repository: https://github.com/kvkalidindi/deccan-design
+EOF
+
+exit 0

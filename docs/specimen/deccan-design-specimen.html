@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>deccan-design v2.0 — design brief specimen</title>
+  <style>
+    /* ================================================================
+       deccan-design v2.0 — tokens
+       ================================================================ */
+    :root {
+      --deccan-blue:     #164999;
+      --deccan-blue-90:  rgba(22, 73, 153, 0.90);
+      --deccan-blue-60:  rgba(22, 73, 153, 0.60);
+      --deccan-blue-30:  rgba(22, 73, 153, 0.30);
+      --deccan-blue-15:  rgba(22, 73, 153, 0.15);
+
+      --deccan-green:    #71BF4D;
+
+      --stone-50:   #FAFAF9;
+      --stone-100:  #F5F5F4;
+      --stone-200:  #E7E5E4;
+      --stone-300:  #D6D3D1;
+      --stone-400:  #A8A29E;
+      --stone-500:  #78716C;
+      --stone-600:  #57534E;
+      --stone-700:  #44403C;
+      --stone-800:  #292524;
+      --stone-900:  #1C1917;
+
+      --paper:      #FFFFFF;
+
+      --font-sans:
+        'Segoe UI Variable Display', 'Segoe UI Variable Text',
+        'Segoe UI Variable', 'Segoe UI',
+        system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono:
+        'Cascadia Mono', 'Cascadia Code', Consolas,
+        'SF Mono', Menlo, 'DejaVu Sans Mono', 'Liberation Mono',
+        ui-monospace, monospace;
+
+      --fs-tiny:     11px;
+      --fs-small:    14px;
+      --fs-body:     17px;
+      --fs-lead:     21px;
+      --fs-h4:       19px;
+      --fs-h3:       24px;
+      --fs-h2:       32px;
+      --fs-h1:       44px;
+      --fs-display:  64px;
+
+      --lh-tight:    1.15;
+      --lh-snug:     1.30;
+      --lh-base:     1.65;
+      --lh-loose:    1.85;
+
+      --s-1:  4px;  --s-2:  8px;  --s-3:  12px; --s-4:  16px;
+      --s-5: 24px;  --s-6: 32px;  --s-7: 48px;  --s-8: 64px;
+      --s-9: 96px;  --s-10:128px;
+
+      --measure:      70ch;
+      --content-max:  1180px;
+      --gutter:       24px;
+      --side-pad:     clamp(20px, 4vw, 64px);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; }
+    body {
+      background: var(--stone-50);
+      color: var(--stone-800);
+      font-family: var(--font-sans);
+      font-size: var(--fs-body);
+      line-height: var(--lh-base);
+      font-optical-sizing: auto;
+      font-feature-settings: "kern", "liga", "calt";
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    img, table, th, td, pre, blockquote, hr,
+    .cover, .end-page, .callout, .swatch, .badge,
+    .plate, .pullquote, .figure, .chip { border-radius: 0; }
+
+    .shell {
+      max-width: var(--content-max);
+      margin: 0 auto;
+      padding: 0 var(--side-pad);
+    }
+
+    /* ================================================================
+       Cover (Plate 01)
+       ================================================================ */
+    .cover {
+      background: var(--paper);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: var(--s-9) var(--side-pad) var(--s-7);
+      page-break-after: always;
+      border-bottom: 1px solid var(--stone-200);
+    }
+    .mark {
+      display: flex;
+      align-items: center;
+      gap: var(--s-3);
+    }
+    .mark-rule {
+      width: 56px;
+      height: 3px;
+      background: var(--deccan-blue);
+    }
+    .mark-text {
+      font-weight: 600;
+      font-size: 18px;
+      letter-spacing: -0.005em;
+      color: var(--stone-900);
+    }
+    .cover-body {
+      align-self: center;
+      padding: var(--s-8) 0 var(--s-6);
+    }
+    .cover-eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-600);
+      background: var(--stone-100);
+      padding: 5px 11px;
+      display: inline-block;
+      margin-bottom: var(--s-6);
+    }
+    .cover-title {
+      font-size: clamp(40px, 6.4vw, var(--fs-display));
+      font-weight: 350;
+      letter-spacing: -0.024em;
+      line-height: 1.04;
+      color: var(--deccan-blue);
+      max-width: 22ch;
+      margin-bottom: var(--s-5);
+    }
+    .cover-subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      line-height: 1.4;
+      color: var(--stone-700);
+      max-width: 50ch;
+    }
+    .cover-meta {
+      display: grid;
+      grid-template-columns: 1.1fr 3fr 1.3fr 0.8fr 1.4fr;
+      gap: var(--gutter);
+      padding-top: var(--s-5);
+      border-top: 1px solid var(--stone-200);
+    }
+    @media (max-width: 760px) { .cover-meta { grid-template-columns: 1fr 1fr; } }
+    .cover-meta dt {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+      margin-bottom: 6px;
+    }
+    .cover-meta dd {
+      font-size: var(--fs-small);
+      color: var(--stone-900);
+      font-weight: 600;
+    }
+
+    /* ================================================================
+       Plate scaffolding
+       ================================================================ */
+    main.body { padding: var(--s-8) 0 var(--s-6); }
+
+    .plate {
+      margin: 0 0 var(--s-9);
+      padding-bottom: var(--s-8);
+      border-bottom: 1px solid var(--stone-200);
+      page-break-inside: auto;
+    }
+    .plate:last-of-type { border-bottom: none; }
+
+    .plate-head {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: var(--s-4);
+      align-items: baseline;
+      margin-bottom: var(--s-7);
+      padding-top: var(--s-2);
+    }
+    .plate-num {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+    }
+    .plate-title {
+      font-size: var(--fs-h2);
+      font-weight: 500;
+      letter-spacing: -0.012em;
+      line-height: var(--lh-snug);
+      color: var(--stone-900);
+    }
+    .plate-caption {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--stone-500);
+      margin-top: var(--s-5);
+      max-width: 60ch;
+    }
+
+    /* Typography defaults inside plates */
+    .plate p {
+      font-size: var(--fs-body);
+      line-height: var(--lh-base);
+      color: var(--stone-800);
+      margin-bottom: var(--s-4);
+      max-width: var(--measure);
+    }
+    .plate h2 {
+      font-size: var(--fs-h2);
+      font-weight: 500;
+      letter-spacing: -0.012em;
+      line-height: var(--lh-snug);
+      color: var(--stone-900);
+      margin: var(--s-7) 0 var(--s-4);
+    }
+    .plate h3 {
+      font-size: var(--fs-h3);
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      line-height: 1.2;
+      color: var(--stone-900);
+      margin: var(--s-6) 0 var(--s-3);
+    }
+    .plate h4 {
+      font-size: var(--fs-h4);
+      font-weight: 600;
+      line-height: 1.25;
+      color: var(--stone-900);
+      margin: var(--s-5) 0 var(--s-2);
+    }
+    .plate .lead {
+      font-size: var(--fs-lead);
+      line-height: 1.5;
+      color: var(--stone-700);
+      max-width: 60ch;
+      margin-bottom: var(--s-5);
+    }
+    .plate code {
+      font-family: var(--font-mono);
+      font-size: 0.92em;
+      background: var(--stone-100);
+      color: var(--stone-900);
+      padding: 1px 6px;
+    }
+    .plate strong { font-weight: 600; color: var(--stone-900); }
+    .plate em { font-style: italic; }
+    .plate a {
+      color: var(--deccan-blue);
+      text-decoration: underline;
+      text-decoration-color: var(--deccan-blue-30);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .plate a:hover { text-decoration-color: var(--deccan-blue); }
+
+    .plate ul, .plate ol {
+      margin: var(--s-3) 0 var(--s-4) 28px;
+      max-width: var(--measure);
+    }
+    .plate li {
+      margin-bottom: var(--s-2);
+      line-height: var(--lh-base);
+    }
+    .plate li::marker { color: var(--stone-500); }
+
+    /* ================================================================
+       Specimen-only display elements
+       ================================================================ */
+
+    /* Type specimen ladder */
+    .type-ladder {
+      display: grid;
+      gap: var(--s-5);
+      max-width: 900px;
+    }
+    .type-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: var(--s-5);
+      align-items: baseline;
+      padding-bottom: var(--s-4);
+      border-bottom: 1px solid var(--stone-200);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--stone-500);
+    }
+    .type-spec {
+      font-size: var(--fs-tiny);
+      font-family: var(--font-mono);
+      color: var(--stone-400);
+      letter-spacing: 0.04em;
+    }
+    .type-display { color: var(--stone-900); }
+    .type-h1     { font-size: var(--fs-h1);     font-weight: 350; letter-spacing: -0.022em; line-height: 1.05; color: var(--stone-900); }
+    .type-h2     { font-size: var(--fs-h2);     font-weight: 500; letter-spacing: -0.012em; line-height: 1.15; color: var(--stone-900); }
+    .type-h3     { font-size: var(--fs-h3);     font-weight: 600; letter-spacing: -0.005em; line-height: 1.2;  color: var(--stone-900); }
+    .type-h4     { font-size: var(--fs-h4);     font-weight: 600; line-height: 1.25; color: var(--stone-900); }
+    .type-lead   { font-size: var(--fs-lead);   font-weight: 400; line-height: 1.5;  color: var(--stone-700); }
+    .type-body   { font-size: var(--fs-body);   font-weight: 400; line-height: 1.65; color: var(--stone-800); }
+    .type-small  { font-size: var(--fs-small);  font-weight: 400; line-height: 1.5;  color: var(--stone-700); }
+    .type-tiny   { font-size: var(--fs-tiny);   font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone-500); font-family: var(--font-mono); }
+    .type-display-cover { font-size: var(--fs-display); font-weight: 350; letter-spacing: -0.024em; line-height: 1.04; color: var(--deccan-blue); }
+
+    /* Weight ladder */
+    .weight-ladder {
+      display: grid;
+      gap: var(--s-3);
+      margin-top: var(--s-5);
+      max-width: 700px;
+    }
+    .weight-row {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: var(--s-4);
+      align-items: baseline;
+      padding: var(--s-3) 0;
+      border-bottom: 1px solid var(--stone-100);
+    }
+    .weight-meta {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 500;
+      color: var(--stone-500);
+      letter-spacing: 0.04em;
+    }
+    .weight-sample { font-size: 22px; line-height: 1.2; color: var(--stone-900); }
+
+    /* Opacity ladder */
+    .opacity-ladder {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--s-3);
+      margin-top: var(--s-5);
+      max-width: 700px;
+    }
+    .opacity-cell {
+      padding: var(--s-4) var(--s-3);
+      color: var(--paper);
+      font-size: var(--fs-tiny);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+    .op-100 { background: var(--deccan-blue);    }
+    .op-90  { background: var(--deccan-blue-90); }
+    .op-60  { background: var(--deccan-blue-60); }
+    .op-30  { background: var(--deccan-blue-30); color: var(--stone-900); }
+    .op-15  { background: var(--deccan-blue-15); color: var(--stone-900); }
+
+    /* Color swatches grid */
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--s-3);
+      margin-top: var(--s-4);
+      max-width: 1000px;
+    }
+    .swatch {
+      background: var(--paper);
+      border: 1px solid var(--stone-200);
+    }
+    .swatch-tile {
+      height: 92px;
+      width: 100%;
+    }
+    .swatch-info {
+      padding: var(--s-3) var(--s-4);
+      border-top: 1px solid var(--stone-200);
+    }
+    .swatch-token {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 600;
+      color: var(--stone-700);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .swatch-value {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--stone-500);
+    }
+
+    /* Code block */
+    pre.code-block {
+      background: var(--stone-100);
+      padding: var(--s-4) var(--s-5);
+      margin: var(--s-4) 0;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--stone-900);
+      overflow-x: auto;
+      max-width: var(--measure);
+      page-break-inside: avoid;
+    }
+
+    /* Callouts */
+    .callout {
+      background: var(--stone-100);
+      padding: var(--s-4) var(--s-5);
+      margin: var(--s-5) 0;
+      border-left: 3px solid var(--deccan-blue);
+      max-width: var(--measure);
+      page-break-inside: avoid;
+    }
+    .callout .label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+      margin-bottom: var(--s-2);
+    }
+    .callout p {
+      font-size: var(--fs-body);
+      color: var(--stone-800);
+      margin-bottom: var(--s-2);
+      max-width: 100%;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout.muted { border-left-color: var(--stone-700); }
+
+    /* Pull quote */
+    .pullquote {
+      margin: var(--s-7) 0;
+      padding: 0 0 0 var(--s-6);
+      border-left: 3px solid var(--deccan-blue);
+      max-width: 60ch;
+    }
+    .pullquote p {
+      font-size: 24px;
+      line-height: 1.4;
+      color: var(--stone-700);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+      margin: 0;
+    }
+    .pullquote cite {
+      display: block;
+      margin-top: var(--s-3);
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--stone-500);
+      font-style: normal;
+    }
+
+    /* Tables */
+    table.demo {
+      width: 100%;
+      max-width: var(--measure);
+      border-collapse: collapse;
+      font-size: var(--fs-small);
+      margin: var(--s-5) 0;
+      background: var(--paper);
+      page-break-inside: avoid;
+    }
+    table.demo thead th {
+      text-align: left;
+      padding: var(--s-3) var(--s-4);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--stone-700);
+      background: var(--stone-100);
+      border-bottom: 2px solid var(--stone-900);
+    }
+    table.demo tbody td {
+      padding: var(--s-3) var(--s-4);
+      color: var(--stone-800);
+      border-bottom: 1px solid var(--stone-200);
+      vertical-align: top;
+    }
+    table.demo tbody tr:nth-child(even) td { background: var(--stone-50); }
+
+    /* Definition list */
+    dl.def {
+      max-width: var(--measure);
+      margin: var(--s-4) 0;
+    }
+    dl.def dt {
+      font-weight: 600;
+      color: var(--stone-900);
+      margin-top: var(--s-3);
+    }
+    dl.def dd {
+      color: var(--stone-700);
+      margin-left: 0;
+      padding-left: var(--s-4);
+      border-left: 2px solid var(--stone-200);
+      margin-bottom: var(--s-3);
+    }
+
+    /* Sidenotes / marginalia */
+    .with-sidenotes {
+      display: grid;
+      grid-template-columns: minmax(0, 60ch) 220px;
+      gap: var(--s-7);
+      max-width: 900px;
+    }
+    @media (max-width: 800px) { .with-sidenotes { grid-template-columns: 1fr; } }
+    .with-sidenotes p { max-width: 100%; }
+    .sidenote {
+      font-family: var(--font-sans);
+      font-size: var(--fs-small);
+      line-height: 1.5;
+      color: var(--stone-600);
+      padding-left: var(--s-3);
+      border-left: 1px solid var(--stone-200);
+    }
+    .sidenote-num {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--deccan-blue);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Eyebrow chip */
+    .chip-eyebrow {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-600);
+      background: var(--stone-100);
+      padding: 5px 11px;
+      margin-bottom: var(--s-4);
+    }
+
+    /* Sustainability green confined-use demo block */
+    .sustain-demo {
+      background: var(--paper);
+      border: 1px solid var(--stone-200);
+      padding: var(--s-5);
+      max-width: 700px;
+      margin-top: var(--s-4);
+    }
+    .sustain-strip {
+      height: 4px;
+      width: 100%;
+      background: var(--deccan-green);
+      margin-bottom: var(--s-4);
+    }
+    .sustain-label {
+      font-family: var(--font-mono);
+      font-size: var(--fs-tiny);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--deccan-green);
+      margin-bottom: var(--s-2);
+    }
+
+    /* Folio illustration */
+    .folio-illus {
+      background: var(--paper);
+      border: 1px solid var(--stone-200);
+      padding: var(--s-5) var(--s-6);
+      margin-top: var(--s-4);
+      max-width: 720px;
+    }
+    .folio-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--s-3) 0;
+      font-family: var(--font-mono);
+      font-size: 9pt;
+      color: var(--stone-500);
+      border-top: 1px solid var(--stone-100);
+    }
+    .folio-row:first-child { border-top: none; }
+
+    /* End page */
+    .end-page {
+      background: var(--paper);
+      min-height: 60vh;
+      display: grid;
+      gap: var(--s-3);
+      align-content: center;
+      justify-items: center;
+      padding: var(--s-9) var(--side-pad);
+      page-break-before: always;
+      border-top: 1px solid var(--stone-200);
+      text-align: center;
+    }
+    .end-rule { width: 56px; height: 3px; background: var(--deccan-blue); }
+    .end-mark { font-size: 21px; font-weight: 600; color: var(--stone-900); }
+    .end-contact { font-size: var(--fs-small); color: var(--stone-600); }
+    .end-classification {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone-500);
+      margin-top: var(--s-2);
+    }
+
+    /* ================================================================
+       Print rules
+       ================================================================ */
+    @page {
+      size: Letter;
+      margin: 0.8in 0.8in 1in 0.8in;
+      @bottom-left {
+        content: "Deccan Fine Chemicals · Confidential";
+        font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+        font-size: 8.5pt;
+        color: #78716C;
+      }
+      @bottom-right {
+        content: counter(page);
+        font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
+        font-size: 8.5pt;
+        color: #78716C;
+      }
+    }
+    @page :first { @bottom-left { content: ""; } @bottom-right { content: ""; } }
+
+    @media print {
+      body { background: var(--paper); font-size: 10.5pt; }
+      .shell { padding: 0; max-width: 100%; }
+      .plate { page-break-before: always; border-bottom: none; }
+      .plate p, .plate ul, .plate ol, .plate table.demo,
+      .callout, .pullquote, pre.code-block { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     PLATE 01 — Cover
+     ============================================================ -->
+<section class="cover">
+  <div class="mark">
+    <div class="mark-rule"></div>
+    <div class="mark-text">Deccan Fine Chemicals</div>
+  </div>
+
+  <div class="cover-body">
+    <span class="cover-eyebrow">Specimen · IT &amp; Digital Transformation</span>
+    <h1 class="cover-title">deccan-design v2.0</h1>
+    <p class="cover-subtitle">Design brief specimen. Type, colour, components, and discipline applied to demonstration content. Companion to the v2.0 specification.</p>
+  </div>
+
+  <dl class="cover-meta">
+    <div><dt>Document type</dt><dd>Specimen</dd></div>
+    <div><dt>Prepared by</dt><dd>Office of the SVP, IT &amp; Digital Transformation</dd></div>
+    <div><dt>Date</dt><dd>May 2026</dd></div>
+    <div><dt>Version</dt><dd>2.0</dd></div>
+    <div><dt>Classification</dt><dd>Confidential</dd></div>
+  </dl>
+</section>
+
+
+<main class="shell body">
+
+<!-- ============================================================
+     PLATE 02 — The system at a glance
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 02</span>
+    <h2 class="plate-title">The system at a glance</h2>
+  </div>
+
+  <p class="lead">A document standard for Deccan Fine Chemicals: editorial-quality typography on the OS-native font stack, a single accent at four opacity stops, a ten-stop neutral grayscale, swiss discipline, and a small set of components that earn their keep.</p>
+
+  <p>The version-two refinement keeps everything from the original swiss_design_at_deccan that was working — the colour tokens, the spatial grid, the component vocabulary, the tone-and-voice rules — and replaces only the type stack. The previous IBM Plex requirement is dropped. The deferred Aptos plan is dropped. The new primary face is whatever the operating system already provides: Segoe UI Variable on Windows 11, San Francisco on macOS, the platform default everywhere else. No font binaries, no MSI deployment, no Microsoft 365 dependency.</p>
+
+  <p>The aesthetic that follows is editorial-corporate: type with rhythm at every size, colour that behaves like ink rather than paint, components that disappear when the content is the point and step forward when the structure is. The plates that follow demonstrate each surface in sequence.</p>
+
+  <p class="plate-caption">The lead paragraph at <code>--fs-lead</code> in <code>--stone-700</code>; body paragraphs at <code>--fs-body</code> in <code>--stone-800</code>; measure held at 70 characters throughout.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 03 — Type ladder
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 03</span>
+    <h2 class="plate-title">Type scale</h2>
+  </div>
+
+  <p>The 1.25 minor-third scale, set in the system stack. On Windows 11 the rendered face is Segoe UI Variable; on macOS it is San Francisco via <code>system-ui</code>. Both render the ladder below with the same proportional rhythm.</p>
+
+  <div class="type-ladder">
+    <div class="type-row">
+      <div>
+        <div class="type-meta">DISPLAY</div>
+        <div class="type-spec">64 / 1.04 / 350</div>
+      </div>
+      <div class="type-display-cover">Hyderabad to Tuni</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">H1</div>
+        <div class="type-spec">44 / 1.15 / 350</div>
+      </div>
+      <div class="type-h1">Python and Jupyter on the Deccan Network</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">H2</div>
+        <div class="type-spec">32 / 1.30 / 500</div>
+      </div>
+      <div class="type-h2">A standard build for engineering workstations</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">H3</div>
+        <div class="type-spec">24 / 1.20 / 600</div>
+      </div>
+      <div class="type-h3">Per-workstation deployment pattern</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">H4</div>
+        <div class="type-spec">19 / 1.25 / 600</div>
+      </div>
+      <div class="type-h4">Token authentication mandatory</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">LEAD</div>
+        <div class="type-spec">21 / 1.50 / 400</div>
+      </div>
+      <div class="type-lead">A document standard exists to settle questions in advance, so that the next forty Deccan documents do not relitigate the same decisions.</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">BODY</div>
+        <div class="type-spec">17 / 1.65 / 400</div>
+      </div>
+      <div class="type-body">Body type on screen sits at 17 pixels with a 1.65 line-height — the editorial-comfortable size on 1080p Windows where Segoe UI Variable is the rendered face. Lifted from the typical 16-pixel default to clear the lower bound of comfortable reading without overshooting the size at which monospace code chips begin to look oversized in line.</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">SMALL</div>
+        <div class="type-spec">14 / 1.50 / 400</div>
+      </div>
+      <div class="type-small">Captions, table cells, and metadata. The drop from body to small is one step on the scale; perceptible, not jarring.</div>
+    </div>
+    <div class="type-row">
+      <div>
+        <div class="type-meta">TINY</div>
+        <div class="type-spec">11 / 1.50 / 600</div>
+      </div>
+      <div class="type-tiny">Mono caps · folio · classification · eyebrow chips</div>
+    </div>
+  </div>
+
+  <h3>Weight, by size</h3>
+
+  <div class="weight-ladder">
+    <div class="weight-row"><div class="weight-meta">350 · DISPLAY</div><div class="weight-sample" style="font-weight:350;">Engineering excellence</div></div>
+    <div class="weight-row"><div class="weight-meta">350 · H1</div><div class="weight-sample" style="font-weight:350;">Engineering excellence</div></div>
+    <div class="weight-row"><div class="weight-meta">400 · BODY</div><div class="weight-sample" style="font-weight:400;">Engineering excellence</div></div>
+    <div class="weight-row"><div class="weight-meta">500 · H2</div><div class="weight-sample" style="font-weight:500;">Engineering excellence</div></div>
+    <div class="weight-row"><div class="weight-meta">600 · H3, H4, STRONG</div><div class="weight-sample" style="font-weight:600;">Engineering excellence</div></div>
+  </div>
+
+  <p class="plate-caption">Convention: as size grows, weight lightens. Variable-font axes make this continuous and visible only as rhythm.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 04 — Colour
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 04</span>
+    <h2 class="plate-title">Colour tokens</h2>
+  </div>
+
+  <p>One accent at four opacity stops; one reserved colour for confined use; ten neutral stones from the lightest paper-adjacent tint to ink. No additional accents, no second hue, no decorative palette.</p>
+
+  <h3>Deccan Blue · the single accent</h3>
+
+  <div class="opacity-ladder">
+    <div class="opacity-cell op-100">100%<br>#164999</div>
+    <div class="opacity-cell op-90">90%</div>
+    <div class="opacity-cell op-60">60%</div>
+    <div class="opacity-cell op-30">30%</div>
+    <div class="opacity-cell op-15">15%</div>
+  </div>
+
+  <h3>Stone · neutral grayscale</h3>
+
+  <div class="swatch-grid">
+    <div class="swatch"><div class="swatch-tile" style="background:#FAFAF9;"></div><div class="swatch-info"><span class="swatch-token">--stone-50</span><span class="swatch-value">#FAFAF9</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#F5F5F4;"></div><div class="swatch-info"><span class="swatch-token">--stone-100</span><span class="swatch-value">#F5F5F4</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#E7E5E4;"></div><div class="swatch-info"><span class="swatch-token">--stone-200</span><span class="swatch-value">#E7E5E4</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#D6D3D1;"></div><div class="swatch-info"><span class="swatch-token">--stone-300</span><span class="swatch-value">#D6D3D1</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#A8A29E;"></div><div class="swatch-info"><span class="swatch-token">--stone-400</span><span class="swatch-value">#A8A29E</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#78716C;"></div><div class="swatch-info"><span class="swatch-token">--stone-500</span><span class="swatch-value">#78716C</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#57534E;"></div><div class="swatch-info"><span class="swatch-token">--stone-600</span><span class="swatch-value">#57534E</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#44403C;"></div><div class="swatch-info"><span class="swatch-token">--stone-700</span><span class="swatch-value">#44403C</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#292524;"></div><div class="swatch-info"><span class="swatch-token">--stone-800</span><span class="swatch-value">#292524</span></div></div>
+    <div class="swatch"><div class="swatch-tile" style="background:#1C1917;"></div><div class="swatch-info"><span class="swatch-token">--stone-900</span><span class="swatch-value">#1C1917</span></div></div>
+  </div>
+
+  <h3>Deccan Green · confined use only</h3>
+
+  <p>The secondary brand colour appears only in two places: as part of the Deccan logo, and in content explicitly about sustainability, environmental performance, BRSR or ESG disclosure. It is not a UI accent. The block below illustrates a sustainability-context use — a confined-use rule and label inside a content surface that is otherwise styled in the standard tokens.</p>
+
+  <div class="sustain-demo">
+    <div class="sustain-strip"></div>
+    <div class="sustain-label">Sustainability disclosure · BRSR FY26</div>
+    <h4 style="margin-top:0;">Energy intensity, Tuni VSEZ campus</h4>
+    <p style="max-width:100%;margin-top:8px;">Reductions in Scope 1 emissions year-on-year, attributable to the methanol-recovery retrofit completed in Q2 FY26. The Deccan Green strip and label above identify the disclosure context; the body remains in the standard token set.</p>
+  </div>
+
+  <p class="plate-caption">Outside the logo and sustainability content, <code>--deccan-green</code> does not appear. Documents that use it for buttons, dividers, or "secondary brand colour" purposes fail review.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 05 — Body type and reading rhythm
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 05</span>
+    <h2 class="plate-title">Body type and reading rhythm</h2>
+  </div>
+
+  <p class="lead">A document is read, in the end, as paragraphs. The system optimises for sustained reading at the densities of the corporate fleet — 1080p and 1440p external monitors, 11-inch laptop panels at 1200p — and for high-quality print at 300 DPI. The body, lead, and small sizes are tuned for that envelope.</p>
+
+  <p>Editorial reading depends on three things working together: a body size large enough to read at arm's length without leaning forward; a line-height generous enough that the eye can return to the next line without losing the column; and a measure short enough that the eye does not drift while tracking left-to-right. The system sets these at <code>17 pixels</code>, <code>1.65</code>, and <code>70 characters</code> respectively, on screen. In print the same three constants resolve to <code>10.5 points</code>, <code>1.5</code>, and the live content area at 0.8-inch margins, which produces the same visual rhythm.</p>
+
+  <p>Inline emphasis exists in three registers. <strong>Strong emphasis</strong> in semibold draws the eye to a noun or claim. <em>Italics</em> mark titles, technical terms on first use, and the occasional voice-of-the-author qualifier — used sparingly because italics, in a sans-serif system, fight the type discipline if overused. Inline code chips in <code>monospace</code> on a stone-100 chip identify file paths, commands, function names, and protocol tokens — the elements where the wire-level form of the word is part of the meaning. Hyperlinks, when present, take their colour from the accent — <a href="#">visit the v2.0 specification</a> — with a 30-percent-opacity underline that strengthens on hover.</p>
+
+  <p>Reading rhythm benefits from variation. A long sequence of body paragraphs with no structural marker is harder to enter and harder to leave; the eye has nothing to anchor on. The pull-quote, the callout, and the figure all serve as anchors for the eye and as deliberate rest stops in the argument. The pull-quote earns its place once or twice in a long section; the callout earns its place wherever the rule, the warning, or the editorial aside is genuinely a separate object from the body.</p>
+
+  <p class="plate-caption">Rendered above in <code>Segoe UI Variable Text</code> on Windows, San Francisco on macOS, the platform default elsewhere. Optical sizing automatically selects the Text variant for body copy.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 06 — Lists, definitions, and emphasis
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 06</span>
+    <h2 class="plate-title">Lists, definitions, and emphasis</h2>
+  </div>
+
+  <h3>Bulleted list</h3>
+  <ul>
+    <li>The list-item marker tints to <code>--stone-500</code> via <code>::marker</code>, sitting visually quieter than the body text it leads.</li>
+    <li>List items inherit the body line-height and bottom margin; the spacing between items reads as deliberate rather than accidental.</li>
+    <li>Nested lists indent on a 28-pixel hanging indent, with a smaller top margin so that nesting reads as one continuous structure.</li>
+  </ul>
+
+  <h3>Numbered list</h3>
+  <ol>
+    <li>Numbered lists use the default decimal marker — preferred over Roman or alpha because Roman numerals strain the eye at corporate-document scale.</li>
+    <li>The marker tint matches the bulleted list. Numbering is for ordering; the visual emphasis stays on the body.</li>
+    <li>Numbered lists are reserved for genuinely ordered content — sequences, ranked options, procedural steps. Unordered content uses bullets.</li>
+  </ol>
+
+  <h3>Definition list</h3>
+  <dl class="def">
+    <dt>Hash pinning</dt>
+    <dd>Recording a SHA-256 hash alongside every package version in a dependency manifest, so that the installer refuses any installation whose hash does not match the recorded value.</dd>
+    <dt>Internal mirror</dt>
+    <dd>A package server that sits between PyPI and Deccan endpoints, caching approved wheels, enforcing an allowlist, and producing a complete audit trail of every package every workstation has ever requested.</dd>
+    <dt>Plant-zone DMZ</dt>
+    <dd>A corporate-side network segment at a manufacturing plant, separated from the OT (operational-technology) network by a data-diode boundary, where analyst workstations operate on read-only OT historian extracts without OT-network access.</dd>
+  </dl>
+
+  <p class="plate-caption">Definition lists pair a semibold term with a stone-200-bordered description block; the most legible glossary treatment in the system.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 07 — Code, inline and block
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 07</span>
+    <h2 class="plate-title">Code · the mono-and-stone discipline</h2>
+  </div>
+
+  <p>The system has one rule for monospace type: <strong>mono and stone always travel together</strong>. Inline mono on a white background reads as a typo; stone-100 on sans body reads as a callout. Together they read as code, which is the only thing they should ever read as. The rule applies to file paths, command names, environment variables, function names, JSON tokens — the wire-level forms of the language whose exact characters are part of the meaning.</p>
+
+  <h3>Inline chip</h3>
+
+  <p>The standard primary interpreter is installed at <code>%LOCALAPPDATA%\Programs\Python\Python312</code>, with project virtual environments at <code>%USERPROFILE%\projects\&lt;name&gt;\.venv</code>. Run <code>uv sync</code> to resolve a lockfile, <code>jupyter lab</code> to start the notebook server, and <code>pip-audit</code> to scan for known CVEs. Configure <code>JUPYTER_CONFIG_DIR</code> only when the default location is unsuitable.</p>
+
+  <h3>Block</h3>
+
+  <pre class="code-block">  # The supported dependency-management invocation
+  $ cd ~/projects/chemprop-pilot
+  $ uv venv
+  $ uv pip compile requirements.in -o requirements.txt --generate-hashes
+  $ uv pip sync requirements.txt
+  $ pip-audit -r requirements.txt</pre>
+
+  <p>The block uses the same colour pair at scale: stone-100 fill, mono type, no border. It holds the body measure on screen and breaks to full content width in print where margins already provide the constraint.</p>
+
+  <p class="plate-caption">Mono types out of the system stack — Cascadia Mono on Windows 11, SF Mono on macOS, Consolas on older Windows, the generic monospace fallback elsewhere. Programming ligatures are off in the document default; <code>Cascadia Code</code> with ligatures is available where intentional.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 08 — Callouts and pull quotes
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 08</span>
+    <h2 class="plate-title">Callouts and the pull quote</h2>
+  </div>
+
+  <p>Two surfaces for content that wants to step out of the body argument: the callout, for rules and warnings and editorial asides; the pull quote, for editorial rhythm in long-form writing.</p>
+
+  <h3>Callout, default</h3>
+
+  <div class="callout">
+    <div class="label">Provisioning rule</div>
+    <p>Install CPython 3.12 from the official python.org Windows installer or its macOS equivalent, pinned to the latest patch release at provisioning time. System Python supplied by a Linux distribution is not the standard. The active development interpreter on any Deccan-managed Linux server is the explicitly-installed CPython build.</p>
+  </div>
+
+  <h3>Callout, prohibition</h3>
+
+  <div class="callout">
+    <div class="label">Prohibited</div>
+    <p>The Anaconda Distribution Installer, because Deccan exceeds the 200-employee Anaconda commercial-license threshold and holds no commercial license. Default-channel Miniconda — that is, configured to pull from <code>repo.anaconda.com</code> — for the same reason. Personal Python installations not deployed through Intune on Deccan-managed devices.</p>
+  </div>
+
+  <h3>Callout, muted</h3>
+
+  <div class="callout muted">
+    <div class="label">Discipline note</div>
+    <p>The muted variant exchanges the Deccan Blue left rule for a stone-700 rule. Used for asides about the system itself — discipline reminders, internal notes, editorial commentary — that should not draw the eye to the brand accent. The muted callout reads as quiet by design.</p>
+  </div>
+
+  <h3>Pull quote</h3>
+
+  <div class="pullquote">
+    <p>Security controls that change a user's commands fail in practice. Security controls that move policy into the infrastructure succeed.</p>
+    <cite>v2.0 spec · §06 components · callout, key</cite>
+  </div>
+
+  <p class="plate-caption">The pull quote earns its place once or twice in a long section; it is a rest stop, not a decoration. The cite line in mono caps anchors it to its source.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 09 — Tables and structured data
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 09</span>
+    <h2 class="plate-title">Tables · the underline-and-band convention</h2>
+  </div>
+
+  <p>The system has one table treatment: mono caps headers on a stone-100 fill, with a 2-pixel solid stone-900 underline; banded body rows alternating between paper and stone-50; 1-pixel stone-200 row separators; no column borders. The eye uses the band and the separator to track horizontally; column borders add noise the table does not need.</p>
+
+  <table class="demo">
+    <thead>
+      <tr>
+        <th>Version</th>
+        <th>Status (May 2026)</th>
+        <th>End of life</th>
+        <th>Position</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>3.9</td><td>Unmaintained</td><td>31 Oct 2025</td><td>Remediation finding</td></tr>
+      <tr><td>3.10</td><td>Security-only</td><td>31 Oct 2026</td><td>Phase out</td></tr>
+      <tr><td>3.11</td><td>Security-only</td><td>Oct 2027</td><td>Acceptable, plan upgrade</td></tr>
+      <tr><td><strong>3.12</strong></td><td><strong>Active bug-fix</strong></td><td><strong>Oct 2028</strong></td><td><strong style="color:var(--deccan-blue);">Primary</strong></td></tr>
+      <tr><td>3.13</td><td>Active bug-fix</td><td>Oct 2029</td><td>Approved alternative</td></tr>
+      <tr><td>3.14</td><td>Released Oct 2025</td><td>Oct 2030</td><td>Deferred</td></tr>
+    </tbody>
+  </table>
+
+  <p>Numerical data and short labels sit comfortably at <code>--fs-small</code>; text-heavy cells inherit body line-height. Columns size to content unless a layout-specific column width is set.</p>
+
+  <p class="plate-caption">Tables hold the body measure on screen and break to full content width in print. <code>page-break-inside: avoid</code> keeps the table on a single page where possible.</p>
+</section>
+
+
+<!-- ============================================================
+     PLATE 10 — Sidenotes and folios
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-head">
+    <span class="plate-num">Plate 10</span>
+    <h2 class="plate-title">Sidenotes, folios, page furniture</h2>
+  </div>
+
+  <p>Two editorial conventions that distinguish a finished document from a draft: sidenotes for content that supports but does not interrupt the argument, and a deliberate folio treatment for the running footer.</p>
+
+  <h3>Sidenotes</h3>
+
+  <div class="with-sidenotes">
+    <div>
+      <p>The standard primary interpreter is CPython 3.12, with Python 3.13 as an approved alternative. Python 3.12 carries full ecosystem coverage in the anticipated Deccan stack.<sup style="color:var(--deccan-blue);font-weight:600;">1</sup> Its support runway extends through October 2028. Python 3.14, released in October 2025, is deferred as the corporate baseline because some chemistry and ML libraries on the CRDMO roadmap still resolve cleanly only on 3.12 or 3.13.<sup style="color:var(--deccan-blue);font-weight:600;">2</sup></p>
+
+      <p>The version landscape is reviewed quarterly. The next review of the deferred-3.14 position is November 2026.</p>
+    </div>
+    <aside>
+      <div class="sidenote">
+        <span class="sidenote-num">[1]</span>
+        Anticipated stack: NumPy, pandas, SciPy, scikit-learn, PyTorch, TensorFlow, RDKit, Chemprop, AVEVA-related Python clients, JupyterLab, and the Anthropic SDK. All ship pre-built wheels for 3.12 on Windows, macOS, and Linux as of May 2026.
+      </div>
+      <div class="sidenote" style="margin-top:24px;">
+        <span class="sidenote-num">[2]</span>
+        Notable holdouts on 3.12/3.13: BoTorch (3.12 only), specific RDKit-derivative ML libraries, two internal AVEVA bridges. The list shortens monthly.
+      </div>
+    </aside>
+  </div>
+
+  <h3>Running footer · folio</h3>
+
+  <p>The convention: mono, 8.5pt, stone-500. Left-aligned imprint, right-aligned bare-integer page number. No "Page 12 of 47" wrapper — the integer is the convention. Suppressed on the cover and the end page.</p>
+
+  <div class="folio-illus">
+    <div class="folio-row"><span style="font-size:11pt;color:var(--stone-300);">— body content above —</span></div>
+    <div class="folio-row"><span>Deccan Fine Chemicals · Confidential</span><span>12</span></div>
+  </div>
+
+  <p class="plate-caption">Sidenotes occupy a fixed-width column to the right of the body measure on screen. In print, the system collapses sidenotes into footnotes at the foot of the page (a future revision will document the print-mode conversion). The folio convention is universal across sections and document classes.</p>
+</section>
+
+
+<!-- ============================================================
+     Plate A — Brand mark
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-label">Plate A · Brand mark</div>
+  <h2 class="plate-title">The Deccan wordmark</h2>
+
+  <p>The wordmark identifies every Deccan document. Its rendering is governed by three rules: clear space, minimum size, and colour variant. The marks below illustrate the four authorised variants and four common misuses.</p>
+
+  <h3 style="margin-top:32px;">Authorised variants</h3>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:24px;margin:24px 0;">
+    <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#164999;"></div>
+        <div style="width:8px;height:8px;border-radius:50%;background:#71BF4D;"></div>
+        <div style="font-weight:600;color:#1C1917;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Full colour · default</p>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#1C1917;"></div>
+        <div style="font-weight:600;color:#1C1917;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Monochrome black · single-colour print</p>
+    </div>
+    <div style="background:#164999;padding:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#FFFFFF;"></div>
+        <div style="font-weight:600;color:#FFFFFF;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.7);margin-top:16px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Monochrome white · dark stock</p>
+    </div>
+    <div style="background:#F5F5F4;padding:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#71BF4D;"></div>
+        <div style="font-weight:600;color:#1C1917;font-size:18px;">Deccan Fine Chemicals · sustainability</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Sustainability context only</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;">Clear space</h3>
+  <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:48px;margin:24px 0;">
+    <div style="display:inline-block;outline:1px dashed #A8A29E;outline-offset:18px;padding:0;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#164999;"></div>
+        <div style="font-weight:600;color:#1C1917;font-size:36px;">Deccan Fine Chemicals</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#78716C;margin-top:32px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Dashed outline: 0.5× wordmark height clear space on all sides.</p>
+  </div>
+
+  <h3 style="margin-top:32px;">Banned uses</h3>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:24px 0;">
+    <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+      <div style="display:flex;align-items:center;gap:12px;transform:rotate(-6deg);">
+        <div style="width:56px;height:3px;background:#164999;"></div>
+        <div style="font-weight:600;color:#1C1917;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;">Rotated · banned</p>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#FF6600;"></div>
+        <div style="font-weight:600;color:#FF6600;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;">Off-palette colour · banned</p>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+      <div style="display:flex;align-items:center;gap:12px;text-shadow:2px 2px 6px rgba(0,0,0,0.4);">
+        <div style="width:56px;height:3px;background:#164999;box-shadow:2px 2px 4px rgba(0,0,0,0.4);"></div>
+        <div style="font-weight:600;color:#1C1917;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;">Drop shadow · banned</p>
+    </div>
+    <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:56px;height:3px;background:#164999;"></div>
+        <div style="font-family:Georgia,serif;font-weight:600;color:#1C1917;font-size:18px;">Deccan Fine Chemicals</div>
+      </div>
+      <p style="font-size:11px;color:#78716C;margin-top:16px;font-family:var(--font-mono);letter-spacing:0.08em;text-transform:uppercase;">Wrong typeface · banned</p>
+    </div>
+  </div>
+
+  <p class="plate-caption">Plate A — the authoritative wordmark reference. Authorised variants live in <code>skill/assets/</code>; banned uses do not appear in any Deccan document.</p>
+</section>
+
+
+<!-- ============================================================
+     Plate B — Colour application
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-label">Plate B · Colour application</div>
+  <h2 class="plate-title">Correct and incorrect colour use</h2>
+
+  <p>The discipline rule for colour is small: Deccan Blue is the single UI accent, Deccan Green is reserved for sustainability content, stone tints belong to callouts / code / banded rows in print, and the page background is paper white.</p>
+
+  <h3 style="margin-top:32px;">Deccan Green — confined use only</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:24px 0;">
+    <div>
+      <p style="font-size:11px;color:#78716C;margin-bottom:8px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Correct · sustainability context</p>
+      <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+        <div style="background:#F5F5F4;border-left:3px solid #71BF4D;padding:16px 24px;">
+          <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">BRSR · Environmental</p>
+          <p style="margin:0;color:#292524;">Scope-1 emissions reduced 12% year-on-year. The Deccan Green flag identifies sustainability content; outside this context it does not appear.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:11px;color:#78716C;margin-bottom:8px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Incorrect · UI accent (banned)</p>
+      <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+        <p style="margin:0 0 16px 0;color:#292524;">Status update on the quarterly review:</p>
+        <a style="display:inline-block;background:#71BF4D;color:#FFFFFF;padding:8px 16px;text-decoration:none;font-weight:600;">Submit for review</a>
+        <p style="margin:16px 0 0 0;font-size:13px;color:#78716C;">Banned — Deccan Green is not a button colour.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;">Stone tints — callout vs page background</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:24px 0;">
+    <div>
+      <p style="font-size:11px;color:#78716C;margin-bottom:8px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Correct · tinted callout on paper</p>
+      <div style="background:#FFFFFF;border:1px solid #E7E5E4;padding:24px;">
+        <p style="margin:0 0 16px 0;color:#292524;">Body paragraph on paper background.</p>
+        <div style="background:#F5F5F4;border-left:3px solid #164999;padding:16px 24px;">
+          <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Note</p>
+          <p style="margin:0;color:#292524;">Callout body in stone-100. Stone tint confined to the callout.</p>
+        </div>
+        <p style="margin:16px 0 0 0;color:#292524;">More body paragraph on paper.</p>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:11px;color:#78716C;margin-bottom:8px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;">Incorrect · stone tint as page background</p>
+      <div style="background:#F5F5F4;border:1px solid #E7E5E4;padding:24px;">
+        <p style="margin:0 0 16px 0;color:#292524;">Body paragraph on a stone-tinted page background — banned for print. Stone-50 screen background is screen-only; print pages are paper white.</p>
+        <div style="background:#FFFFFF;padding:16px 24px;">
+          <p style="margin:0;color:#292524;">An inverted callout to compensate is not the fix. The fix is to keep the page on paper and let the callout carry the tint.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p class="plate-caption">Plate B — the colour discipline summarised: one accent, one reserved colour, stone tints confined to where the tint is the point. Anything else fails review.</p>
+</section>
+
+
+<!-- ============================================================
+     Plate C — Tone and voice
+     ============================================================ -->
+<section class="plate">
+  <div class="plate-label">Plate C · Tone and voice</div>
+  <h2 class="plate-title">Three before / after rewrites</h2>
+
+  <p>The corporate-document register is unambiguous. The three pairs below illustrate the most common patterns that fail review — and the rewrite that survives it.</p>
+
+  <h3 style="margin-top:32px;">1. Conversational subtitle in a heading</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0 24px 0;">
+    <div style="background:#F5F5F4;border-left:3px solid #44403C;padding:16px 24px;">
+      <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Before · banned</p>
+      <p style="font-size:18px;font-weight:600;color:#1C1917;margin:0 0 8px 0;">Python version selection: the EOL clock is the deciding factor</p>
+      <p style="margin:0;color:#44403C;font-size:14px;">Conversational subtitle. Editorial filler. Restates the body in the heading.</p>
+    </div>
+    <div style="background:#F5F5F4;border-left:3px solid #164999;padding:16px 24px;">
+      <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">After · correct</p>
+      <p style="font-size:18px;font-weight:600;color:#1C1917;margin:0 0 8px 0;">Python version selection</p>
+      <p style="margin:0;color:#44403C;font-size:14px;">Plain noun phrase. The body argues the EOL clock; the heading names the topic.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;">2. First-person narrator aside</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0 24px 0;">
+    <div style="background:#F5F5F4;border-left:3px solid #44403C;padding:16px 24px;">
+      <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Before · banned</p>
+      <p style="margin:0;color:#292524;">Let me walk you through the rollout plan. We'll start by looking at the pilot cohort, and then I want to show you the wave-1 entry criteria. It's worth noting that the order matters here.</p>
+    </div>
+    <div style="background:#F5F5F4;border-left:3px solid #164999;padding:16px 24px;">
+      <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">After · correct</p>
+      <p style="margin:0;color:#292524;">The rollout proceeds in four waves. The pilot cohort consists of five IT users; wave 1 admits fifty engineering and R&amp;D users on the pilot's exit criteria. Wave order is dependent — each wave's entry criteria are the previous wave's exit criteria.</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px;">3. "Deep dive" / decorative emoji / exclamation</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:16px 0 24px 0;">
+    <div style="background:#F5F5F4;border-left:3px solid #44403C;padding:16px 24px;">
+      <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">Before · banned</p>
+      <p style="margin:0;color:#292524;">TL;DR: the installer is unsigned! 🚀 Let's dive deeper into what that means for the rollout — and here's the kicker — SmartScreen will warn the user on every first install.</p>
+    </div>
+    <div style="background:#F5F5F4;border-left:3px solid #164999;padding:16px 24px;">
+      <p style="font-family:var(--font-mono);font-size:11px;font-weight:600;color:#78716C;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:8px;">After · correct</p>
+      <p style="margin:0;color:#292524;">Summary: the installer is unsigned. SmartScreen warns the user on the first install. The runbook section in the admin guide covers the dismissal steps and the silent-install bypass for Intune-managed endpoints.</p>
+    </div>
+  </div>
+
+  <p class="plate-caption">Plate C — the read-aloud test in action. Every rewrite passes the test "would this survive read-aloud at a board meeting?" Every before-pattern fails it.</p>
+</section>
+
+
+</main>
+
+
+<!-- ============================================================
+     End page
+     ============================================================ -->
+<section class="end-page">
+  <div class="end-mark">Deccan Fine Chemicals</div>
+  <div class="end-rule"></div>
+  <div class="end-contact">deccanchemicals.com · Hyderabad, India</div>
+  <div class="end-classification">Confidential · Internal use</div>
+</section>
+
+</body>
+</html>
