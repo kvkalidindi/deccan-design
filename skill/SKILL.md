@@ -58,8 +58,8 @@ Pull these into the artifact every time:
 
 Every Deccan document follows all eight:
 
-1. **Cover page mandatory and self-contained.** Wordmark + title + subtitle + author + version + date + classification. No header, no footer, no page number.
-2. **End page mandatory and self-contained.** No header, no footer, no page number.
+1. **Cover page mandatory and self-contained.** Wordmark + title + subtitle + author + version + date + classification. No header, no footer, no page number. **Must fit on exactly one physical page in print** — never use `min-height: 100vh` alone; pair it with the `@media print` overrides in `skill/references/print-rules.md`.
+2. **End page mandatory and self-contained.** No header, no footer, no page number. Must fit on exactly one physical page in print.
 3. **Every H1 starts on a new page** (`page-break-before: always`).
 4. **Body fills the live content area** — no 60ch artificial cap in print; ≥ 80% of paper width.
 5. **End page after a hard page break.**

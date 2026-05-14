@@ -63,7 +63,35 @@ tbody tr:nth-child(even) td{background:var(--stone-50);}
   @bottom-right{content:counter(page);font-family:'Cascadia Mono',Consolas,monospace;font-size:8.5pt;color:#78716C;}
 }
 @page :first{@bottom-left{content:"";}@bottom-right{content:"";}}
-@media print{body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
+@media print{
+      /* Print: keep the cover and end page each on exactly one physical page.
+         100vh resolves to the full paper height in print (not the live content
+         area), so min-height:100vh causes the cover to overflow into page 2.
+         These rules override that. */
+      .cover {
+        min-height: auto;
+        height: auto;
+        padding: var(--s-6) 0 var(--s-5);
+        border-bottom: none;
+        page-break-after: always;
+        break-after: page;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .cover-body { padding: var(--s-5) 0 var(--s-4); }
+      .cover-title { font-size: 28pt; max-width: none; }
+      .cover-subtitle { font-size: 13pt; }
+      .end-page {
+        min-height: auto;
+        height: auto;
+        padding: var(--s-7) 0 var(--s-6);
+        border-top: none;
+        page-break-before: always;
+        break-before: page;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
 </style>
 </head>
 <body>

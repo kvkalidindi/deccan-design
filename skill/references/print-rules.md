@@ -49,12 +49,60 @@ The footer appears only on body pages. Suppressed on the cover and on the end pa
 | Element | Rule |
 |---|---|
 | H1 | `page-break-before: always` |
-| Cover | `page-break-after: always` |
-| End page | `page-break-before: always` |
+| Cover | `page-break-after: always` + `page-break-inside: avoid` |
+| End page | `page-break-before: always` + `page-break-inside: avoid` |
 | Callout, code block, pull quote, table, TOC | `page-break-inside: avoid` |
 | Headings | `page-break-after: avoid` (heading + first paragraph stay together) |
 
 Within a section, the rendering engine uses standard widow/orphan handling.
+
+## Cover and end-page sizing in print
+
+The cover and the end page must each render on **exactly one physical page**. Two failure modes have been observed and explicitly defended against:
+
+### Failure mode — `min-height: 100vh` overflow
+
+On screen, `.cover { min-height: 100vh; }` makes the cover fill the viewport. In print, `100vh` resolves to the **full paper height** (e.g. 1056 px on Letter), not the live content area after margins (~883 px on Letter at 0.8" outside / 1" bottom). The cover then overflows into a second physical page — and the second page picks up the body footer because `@page :first` only suppresses page 1, not the cover-overflow page.
+
+### Required print overrides
+
+Every implementation of the cover and end page must include these print-mode overrides:
+
+```css
+@media print {
+  .cover {
+    min-height: auto;             /* not 100vh */
+    height: auto;
+    padding: var(--s-6) 0 var(--s-5);
+    border-bottom: none;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .cover-body  { padding: var(--s-5) 0 var(--s-4); }
+  .cover-title { font-size: 28pt; max-width: none; }
+  .cover-subtitle { font-size: 13pt; }
+  .end-page {
+    min-height: auto;
+    height: auto;
+    padding: var(--s-7) 0 var(--s-6);
+    border-top: none;
+    page-break-before: always;
+    break-before: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
+```
+
+The bundled `skill/assets/templates/document.html` ships these rules. Any custom document that re-derives the cover composition must include them.
+
+### Verification
+
+After producing a document, print-preview it in Chrome / Edge / Firefox / Safari. The cover must occupy exactly **one** page. The footer must be empty on page 1 (the cover). Body content must start on page 2 with footer "2". The end page must occupy the final page with no footer.
+
+If the cover splits across two pages, the `min-height: 100vh` rule is winning. Verify the print overrides above are present and have not been overridden by a higher-specificity rule.
 
 ## Print background
 
