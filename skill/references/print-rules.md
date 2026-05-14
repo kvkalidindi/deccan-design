@@ -64,6 +64,12 @@ The cover and the end page must each render on **exactly one physical page**. Tw
 
 On screen, `.cover { min-height: 100vh; }` makes the cover fill the viewport. In print, `100vh` resolves to the **full paper height** (e.g. 1056 px on Letter), not the live content area after margins (~883 px on Letter at 0.8" outside / 1" bottom). The cover then overflows into a second physical page — and the second page picks up the body footer because `@page :first` only suppresses page 1, not the cover-overflow page.
 
+### Failure mode — grid-row collapse in print
+
+The cover uses `display: grid; grid-template-rows: auto 1fr auto;` on screen so the wordmark sits at the top, the title block centres vertically, and the metadata strip pins to the bottom. In print with `min-height: auto`, the `1fr` middle row collapses to zero, but `align-self: center` on `.cover-body` still positions its content visually. Edge then sees the grid section as shorter than the rendered content and inserts a page break at the (wrong) grid boundary — splitting the cover even with `break-inside: avoid` set, because the engine doesn't know the visual height exceeds the grid track.
+
+The cover must therefore drop grid layout in print and use block flow.
+
 ### Required print overrides
 
 Every implementation of the cover and end page must include these print-mode overrides:
@@ -73,6 +79,8 @@ Every implementation of the cover and end page must include these print-mode ove
   .cover {
     min-height: auto;             /* not 100vh */
     height: auto;
+    display: block;               /* not grid — see grid-row collapse */
+    grid-template-rows: none;
     padding: var(--s-6) 0 var(--s-5);
     border-bottom: none;
     page-break-after: always;
@@ -80,12 +88,19 @@ Every implementation of the cover and end page must include these print-mode ove
     page-break-inside: avoid;
     break-inside: avoid;
   }
-  .cover-body  { padding: var(--s-5) 0 var(--s-4); }
+  .cover-body  {
+    align-self: auto;             /* reset grid centring */
+    padding: var(--s-5) 0 var(--s-4);
+  }
   .cover-title { font-size: 28pt; max-width: none; }
   .cover-subtitle { font-size: 13pt; }
   .end-page {
     min-height: auto;
     height: auto;
+    display: block;               /* same reason */
+    grid-template-rows: none;
+    align-content: initial;
+    justify-items: initial;
     padding: var(--s-7) 0 var(--s-6);
     border-top: none;
     page-break-before: always;

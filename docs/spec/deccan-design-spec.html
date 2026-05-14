@@ -530,6 +530,8 @@
       .cover {
         min-height: auto;
         height: auto;
+        display: block;            /* override grid for print */
+        grid-template-rows: none;
         padding: var(--s-6) 0 var(--s-5);
         border-bottom: none;
         page-break-after: always;
@@ -537,12 +539,19 @@
         page-break-inside: avoid;
         break-inside: avoid;
       }
-      .cover-body { padding: var(--s-5) 0 var(--s-4); }
+      .cover-body {
+        align-self: auto;
+        padding: var(--s-5) 0 var(--s-4);
+      }
       .cover-title { font-size: 28pt; max-width: none; }
       .cover-subtitle { font-size: 13pt; }
       .end-page {
         min-height: auto;
         height: auto;
+        display: block;
+        grid-template-rows: none;
+        align-content: initial;
+        justify-items: initial;
         padding: var(--s-7) 0 var(--s-6);
         border-top: none;
         page-break-before: always;
