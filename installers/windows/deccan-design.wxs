@@ -3,7 +3,12 @@
   deccan-design v2.0 — Windows MSI definition
 
   Per-user install (no admin elevation). Unsigned.
-  Build with WiX Toolset v4: see installers/windows/build.ps1.
+  Build with WiX Toolset v4.0.6: see installers/windows/build.ps1.
+
+  Package version v2.0.1 — refresh that bundles the full skill tree
+  (references, slot template, assets) which the v2.0.0 MSI omitted, and
+  picks up the cover/end-page print-rendering fixes shipped to the
+  repo. Design system version remains v2.0.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
@@ -11,7 +16,7 @@
   <Package
       Name="deccan-design"
       Manufacturer="Deccan Fine Chemicals Pvt. Ltd."
-      Version="2.0.0"
+      Version="2.0.1"
       UpgradeCode="72423D74-5D81-4CC6-8F5A-6AB4FFE65448"
       InstallerVersion="500"
       Scope="perUser"
@@ -41,13 +46,19 @@
       <Directory Id="AnthropicDir" Name="Anthropic">
         <Directory Id="ClaudeDir" Name="Claude">
           <Directory Id="ClaudeSkillsDir" Name="skills">
-            <Directory Id="DeccanSkillDir" Name="deccan-design" />
+            <Directory Id="DeccanSkillDir" Name="deccan-design">
+              <Directory Id="DeccanSkillRefsDir"      Name="references" />
+              <Directory Id="DeccanSkillAssetsDir"    Name="assets">
+                <Directory Id="DeccanSkillFontsDir"     Name="fonts" />
+                <Directory Id="DeccanSkillTemplatesDir" Name="templates" />
+              </Directory>
+            </Directory>
           </Directory>
         </Directory>
       </Directory>
       <!-- deccan-design root (helpers, docs, assets) -->
       <Directory Id="DeccanRootDir" Name="deccan-design">
-        <Directory Id="DeccanDocsDir" Name="docs" />
+        <Directory Id="DeccanDocsDir"   Name="docs" />
         <Directory Id="DeccanAssetsDir" Name="assets" />
       </Directory>
     </StandardDirectory>
@@ -111,13 +122,50 @@
       </Component>
     </Feature>
 
-    <Feature Id="ClaudeSkill" Title="Claude skill" Level="1">
+    <Feature Id="ClaudeSkill" Title="Claude skill (SKILL.md + references + slot template + assets)" Level="1">
       <Component Id="cmpSkillMd" Directory="DeccanSkillDir" Guid="*">
         <File Id="fSkillMd" Source="..\..\skill\SKILL.md" />
       </Component>
-      <!-- Skill references and assets are recursively harvested via a separate
-           HarvestDirectory step in build.ps1, which generates a fragment that
-           is linked in at build time. See build.ps1 for the heat invocation. -->
+      <!-- Skill reference modules -->
+      <Component Id="cmpSkillRefTokens" Directory="DeccanSkillRefsDir" Guid="*">
+        <File Id="fSkillRefTokens" Source="..\..\skill\references\tokens.md" />
+      </Component>
+      <Component Id="cmpSkillRefComponents" Directory="DeccanSkillRefsDir" Guid="*">
+        <File Id="fSkillRefComponents" Source="..\..\skill\references\components.md" />
+      </Component>
+      <Component Id="cmpSkillRefPrintRules" Directory="DeccanSkillRefsDir" Guid="*">
+        <File Id="fSkillRefPrintRules" Source="..\..\skill\references\print-rules.md" />
+      </Component>
+      <Component Id="cmpSkillRefToneAndVoice" Directory="DeccanSkillRefsDir" Guid="*">
+        <File Id="fSkillRefToneAndVoice" Source="..\..\skill\references\tone-and-voice.md" />
+      </Component>
+      <Component Id="cmpSkillRefDocumentTemplates" Directory="DeccanSkillRefsDir" Guid="*">
+        <File Id="fSkillRefDocumentTemplates" Source="..\..\skill\references\document-templates.md" />
+      </Component>
+      <!-- Slot-fill HTML template + companion docs -->
+      <Component Id="cmpSkillTplDocument" Directory="DeccanSkillTemplatesDir" Guid="*">
+        <File Id="fSkillTplDocument" Source="..\..\skill\assets\templates\document.html" />
+      </Component>
+      <Component Id="cmpSkillTplSlots" Directory="DeccanSkillTemplatesDir" Guid="*">
+        <File Id="fSkillTplSlots" Source="..\..\skill\assets\templates\document-slots.md" />
+      </Component>
+      <Component Id="cmpSkillTplReadme" Directory="DeccanSkillTemplatesDir" Guid="*">
+        <File Id="fSkillTplReadme" Source="..\..\skill\assets\templates\README.md" />
+      </Component>
+      <!-- Fonts dir README — keeps the directory present and documents the OS-native policy -->
+      <Component Id="cmpSkillFontsReadme" Directory="DeccanSkillFontsDir" Guid="*">
+        <File Id="fSkillFontsReadme" Source="..\..\skill\assets\fonts\README.md" />
+      </Component>
+      <!-- Logo assets live under skill/assets directly -->
+      <Component Id="cmpSkillLogoSvg" Directory="DeccanSkillAssetsDir" Guid="*">
+        <File Id="fSkillLogoSvg" Source="..\..\skill\assets\logo.svg" />
+      </Component>
+      <Component Id="cmpSkillLogoPng" Directory="DeccanSkillAssetsDir" Guid="*">
+        <File Id="fSkillLogoPng" Source="..\..\skill\assets\logo.png" />
+      </Component>
+      <Component Id="cmpSkillLogoB64" Directory="DeccanSkillAssetsDir" Guid="*">
+        <File Id="fSkillLogoB64" Source="..\..\skill\assets\logo.b64.txt" />
+      </Component>
     </Feature>
 
     <Feature Id="DocsAndAssets" Title="Documentation and assets" Level="1">
@@ -127,21 +175,30 @@
       <Component Id="cmpPreferencesReminder" Directory="DeccanRootDir" Guid="*">
         <File Id="fPreferencesReminder" Source="preferences-reminder.txt" />
       </Component>
+      <Component Id="cmpPersonalPreferences" Directory="DeccanDocsDir" Guid="*">
+        <File Id="fPersonalPreferences" Source="..\..\claude\personal-preferences.md" />
+      </Component>
+      <Component Id="cmpCopyright" Directory="DeccanDocsDir" Guid="*">
+        <File Id="fCopyright" Source="..\..\COPYRIGHT.md" />
+      </Component>
       <Component Id="cmpLogoPng" Directory="DeccanAssetsDir" Guid="*">
-        <File Id="fLogoPng" Source="..\..\skill\assets\logo.png" />
+        <File Id="fLogoPng" Source="..\..\skill\assets\logo.png" Name="logo.png" />
       </Component>
       <Component Id="cmpLogoSvg" Directory="DeccanAssetsDir" Guid="*">
-        <File Id="fLogoSvg" Source="..\..\skill\assets\logo.svg" />
+        <File Id="fLogoSvg" Source="..\..\skill\assets\logo.svg" Name="logo.svg" />
       </Component>
     </Feature>
 
     <Feature Id="VersionMarker" Title="Version marker" Level="1">
       <Component Id="cmpVersionReg" Directory="DeccanRootDir" Guid="*">
         <RegistryValue Root="HKCU" Key="Software\deccan-design"
-                       Name="Version" Value="2.0.0" Type="string" KeyPath="yes" />
+                       Name="Version" Value="2.0.1" Type="string" KeyPath="yes" />
         <RegistryValue Root="HKCU" Key="Software\deccan-design"
                        Name="InstallPath" Type="string"
                        Value="[%APPDATA]\deccan-design" />
+        <RegistryValue Root="HKCU" Key="Software\deccan-design"
+                       Name="DesignSystemVersion" Type="string"
+                       Value="2.0" />
       </Component>
     </Feature>
 

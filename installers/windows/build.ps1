@@ -17,7 +17,7 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Release',
-    [string]$Output        = 'deccan-design-2.0.0.msi'
+    [string]$Output        = 'deccan-design-2.0.1.msi'
 )
 
 $ErrorActionPreference = 'Stop'
