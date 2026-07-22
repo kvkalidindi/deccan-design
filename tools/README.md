@@ -1,10 +1,11 @@
 # tools/
 
-Build and QA helpers for the deccan-design system. **Not part of the installer payload.** These scripts are for developers and QA working on the design system itself, not for end-user endpoints.
+Build and QA helpers for the deccan-design system. **Not part of the installer payload.** These scripts are for developers and QA working on the design system itself, not for end-user endpoints — with one exception: `converter/` is the source of the end-user **Deccan Convert** utility, distributed as binaries on the releases page.
 
-| Script | Use |
+| Entry | Use |
 |---|---|
-| `Render-DeccanDocumentPdf.ps1` | Render an HTML deliverable to PDF via Edge or Chrome headless, then optionally verify the page structure (cover with no footer, body pages with footers, end page with no footer). |
+| `Render-DeccanDocumentPdf.ps1` | Render an HTML deliverable to PDF via Edge or Chrome headless, then optionally verify the page structure (cover with no footer, body pages with footers, end page with no footer). Windows / PowerShell. |
+| [`converter/`](converter/) | **Deccan Convert** — the cross-platform (Windows 11 / macOS) document converter that applies deccan-design v2.0 to md / html / docx / xlsx / pptx / pdf artifacts. Python source, PyInstaller packaging, GitHub Actions release builds. Its PDF writer and print-contract verifier are the cross-platform port of `Render-DeccanDocumentPdf.ps1`. |
 
 ## Render-DeccanDocumentPdf.ps1
 

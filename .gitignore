@@ -27,6 +27,14 @@ desktop.ini
 # Python build noise (if any helper scripts leave it)
 __pycache__/
 *.pyc
+*.egg-info/
+.pytest_cache/
+
+# Deccan Convert build outputs (tools/converter/)
+tools/converter/build/
+tools/converter/dist/
+tools/converter/packaging/icon.ico
+tools/converter/packaging/icon.icns
 
 # Office lock files (in case a template is opened during build)
 ~$*.dotx

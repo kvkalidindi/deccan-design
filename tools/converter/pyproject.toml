@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "deccan-convert"
+description = "Deccan Fine Chemicals document converter - applies deccan-design v2.0 to md/html/docx/xlsx/pptx/pdf artifacts"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Proprietary" }
+dynamic = ["version"]
+dependencies = [
+    "markdown>=3.5",
+    "beautifulsoup4>=4.12",
+    "mammoth>=1.6",
+    "markdownify>=0.11",
+    "python-docx>=1.1",
+    "openpyxl>=3.1",
+    "python-pptx>=0.6.23",
+    "pdfplumber>=0.10",
+    "pypdf>=4.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7.4"]
+build = ["pyinstaller>=6.3"]
+
+[project.scripts]
+deccan-convert = "deccan_convert.__main__:main"
+
+[tool.setuptools]
+packages = [
+    "deccan_convert",
+    "deccan_convert.readers",
+    "deccan_convert.writers",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "deccan_convert.__version__" }
+
+[tool.setuptools.package-data]
+deccan_convert = ["assets_data/*"]
+
+[tool.pytest.ini_options]
+markers = [
+    "browser: tests that require a Chromium-family browser (Edge/Chrome/Chromium)",
+]

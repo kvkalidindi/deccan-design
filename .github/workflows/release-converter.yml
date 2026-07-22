@@ -1,0 +1,183 @@
+name: release-converter
+
+# Builds the Deccan Convert utility (tools/converter/) for Windows 11 and
+# macOS and attaches the binaries to a GitHub Release on converter-v* tags.
+# Binaries are unsigned by design (PRD §1.4 Decision 5) — the release notes
+# carry the SmartScreen / Gatekeeper guidance, mirroring installers/*/README.md.
+#
+# PDF smoke tests use the browser preinstalled on the runners (Edge on
+# windows-latest, Chrome on macos-latest) via headless print — never Office
+# COM automation, per the design-system print policy.
+
+on:
+  push:
+    tags: ['converter-v*']
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/converter/**'
+      - '.github/workflows/release-converter.yml'
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: tools/converter
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install package and test deps
+        run: pip install -e '.[test]'
+
+      - name: Asset drift check
+        run: python sync_assets.py --check
+
+      - name: Unit tests (no browser required)
+        run: python -m pytest tests/ -q -m 'not browser'
+
+  build:
+    needs: test
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            artifact: deccan-convert-windows-x64
+          - os: macos-latest
+            artifact: deccan-convert-macos-arm64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install package, build and test deps
+        run: pip install -e '.[test,build]' pillow
+
+      - name: Asset drift check
+        run: python sync_assets.py --check
+
+      - name: Generate icons
+        run: python packaging/make_icons.py
+
+      - name: Build binary
+        run: pyinstaller --noconfirm packaging/deccan-convert.spec
+
+      - name: Smoke test — md to pdf with print-contract verification (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          @'
+          # Smoke Test
+          A one-section document to exercise the full pipeline.
+          '@ | Set-Content smoke.md
+          # The exe is a windowed app: launch it via Start-Process so the
+          # shell waits, and read the .log it writes when no console exists.
+          $p = Start-Process -FilePath ./dist/deccan-convert.exe -ArgumentList @(
+            'smoke.md','-o','smoke.pdf','--title','Smoke Test','--type','Report','--prepared-by','CI'
+          ) -Wait -PassThru -NoNewWindow
+          if (Test-Path smoke.pdf.log) { Get-Content smoke.pdf.log }
+          if ($p.ExitCode -ne 0) { throw "converter exited $($p.ExitCode)" }
+          if (-not (Test-Path smoke.pdf)) { throw "smoke.pdf not produced" }
+          if ((Test-Path smoke.pdf.log) -and (Select-String -Path smoke.pdf.log -Pattern 'FAIL' -Quiet)) { throw "print contract FAIL" }
+
+      - name: Smoke test — md to pdf with print-contract verification (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          printf '# Smoke Test\n\nA one-section document to exercise the full pipeline.\n' > smoke.md
+          ./dist/deccan-convert smoke.md -o smoke.pdf --title "Smoke Test" --type Report --prepared-by "CI"
+          test -f smoke.pdf
+          if [ -f smoke.pdf.log ]; then cat smoke.pdf.log; ! grep -q FAIL smoke.pdf.log; fi
+
+      - name: Package artifact (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Copy-Item dist/deccan-convert.exe "${{ matrix.artifact }}.exe"
+          Get-FileHash "${{ matrix.artifact }}.exe" -Algorithm SHA256 | Format-List
+
+      - name: Package artifact (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent "dist/Deccan Convert.app" "${{ matrix.artifact }}.zip"
+          shasum -a 256 "${{ matrix.artifact }}.zip"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            tools/converter/${{ matrix.artifact }}.exe
+            tools/converter/${{ matrix.artifact }}.zip
+          if-no-files-found: error
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/converter-v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: assets
+          merge-multiple: true
+
+      - name: Compute checksums
+        working-directory: .
+        run: |
+          cd assets
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            assets/*
+          body: |
+            ## Deccan Convert — ${{ github.ref_name }}
+
+            Converts .md / .html / .docx / .xlsx / .pptx / .pdf documents
+            (and Google Workspace exports) into deccan-design v2.0 artifacts.
+            Runs entirely in user space — no administrator rights required.
+
+            | Download | Platform |
+            |---|---|
+            | `deccan-convert-windows-x64.exe` | Windows 11 (also Windows 10) |
+            | `deccan-convert-macos-arm64.zip` | macOS (Apple silicon) |
+
+            Verify downloads against `SHA256SUMS.txt`.
+
+            ### The binaries are unsigned (by design)
+
+            **Windows — SmartScreen:** on first run, select **More info →
+            Run anyway**. IT can whitelist the SHA256 above in Intune /
+            Endpoint Central for silent rollout.
+
+            **macOS — Gatekeeper:** unzip, then **right-click → Open → Open**
+            on first launch (or System Settings → Privacy & Security →
+            **Open Anyway**). Jamf deployments bypass the prompt.
+
+            ### Usage
+
+            Double-click for the GUI, or script it:
+
+            ```
+            deccan-convert report.docx -o report.pdf --classification Internal
+            ```
+
+            Full manual: `tools/converter/README.md` in the repository.

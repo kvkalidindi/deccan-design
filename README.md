@@ -15,6 +15,7 @@ Version 2.0 — May 2026.
 | [`skill/`](skill/) | The Anthropic skill module for Claude Code / Claude Desktop / Claude.ai. |
 | [`templates/`](templates/) | Native Office (Word / Excel / PowerPoint), Outlook signature, and Google Workspace templates. |
 | [`installers/`](installers/) | Windows MSI (WiX v4) and macOS PKG (pkgbuild / productbuild). Both **unsigned**. |
+| [`tools/converter/`](tools/converter/) | **Deccan Convert** — the document converter utility for Windows 11 / macOS (source + build). |
 | [`claude/`](claude/) | The personal-preferences text users paste into Claude.ai → Settings → Profile → Preferences. |
 
 ## Install
@@ -59,6 +60,17 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 | Use the system in Google Docs | Upload the `templates/gworkspace/*.docx` → Open with Google Docs → File → Save as Google Docs. |
 | Generate an HTML document | Fill the slots in `skill/assets/templates/document.html`. |
 | Ask Claude for a Deccan document | In any Claude surface, ask: *"Generate a one-page Deccan status memo about &lt;topic&gt;."* The `deccan-design` skill activates automatically once installed. |
+
+## Deccan Convert — apply the system to existing documents
+
+**Deccan Convert** is a downloadable utility for Windows 11 and macOS that takes an existing artifact — `.md`, HTML, Word `.docx`, Excel `.xlsx`, PowerPoint `.pptx`, PDF, or a Google Docs / Sheets / Slides export — and produces a version rendered under the deccan-design principles, in your choice of supported output format. It runs entirely in user space; no admin rights needed.
+
+- **Download:** `deccan-convert-windows-x64.exe` or `deccan-convert-macos-arm64.zip` from the [releases page](https://github.com/kvkalidindi/deccan-design/releases) (tags named `converter-v*`). Like the installers, the binaries are **unsigned by design** — the same SmartScreen / Gatekeeper steps above apply.
+- **Use:** double-click for the GUI, or script it: `deccan-convert report.docx -o report.pdf --classification Internal`.
+- Documents (md / html / docx / pdf) convert freely between document formats; workbooks and decks restyle in place (data and formulas untouched). Every PDF it produces is verified against the print contract automatically.
+- **Google Workspace:** File → Download as docx/xlsx/pptx → convert → re-upload to Drive.
+
+The full manual, support matrix, and format caveats are in [`tools/converter/README.md`](tools/converter/README.md).
 
 ## PDF generation — on demand
 
