@@ -91,6 +91,22 @@ def find_browser() -> Path:
     return browsers[0]
 
 
+def _run_render(args: list[str], log_path: Path) -> int:
+    """Run a headless render without pipe capture.
+
+    Chromium-family browsers (notably on macOS) leave helper processes
+    holding the inherited stderr open after the main process exits; with
+    capture_output=True, subprocess.run() then blocks on pipe EOF until the
+    timeout even though the PDF was written. Redirecting to a file waits on
+    the direct child only.
+    """
+    with open(log_path, "wb") as sink:
+        result = subprocess.run(
+            args, stdout=sink, stderr=subprocess.STDOUT, timeout=180
+        )
+    return result.returncode
+
+
 def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None:
     uri = html_path.resolve().as_uri()
     with tempfile.TemporaryDirectory(prefix="deccan-render-") as profile:
@@ -98,26 +114,27 @@ def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None
             str(browser),
             "--headless=new",
             "--disable-gpu",
+            "--no-first-run",
+            "--no-default-browser-check",
             f"--user-data-dir={profile}",
             "--no-pdf-header-footer",
             f"--print-to-pdf={pdf_path.resolve()}",
             uri,
         ]
-        result = subprocess.run(
-            base_args, capture_output=True, text=True, timeout=180
-        )
-        if result.returncode != 0 or not pdf_path.is_file():
+        log_path = Path(profile) / "render.log"
+        returncode = _run_render(base_args, log_path)
+        if returncode != 0 or not pdf_path.is_file():
             # Root/container environments (CI) need --no-sandbox; end-user
             # machines do not, so it is retry-only, never the default.
             retry = base_args[:1] + ["--no-sandbox"] + base_args[1:]
-            result = subprocess.run(
-                retry, capture_output=True, text=True, timeout=180
-            )
-        if result.returncode != 0 or not pdf_path.is_file():
-            raise RuntimeError(
-                f"Headless render failed (exit {result.returncode}): "
-                f"{(result.stderr or '').strip()[-400:]}"
-            )
+            returncode = _run_render(retry, log_path)
+        if returncode != 0 or not pdf_path.is_file():
+            tail = ""
+            try:
+                tail = log_path.read_text(errors="replace").strip()[-400:]
+            except OSError:
+                pass
+            raise RuntimeError(f"Headless render failed (exit {returncode}): {tail}")
 
 
 def write_pdf(
