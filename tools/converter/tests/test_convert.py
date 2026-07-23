@@ -33,7 +33,16 @@ def inputs(sample_md, sample_html, sample_docx, sample_xlsx, sample_pptx, sample
     }
 
 
-@pytest.mark.parametrize("pair", sorted(matrix.SUPPORTED_PAIRS))
+# PDF-output pairs carry the browser marker: CI's ubuntu test job deselects
+# them (its snap-packaged Chromium hangs headless); the PDF pipeline is
+# covered by the post-build smoke tests on the Windows/macOS runners.
+@pytest.mark.parametrize(
+    "pair",
+    [
+        pytest.param(pair, marks=pytest.mark.browser) if pair[1] == "pdf" else pair
+        for pair in sorted(matrix.SUPPORTED_PAIRS)
+    ],
+)
 def test_supported_pair_converts(pair, inputs, tmp_path):
     src_fmt, dst_fmt = pair
     if dst_fmt == "pdf" and not browser_available():
