@@ -93,8 +93,10 @@ jobs:
           '@ | Set-Content smoke.md
           # The exe is a windowed app: launch it via Start-Process so the
           # shell waits, and read the .log it writes when no console exists.
+          # Argument values must be space-free: Start-Process joins the
+          # ArgumentList with spaces without quoting.
           $p = Start-Process -FilePath ./dist/deccan-convert.exe -ArgumentList @(
-            'smoke.md','-o','smoke.pdf','--title','Smoke Test','--type','Report','--prepared-by','CI'
+            'smoke.md','-o','smoke.pdf','--title','Smoke-Test','--type','Report','--prepared-by','CI'
           ) -Wait -PassThru -NoNewWindow
           if (Test-Path smoke.pdf.log) { Get-Content smoke.pdf.log }
           if ($p.ExitCode -ne 0) { throw "converter exited $($p.ExitCode)" }
@@ -105,7 +107,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           printf '# Smoke Test\n\nA one-section document to exercise the full pipeline.\n' > smoke.md
-          ./dist/deccan-convert smoke.md -o smoke.pdf --title "Smoke Test" --type Report --prepared-by "CI"
+          ./dist/deccan-convert smoke.md -o smoke.pdf --title "Smoke-Test" --type Report --prepared-by "CI"
           test -f smoke.pdf
           if [ -f smoke.pdf.log ]; then cat smoke.pdf.log; ! grep -q FAIL smoke.pdf.log; fi
 
