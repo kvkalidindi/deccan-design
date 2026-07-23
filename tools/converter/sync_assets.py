@@ -117,6 +117,18 @@ def build_base_docx(dotx: Path, out: Path) -> bytes:
     return out.read_bytes()
 
 
+def _zip_contents_equal(a: bytes, b: bytes) -> bool:
+    """True when two zip packages hold the same entries with the same bytes."""
+    import io
+
+    with zipfile.ZipFile(io.BytesIO(a)) as za, zipfile.ZipFile(io.BytesIO(b)) as zb:
+        names_a = [i.filename for i in za.infolist()]
+        names_b = [i.filename for i in zb.infolist()]
+        if names_a != names_b:
+            return False
+        return all(za.read(n) == zb.read(n) for n in names_a)
+
+
 def expected_copies() -> dict[Path, bytes]:
     """Every straight-copy destination (flat + kit) -> expected bytes."""
     result: dict[Path, bytes] = {}
@@ -165,7 +177,11 @@ def check() -> None:
             tmp_path = Path(tmp.name)
         try:
             fresh = build_base_docx(REPO / src_rel, tmp_path)
-            if base.read_bytes() != fresh:
+            # Compare zip CONTENTS, not raw bytes: DEFLATE output differs
+            # across zlib builds (e.g. the Windows CI runner), so a committed
+            # base and a freshly regenerated one may differ byte-wise while
+            # being identical in every entry.
+            if not _zip_contents_equal(base.read_bytes(), fresh):
                 problems.append(f"drift:   {base_name} differs from regenerated output")
         finally:
             tmp_path.unlink(missing_ok=True)
