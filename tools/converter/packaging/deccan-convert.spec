@@ -87,7 +87,7 @@ if sys.platform == "darwin":
         icon=str(_icon_icns) if _icon_icns.is_file() else None,
         bundle_identifier="com.deccanchemicals.deccan-convert",
         info_plist={
-            "CFBundleShortVersionString": "1.0.0",
+            "CFBundleShortVersionString": "1.0.1",
             "NSHighResolutionCapable": True,
         },
     )
