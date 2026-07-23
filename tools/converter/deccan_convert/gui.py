@@ -89,6 +89,22 @@ class ConverterApp:
         self._detail_row(5, "Version", "version")
         self._detail_combo(6, "Classification", "classification", CLASSIFICATIONS)
 
+        ttk.Label(self.details, text="Word template").grid(
+            row=7, column=0, sticky="w", padx=4, pady=2
+        )
+        self.template_var = tk.StringVar(value="document")
+        self.template_box = ttk.Combobox(
+            self.details, textvariable=self.template_var, state="disabled",
+            values=["document", "technical-spec", "policy", "customer-letter"],
+        )
+        self.template_box.grid(row=7, column=1, sticky="ew", padx=4, pady=2)
+
+        self.logo_var = tk.BooleanVar(value=False)
+        self.logo_check = ttk.Checkbutton(
+            self.details, text="Use graphical logo on cover", variable=self.logo_var
+        )
+        self.logo_check.grid(row=8, column=0, columnspan=2, sticky="w", padx=4, pady=2)
+
         # --- output path ---
         ttk.Label(frame, text="Save as").grid(row=4, column=0, sticky="w", **pad)
         self.output_var = tk.StringVar()
@@ -103,7 +119,10 @@ class ConverterApp:
         self.convert_btn = ttk.Button(
             frame, text="Convert", command=self.start_conversion, state="disabled"
         )
-        self.convert_btn.grid(row=5, column=0, columnspan=3, sticky="ew", **pad)
+        self.convert_btn.grid(row=5, column=0, columnspan=2, sticky="ew", **pad)
+        ttk.Button(frame, text="Export design kit…", command=self.export_kit).grid(
+            row=5, column=2, sticky="ew", **pad
+        )
         self.progress = ttk.Progressbar(frame, mode="indeterminate")
         self.progress.grid(row=6, column=0, columnspan=3, sticky="ew", padx=10)
 
@@ -201,6 +220,14 @@ class ConverterApp:
         )
         in_fmt = matrix.detect_format(Path(self.input_var.get()))
         self._set_details_enabled(in_fmt in matrix.DOCUMENT_FORMATS)
+        # Template flavors apply to Word output only; the logo option applies
+        # to any format with a cover (everything except md and xlsx).
+        self.template_box.configure(state="readonly" if fmt == "docx" else "disabled")
+        if fmt != "docx":
+            self.template_var.set("document")
+        self.logo_check.configure(
+            state="normal" if fmt in ("html", "pdf", "docx", "pptx") else "disabled"
+        )
 
     def _set_details_enabled(self, enabled: bool) -> None:
         state = "normal" if enabled else "disabled"
@@ -241,22 +268,41 @@ class ConverterApp:
         self.working = True
         self.convert_btn.configure(state="disabled")
         self.progress.start(12)
+        template = self.template_var.get() or "document"
+        logo = bool(self.logo_var.get())
         thread = threading.Thread(
-            target=self._worker, args=(input_path, output_path, metadata), daemon=True
+            target=self._worker,
+            args=(input_path, output_path, metadata, template, logo),
+            daemon=True,
         )
         thread.start()
 
-    def _worker(self, input_path: Path, output_path: Path, metadata) -> None:
+    def _worker(self, input_path: Path, output_path: Path, metadata, template, logo) -> None:
         try:
             result = convert(
                 input_path,
                 output_path,
                 metadata=metadata,
                 log=lambda msg: self.queue.put(("log", msg)),
+                template=template,
+                logo=logo,
             )
             self.queue.put(("done", result))
         except Exception as exc:
             self.queue.put(("error", f"{exc}"))
+
+    def export_kit(self) -> None:
+        chosen = filedialog.askdirectory(title="Export design kit to…")
+        if not chosen:
+            return
+        from deccan_convert.kit import export_kit
+
+        try:
+            target = export_kit(Path(chosen))
+        except (FileNotFoundError, FileExistsError, OSError) as exc:
+            self.log(f"Export failed: {exc}", "error")
+            return
+        self.log(f"Design kit written to {target}")
 
     def _poll_queue(self) -> None:
         try:

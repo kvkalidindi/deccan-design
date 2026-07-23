@@ -48,7 +48,9 @@ Launch with no arguments (double-click). Pick the input file; the output-format 
 deccan-convert INPUT (-o OUTPUT | --to FORMAT)
                [--title T] [--subtitle S] [--type Report] [--prepared-by WHO]
                [--date "July 2026"] [--version 1.0] [--classification Internal]
-               [--no-verify]
+               [--template document|technical-spec|policy|customer-letter]
+               [--logo] [--no-verify]
+deccan-convert --export-kit DIR
 ```
 
 Examples:
@@ -69,6 +71,18 @@ Exit codes: `0` success · `1` unexpected error · `2` unsupported conversion or
 On the Windows build (a windowed app), CLI output is also written to `<output>.log` beside the converted file when no console is attached.
 
 Every PDF the tool produces is verified against the print contract automatically (cover page 1 without footer, body pages with the running footer, end page without footer) — the same check `tools/Render-DeccanDocumentPdf.ps1 -Verify` performs, with no external dependencies. `--no-verify` skips it.
+
+## Template flavors (`--template`, Word output only)
+
+Word output can inherit any of the four Word template families: `document` (default), `technical-spec`, `policy`, `customer-letter`. Selecting a flavor also implies its default document type (Specification / Policy / Letter) when the input carries none. The flavor option applies to `.docx` output only — HTML/PDF flow through the single canonical slot template, and spreadsheets/decks have exactly one design by construction (the restyle track preserves the source's structure and applies the one token recipe).
+
+## Logo option (`--logo`)
+
+By default covers carry the sanctioned *text* wordmark ("Deccan Fine Chemicals" with the blue rule) — resolution- and network-proof. `--logo` (or the GUI checkbox) swaps the cover mark for the graphical Deccan wordmark from the **bundled** asset: embedded as a data URI in HTML/PDF, as an image part in docx/pptx. Nothing is ever fetched; the end page keeps the text mark.
+
+## Export kit — equip any offline endpoint (`--export-kit DIR`)
+
+The binary carries the complete design system, not just what it needs to convert. `deccan-convert --export-kit DIR` writes `DIR/deccan-design-kit/` containing every Office template (4 Word, 3 Excel, 3 PowerPoint), the Google Workspace files, both email signatures, and the Anthropic Claude skill (rules, tokens, print contract, slot template, logo assets), plus a README covering per-user template installation and how to equip a Claude environment offline (copy `skill/` to `<repo>/.claude/skills/deccan-design/`). One downloaded binary makes any machine a fully-equipped deccan-design endpoint — no repo checkout, no network, no admin rights.
 
 ## Document metadata
 

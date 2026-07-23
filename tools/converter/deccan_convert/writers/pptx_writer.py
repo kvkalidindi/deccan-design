@@ -43,7 +43,10 @@ _CHART_TYPES = (MSO_SHAPE_TYPE.CHART, MSO_SHAPE_TYPE.EMBEDDED_OLE_OBJECT)
 
 
 def restyle_pptx(
-    source: Path, path: Path, log: Callable[[str], None] | None = None
+    source: Path,
+    path: Path,
+    log: Callable[[str], None] | None = None,
+    logo: bool = False,
 ) -> tuple[Path, list[str]]:
     say = log or (lambda _msg: None)
     warnings: list[str] = []
@@ -60,7 +63,7 @@ def restyle_pptx(
         content = _harvest(slide, index, warnings)
         new_slide = deck.slides.add_slide(blank_layout)
         if index == 0 and content["looks_like_cover"]:
-            _build_cover(deck, new_slide, content)
+            _build_cover(deck, new_slide, content, logo=logo)
         elif content["is_section_break"]:
             _build_section(deck, new_slide, content)
         else:
@@ -198,10 +201,19 @@ def _blue_rule(slide, left, top, width=0.6):
 # --- slide builders (geometry mirrors the bundled deck's sample slides) -------
 
 
-def _build_cover(deck, slide, content) -> None:
-    box = _textbox(slide, 0.6, 2.8, 11.0, 0.4)
-    _set_run(box.text_frame.paragraphs[0].add_run(), "Deccan Fine Chemicals",
-             SANS_TEXT, 12, True, STONE_900)
+def _build_cover(deck, slide, content, logo: bool = False) -> None:
+    if logo:
+        # Graphical wordmark from the bundled asset (never fetched); the
+        # text mark is the sanctioned fallback everywhere else.
+        from pptx.util import Inches
+
+        slide.shapes.add_picture(
+            str(asset_path("logo.png")), Inches(0.6), Inches(2.7), height=Inches(0.5)
+        )
+    else:
+        box = _textbox(slide, 0.6, 2.8, 11.0, 0.4)
+        _set_run(box.text_frame.paragraphs[0].add_run(), "Deccan Fine Chemicals",
+                 SANS_TEXT, 12, True, STONE_900)
     _blue_rule(slide, 0.6, 3.5)
     box = _textbox(slide, 0.6, 3.7, 11.0, 1.4)
     _set_run(box.text_frame.paragraphs[0].add_run(),

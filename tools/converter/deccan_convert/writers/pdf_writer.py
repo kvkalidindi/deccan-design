@@ -110,10 +110,13 @@ def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None
 
 
 def write_pdf(
-    ir: DocumentIR, path: Path, log: Callable[[str], None] | None = None
+    ir: DocumentIR,
+    path: Path,
+    log: Callable[[str], None] | None = None,
+    logo: bool = False,
 ) -> Path:
     say = log or (lambda _msg: None)
-    html_content = render_html(ir)
+    html_content = render_html(ir, logo=logo)
 
     try:
         browser = find_browser()

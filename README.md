@@ -66,7 +66,8 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 **Deccan Convert** is a downloadable utility for Windows 11 and macOS that takes an existing artifact — `.md`, HTML, Word `.docx`, Excel `.xlsx`, PowerPoint `.pptx`, PDF, or a Google Docs / Sheets / Slides export — and produces a version rendered under the deccan-design principles, in your choice of supported output format. It runs entirely in user space; no admin rights needed.
 
 - **Download:** `deccan-convert-windows-x64.exe` or `deccan-convert-macos-arm64.zip` from the [releases page](https://github.com/kvkalidindi/deccan-design/releases) (tags named `converter-v*`). Like the installers, the binaries are **unsigned by design** — the same SmartScreen / Gatekeeper steps above apply.
-- **Use:** double-click for the GUI, or script it: `deccan-convert report.docx -o report.pdf --classification Internal`.
+- **Use:** double-click for the GUI, or script it: `deccan-convert report.docx -o report.pdf --classification Internal`. Word output can target any template family (`--template policy`), and `--logo` puts the graphical wordmark on the cover (bundled asset — nothing fetched).
+- **Offline design kit:** `deccan-convert --export-kit DIR` writes the complete design system out of the binary — all Office/Workspace templates, signatures, and the Claude skill — so any endpoint is fully equipped with one download, no network or repo checkout needed.
 - Documents (md / html / docx / pdf) convert freely between document formats; workbooks and decks restyle in place (data and formulas untouched). Every PDF it produces is verified against the print contract automatically.
 - **Google Workspace:** File → Download as docx/xlsx/pptx → convert → re-upload to Drive.
 

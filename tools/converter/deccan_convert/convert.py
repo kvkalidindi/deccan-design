@@ -33,6 +33,8 @@ def convert(
     metadata: Metadata | None = None,
     log: Callable[[str], None] | None = None,
     verify: bool = True,
+    template: str = "document",
+    logo: bool = False,
 ) -> ConversionResult:
     say = log or (lambda _msg: None)
     input_path = Path(input_path)
@@ -50,11 +52,19 @@ def convert(
     out_fmt = matrix.detect_format(output_path)
     matrix.check_pair(in_fmt, out_fmt)
 
+    if template != "document" and out_fmt != "docx":
+        raise ValueError(
+            "Template flavors apply to Word (.docx) output only - the other "
+            "formats have exactly one design by construction. Drop the "
+            "template option or choose docx output."
+        )
+
     if in_fmt in matrix.DOCUMENT_FORMATS:
         return _convert_document(
-            input_path, output_path, in_fmt, out_fmt, metadata, say, verify
+            input_path, output_path, in_fmt, out_fmt, metadata, say, verify,
+            template=template, logo=logo,
         )
-    return _restyle(input_path, output_path, in_fmt, say)
+    return _restyle(input_path, output_path, in_fmt, say, logo=logo)
 
 
 def _convert_document(
@@ -65,6 +75,8 @@ def _convert_document(
     metadata: Metadata | None,
     say: Callable[[str], None],
     verify: bool,
+    template: str = "document",
+    logo: bool = False,
 ) -> ConversionResult:
     from deccan_convert.readers import read_document
     from deccan_convert.writers import write_document
@@ -76,7 +88,7 @@ def _convert_document(
         ir.metadata = _merge_metadata(ir.metadata, metadata)
 
     say("Applying deccan-design v2.0")
-    written = write_document(ir, output_path, out_fmt, log=say)
+    written = write_document(ir, output_path, out_fmt, log=say, template=template, logo=logo)
 
     result = ConversionResult(output_path=written, warnings=list(ir.warnings))
 
@@ -105,7 +117,11 @@ def _merge_metadata(extracted: Metadata, provided: Metadata) -> Metadata:
 
 
 def _restyle(
-    input_path: Path, output_path: Path, in_fmt: str, say: Callable[[str], None]
+    input_path: Path,
+    output_path: Path,
+    in_fmt: str,
+    say: Callable[[str], None],
+    logo: bool = False,
 ) -> ConversionResult:
     say(f"Restyling {in_fmt}: {input_path.name}")
     if in_fmt == "xlsx":
@@ -115,6 +131,6 @@ def _restyle(
     else:
         from deccan_convert.writers.pptx_writer import restyle_pptx
 
-        written, warnings = restyle_pptx(input_path, output_path, log=say)
+        written, warnings = restyle_pptx(input_path, output_path, log=say, logo=logo)
     say(f"Wrote {written}")
     return ConversionResult(output_path=written, warnings=warnings)

@@ -28,11 +28,29 @@ def build_parser() -> argparse.ArgumentParser:
             "Google Docs/Sheets/Slides: download as docx/xlsx/pptx first."
         ),
     )
-    parser.add_argument("input", help="input file (.md .html .docx .xlsx .pptx .pdf)")
+    parser.add_argument(
+        "input", nargs="?", help="input file (.md .html .docx .xlsx .pptx .pdf)"
+    )
     out = parser.add_mutually_exclusive_group()
     out.add_argument("-o", "--output", help="output file path (format from extension)")
     out.add_argument(
         "--to", choices=matrix.FORMATS, help="output format (writes next to the input)"
+    )
+    parser.add_argument(
+        "--template",
+        default="document",
+        choices=("document", "technical-spec", "policy", "customer-letter"),
+        help="Word template flavor (docx output only; default: document)",
+    )
+    parser.add_argument(
+        "--logo", action="store_true",
+        help="use the graphical Deccan wordmark on the cover (bundled asset, "
+             "embedded - nothing is fetched)",
+    )
+    parser.add_argument(
+        "--export-kit", metavar="DIR",
+        help="write the bundled design kit (all templates, signatures, and the "
+             "Claude skill) to DIR/deccan-design-kit and exit",
     )
     parser.add_argument("--title", default="", help="document title")
     parser.add_argument("--subtitle", default="", help="document subtitle")
@@ -60,6 +78,20 @@ def build_parser() -> argparse.ArgumentParser:
 def run_cli(argv: list[str]) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
+
+    if args.export_kit:
+        from deccan_convert.kit import export_kit
+
+        try:
+            target = export_kit(Path(args.export_kit))
+        except (FileNotFoundError, FileExistsError, OSError) as exc:
+            print(f"error: {exc}")
+            return 2
+        print(f"Design kit written to {target}")
+        return 0
+
+    if not args.input:
+        parser.error("input file required (or use --export-kit DIR)")
 
     input_path = Path(args.input)
     if args.output:
@@ -99,6 +131,8 @@ def run_cli(argv: list[str]) -> int:
             metadata=metadata,
             log=say,
             verify=not args.no_verify,
+            template=args.template,
+            logo=args.logo,
         )
     except (UnsupportedConversion, FileNotFoundError, ValueError) as exc:
         say(f"error: {exc}")

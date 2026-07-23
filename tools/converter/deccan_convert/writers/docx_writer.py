@@ -36,16 +36,32 @@ STONE_700 = RGBColor(0x57, 0x53, 0x4E)
 STONE_900 = RGBColor(0x1C, 0x19, 0x17)
 MONO_FONT = "Cascadia Mono"
 
-_COVER_PLACEHOLDERS = {
-    "DOCUMENT": lambda m: m.document_type.upper(),
-    "Document title": lambda m: m.title,
-    "One-sentence subtitle": lambda m: m.subtitle,
+# Word template flavors: selector key -> (bundled base asset, implied
+# default document type). All four bases share the same structure; they
+# differ in cover placeholder text and end-page classification line, which
+# is why the cover is filled positionally rather than by placeholder text.
+WORD_TEMPLATES = {
+    "document": ("deccan-document-base.docx", ""),
+    "technical-spec": ("deccan-technical-spec-base.docx", "Specification"),
+    "policy": ("deccan-policy-base.docx", "Policy"),
+    "customer-letter": ("deccan-customer-letter-base.docx", "Letter"),
 }
 
 _META_TABLE_ORDER = ("document_type", "prepared_by", "date", "version", "classification")
 
 
-def write_docx(ir: DocumentIR, path: Path) -> Path:
+def write_docx(
+    ir: DocumentIR, path: Path, template: str = "document", logo: bool = False
+) -> Path:
+    if template not in WORD_TEMPLATES:
+        raise ValueError(
+            f"Unknown Word template '{template}'. "
+            f"Choose one of: {', '.join(WORD_TEMPLATES)}."
+        )
+    base_asset, implied_type = WORD_TEMPLATES[template]
+    if implied_type and not ir.metadata.document_type.strip():
+        ir.metadata.document_type = implied_type
+
     meta = ir.metadata.with_defaults()
     missing = meta.missing_required()
     if missing:
@@ -54,9 +70,9 @@ def write_docx(ir: DocumentIR, path: Path) -> Path:
             "These are never invented — provide them explicitly."
         )
 
-    doc = docx.Document(str(asset_path("deccan-document-base.docx")))
+    doc = docx.Document(str(asset_path(base_asset)))
 
-    _fill_cover(doc, meta)
+    _fill_cover(doc, meta, logo=logo)
     _fill_end_page(doc, meta)
     anchor = _clear_sample_body(doc)
     _build_body(doc, anchor, ir)
@@ -97,14 +113,27 @@ def _index_of(paragraphs, target) -> int:
     raise ValueError("paragraph not found in document body")
 
 
-def _fill_cover(doc, meta) -> None:
+def _fill_cover(doc, meta, logo: bool = False) -> None:
+    """Positional cover fill — works for every Word template variant.
+
+    All four bases share the cover structure: the wordmark paragraph comes
+    first, then (skipping empty spacer paragraphs) the eyebrow, title, and
+    subtitle paragraphs, then the 2x5 metadata table. Only the placeholder
+    strings differ per variant, so position, not text, is the contract.
+    """
     breaks = _section_break_paragraphs(doc)
     paragraphs = doc.paragraphs
     cover_end = _index_of(paragraphs, breaks[0]) if breaks else len(paragraphs)
-    for p in paragraphs[:cover_end]:
-        replacer = _COVER_PLACEHOLDERS.get(p.text.strip())
-        if replacer is not None:
-            _replace_paragraph_text(p, replacer(meta))
+    non_empty = [p for p in paragraphs[:cover_end] if p.text.strip()]
+    if len(non_empty) < 4:
+        raise RuntimeError("Cover does not have the expected wordmark + 3 text paragraphs")
+
+    wordmark, eyebrow, title, subtitle = non_empty[0], non_empty[1], non_empty[2], non_empty[3]
+    _replace_paragraph_text(eyebrow, meta.document_type.upper())
+    _replace_paragraph_text(title, meta.title)
+    _replace_paragraph_text(subtitle, meta.subtitle)
+    if logo:
+        _swap_wordmark_for_logo(wordmark)
 
     # Cover metadata strip: a 2-row table, labels then values.
     if doc.tables:
@@ -115,9 +144,24 @@ def _fill_cover(doc, meta) -> None:
                 _replace_paragraph_text(cell.paragraphs[0], value)
 
 
+def _swap_wordmark_for_logo(paragraph) -> None:
+    """Replace the text wordmark with the bundled logo image (cover only).
+
+    Logo-usage rules: minimum 12 mm in print — 0.4" (10.2 mm) is below that
+    for the square canvas, so use 0.5" height. The end page keeps the text
+    mark; the graphical mark appears once, on the cover.
+    """
+    for run in paragraph.runs:
+        run.text = ""
+    run = paragraph.runs[0] if paragraph.runs else paragraph.add_run()
+    run.add_picture(str(asset_path("logo.png")), height=Inches(0.5))
+
+
 def _fill_end_page(doc, meta) -> None:
+    # End-page classification line: "<CLASSIFICATION> · INTERNAL USE" (the
+    # placeholder classification differs per template variant).
     for p in doc.paragraphs:
-        if "INTERNAL USE" in p.text.upper() and "·" in p.text:
+        if re.fullmatch(r"[A-Z]+ · INTERNAL USE", p.text.strip()):
             _replace_paragraph_text(p, f"{meta.classification.upper()} · INTERNAL USE")
 
 
