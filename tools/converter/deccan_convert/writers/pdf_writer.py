@@ -116,6 +116,15 @@ def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None
             "--disable-gpu",
             "--no-first-run",
             "--no-default-browser-check",
+            # macOS: startup touches the system Keychain to set up cookie
+            # encryption, which can block forever in headless/CI sessions.
+            # Mock keychain + basic password store skip that path entirely
+            # (no-ops on Windows/Linux).
+            "--use-mock-keychain",
+            "--password-store=basic",
+            "--disable-sync",
+            "--disable-extensions",
+            "--mute-audio",
             f"--user-data-dir={profile}",
             "--no-pdf-header-footer",
             f"--print-to-pdf={pdf_path.resolve()}",
