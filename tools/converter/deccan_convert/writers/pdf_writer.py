@@ -43,16 +43,19 @@ def _windows_candidates() -> list[Path]:
 
 
 def _macos_candidates() -> list[Path]:
+    # Chrome before Edge: Edge on macOS is unreliable in headless print mode
+    # (it can hang without producing a PDF).
     apps = [
-        "Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
         "Google Chrome.app/Contents/MacOS/Google Chrome",
         "Chromium.app/Contents/MacOS/Chromium",
+        "Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
     ]
     roots = [Path("/Applications"), Path.home() / "Applications"]
     return [root / app for root in roots for app in apps]
 
 
-def find_browser() -> Path:
+def find_browsers() -> list[Path]:
+    """All Chromium-family browsers on this machine, in preference order."""
     if sys.platform == "win32":
         candidates = _windows_candidates()
         which_names = ["msedge", "chrome"]
@@ -65,19 +68,27 @@ def find_browser() -> Path:
             "chromium", "chromium-browser", "google-chrome",
             "google-chrome-stable", "microsoft-edge",
         ]
-    for candidate in candidates:
-        if candidate.is_file():
-            return candidate
-    for name in which_names:
-        found = shutil.which(name)
-        if found:
-            return Path(found)
+    found: list[Path] = []
     env_override = os.environ.get("DECCAN_CONVERT_BROWSER")
     if env_override and Path(env_override).is_file():
-        return Path(env_override)
-    raise BrowserNotFound(
-        "No Microsoft Edge, Google Chrome, or Chromium installation was found."
-    )
+        found.append(Path(env_override))
+    for candidate in candidates:
+        if candidate.is_file() and candidate not in found:
+            found.append(candidate)
+    for name in which_names:
+        located = shutil.which(name)
+        if located and Path(located) not in found:
+            found.append(Path(located))
+    return found
+
+
+def find_browser() -> Path:
+    browsers = find_browsers()
+    if not browsers:
+        raise BrowserNotFound(
+            "No Microsoft Edge, Google Chrome, or Chromium installation was found."
+        )
+    return browsers[0]
 
 
 def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None:
@@ -118,9 +129,8 @@ def write_pdf(
     say = log or (lambda _msg: None)
     html_content = render_html(ir, logo=logo)
 
-    try:
-        browser = find_browser()
-    except BrowserNotFound:
+    browsers = find_browsers()
+    if not browsers:
         fallback = path.with_suffix(".html")
         fallback.write_text(html_content, encoding="utf-8")
         ir.warnings.append(
@@ -131,9 +141,18 @@ def write_pdf(
         say(ir.warnings[-1])
         return fallback
 
-    say(f"Rendering PDF via {browser.name}")
     with tempfile.TemporaryDirectory(prefix="deccan-html-") as tmp:
         html_path = Path(tmp) / "document.html"
         html_path.write_text(html_content, encoding="utf-8")
-        render_pdf_from_html(html_path, path, browser)
-    return path
+        last_error: Exception | None = None
+        for browser in browsers:
+            say(f"Rendering PDF via {browser.name}")
+            try:
+                render_pdf_from_html(html_path, path, browser)
+                return path
+            except (RuntimeError, subprocess.TimeoutExpired) as exc:
+                # A browser can be present but broken for headless printing
+                # (e.g. Edge on macOS hanging) — fall through to the next one.
+                last_error = exc
+                say(f"{browser.name} failed to render; trying the next browser")
+    raise RuntimeError(f"All PDF render attempts failed: {last_error}")
