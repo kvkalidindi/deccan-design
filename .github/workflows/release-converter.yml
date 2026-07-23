@@ -18,6 +18,14 @@ on:
       - 'tools/converter/**'
       - '.github/workflows/release-converter.yml'
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: >-
+          Create a release with this tag (e.g. converter-v1.0.0). The tag is
+          created by the release action at the built commit. Leave empty for
+          a build-only dry run.
+        required: false
+        default: ''
 
 defaults:
   run:
@@ -125,10 +133,14 @@ jobs:
 
   release:
     needs: build
-    if: startsWith(github.ref, 'refs/tags/converter-v')
+    if: >-
+      startsWith(github.ref, 'refs/tags/converter-v') ||
+      (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -146,10 +158,11 @@ jobs:
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
+          tag_name: ${{ env.RELEASE_TAG }}
           files: |
             assets/*
           body: |
-            ## Deccan Convert — ${{ github.ref_name }}
+            ## Deccan Convert — ${{ env.RELEASE_TAG }}
 
             Converts .md / .html / .docx / .xlsx / .pptx / .pdf documents
             (and Google Workspace exports) into deccan-design v2.0 artifacts.
