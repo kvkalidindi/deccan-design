@@ -11,6 +11,8 @@ on:
       - 'docs/specimen/**'
       - 'docs/admin-guide/**'
       - 'skill/assets/templates/**'
+      - 'templates/**'
+      - 'tools/templates-build/**'
   pull_request:
     branches: [main]
     paths:
@@ -18,6 +20,8 @@ on:
       - 'docs/specimen/**'
       - 'docs/admin-guide/**'
       - 'skill/assets/templates/**'
+      - 'templates/**'
+      - 'tools/templates-build/**'
   workflow_dispatch:
 
 jobs:
@@ -50,3 +54,26 @@ jobs:
             fi
           done
           echo "All eight slot placeholders present."
+
+  templates-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install template tooling deps
+        run: pip install python-pptx
+
+      - name: Template compliance scan
+        run: python tools/templates-build/verify_templates.py
+
+      - name: Derived templates are current
+        run: python tools/templates-build/build_templates.py --check
+
+      - name: Converter bundled assets are current
+        run: python tools/converter/sync_assets.py --check
