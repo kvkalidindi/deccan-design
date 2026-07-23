@@ -124,8 +124,21 @@ def default_output_path(input_path: str | Path, output_format: str) -> Path:
     """
     input_path = Path(input_path)
     candidate = input_path.with_suffix(default_extension(output_format))
-    if candidate.resolve() == input_path.resolve():
+    if _same_path(candidate, input_path):
         candidate = input_path.with_name(
             input_path.stem + "-deccan" + default_extension(output_format)
         )
     return candidate
+
+
+def _same_path(a: Path, b: Path) -> bool:
+    """Identity comparison that also catches case-insensitive filesystems."""
+    import os
+
+    if a.exists() and b.exists():
+        try:
+            return os.path.samefile(a, b)
+        except OSError:
+            pass
+    # Fall back to a normalised-case comparison when one side doesn't exist yet.
+    return os.path.normcase(str(a.resolve())) == os.path.normcase(str(b.resolve()))

@@ -19,6 +19,8 @@ import openpyxl
 from openpyxl.styles import Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
+from deccan_convert.limits import MAX_XLSX_COLS, MAX_XLSX_ROWS
+
 # Token values (skill/references/tokens.md).
 _STONE_50 = "FAFAF9"
 _STONE_100 = "F5F5F4"
@@ -63,20 +65,35 @@ def restyle_xlsx(
         if ws.sheet_state != "visible":
             continue
         say(f"Restyling sheet '{ws.title}'")
-        _restyle_sheet(ws)
+        clamped = _restyle_sheet(ws)
+        if clamped:
+            warnings.append(clamped)
 
     wb.template = False
     wb.save(str(path))
     return path, warnings
 
 
-def _restyle_sheet(ws) -> None:
+def _restyle_sheet(ws) -> str | None:
     if ws.max_row is None or ws.max_column is None:
-        return
+        return None
+
+    # ws.max_row/max_column come from the untrusted workbook. A single cell at
+    # XFD1048576 declares a ~17-billion-cell rectangle; iter_rows would
+    # materialise and style every cell → OOM. Clamp to a sane styled region.
+    max_row = min(ws.max_row, MAX_XLSX_ROWS)
+    max_col = min(ws.max_column, MAX_XLSX_COLS)
+    clamped = None
+    if ws.max_row > MAX_XLSX_ROWS or ws.max_column > MAX_XLSX_COLS:
+        clamped = (
+            f"xlsx: sheet '{ws.title}' declares {ws.max_row} rows x "
+            f"{ws.max_column} cols; styling was capped at "
+            f"{max_row} x {max_col}. Cell values are unchanged."
+        )
 
     header_rows = _header_row_count(ws)
 
-    for row in ws.iter_rows(min_row=1, max_row=ws.max_row, max_col=ws.max_column):
+    for row in ws.iter_rows(min_row=1, max_row=max_row, max_col=max_col):
         for cell in row:
             is_header = cell.row <= header_rows
             if is_header:
@@ -91,7 +108,7 @@ def _restyle_sheet(ws) -> None:
                 cell.border = _BODY_BORDER
 
     # Column widths: keep author-set widths, give unset columns breathing room.
-    for col_idx in range(1, ws.max_column + 1):
+    for col_idx in range(1, max_col + 1):
         letter = get_column_letter(col_idx)
         dim = ws.column_dimensions[letter]
         if not dim.customWidth or (dim.width or 0) < _MIN_COL_WIDTH:
@@ -102,6 +119,7 @@ def _restyle_sheet(ws) -> None:
         ws.freeze_panes = f"A{header_rows + 1}"
 
     ws.sheet_view.showGridLines = False
+    return clamped
 
 
 def _header_row_count(ws) -> int:

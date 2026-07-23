@@ -125,6 +125,13 @@ def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None
             "--disable-sync",
             "--disable-extensions",
             "--mute-audio",
+            # Security: block all network egress during the render. A correct
+            # deccan document is fully self-contained (bundled CSS, inline
+            # data: images), so nothing legitimate is fetched. This blackholes
+            # any subresource that might survive input sanitization, defeating
+            # beaconing / internal SSRF / tracking from an attacker document.
+            "--host-resolver-rules=MAP * ~NOTFOUND",
+            "--disable-features=Translate,OptimizationHints",
             f"--user-data-dir={profile}",
             "--no-pdf-header-footer",
             f"--print-to-pdf={pdf_path.resolve()}",
@@ -133,10 +140,13 @@ def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None
         log_path = Path(profile) / "render.log"
         returncode = _run_render(base_args, log_path)
         if returncode != 0 or not pdf_path.is_file():
-            # Root/container environments (CI) need --no-sandbox; end-user
-            # machines do not, so it is retry-only, never the default.
-            retry = base_args[:1] + ["--no-sandbox"] + base_args[1:]
-            returncode = _run_render(retry, log_path)
+            # The Chromium sandbox is a key defense when rendering untrusted
+            # content, so --no-sandbox is never used automatically on an
+            # end-user machine. Root/container CI images cannot run the
+            # sandbox, so the retry is gated behind an explicit opt-in.
+            if os.environ.get("DECCAN_CONVERT_ALLOW_NO_SANDBOX") == "1":
+                retry = base_args[:1] + ["--no-sandbox"] + base_args[1:]
+                returncode = _run_render(retry, log_path)
         if returncode != 0 or not pdf_path.is_file():
             tail = ""
             try:

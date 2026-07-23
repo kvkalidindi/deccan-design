@@ -38,6 +38,36 @@ _KEPT_ATTRS = {
     "td": {"colspan", "rowspan"},
 }
 
+# Link schemes allowed to survive in <a href>. Everything else (javascript:,
+# data:, file:, vbscript:, ...) is dropped so no active or local-file link is
+# baked into the output.
+_SAFE_HREF_PREFIXES = ("http:", "https:", "mailto:", "tel:", "#", "/", "./", "../")
+
+
+def _sanitize_url_attrs(element: Tag, kept: dict) -> bool:
+    """Neutralise dangerous URL attributes. Returns False if the whole element
+    should be dropped.
+
+    The produced HTML is rendered in a headless browser with network and
+    file:// access, so a surviving remote/file <img src> would beacon out,
+    reach internal hosts (SSRF), or probe the local filesystem at conversion
+    time. Legitimate images arrive as inline data: URIs (mammoth), so images
+    are restricted to data: and everything else is dropped. <a href> is
+    scheme-allow-listed.
+    """
+    if element.name == "img":
+        src = (kept.get("src") or "").strip()
+        if not src.lower().startswith("data:image/"):
+            return False  # drop remote/file/unknown image references entirely
+    if element.name == "a" and "href" in kept:
+        href = kept["href"].strip()
+        # Collapse whitespace/control chars that could smuggle a scheme past
+        # the prefix check (e.g. "java\tscript:").
+        collapsed = "".join(href.split()).lower()
+        if not collapsed.startswith(_SAFE_HREF_PREFIXES):
+            kept.pop("href")
+    return True
+
 
 def sanitize_fragment(soup_fragment: Tag) -> None:
     """In-place: strip everything outside the component vocabulary."""
@@ -66,6 +96,9 @@ def sanitize_fragment(soup_fragment: Tag) -> None:
         for attr in keep_attrs:
             if element.has_attr(attr):
                 kept[attr] = element[attr]
+        if not _sanitize_url_attrs(element, kept):
+            element.decompose()
+            continue
         element.attrs = kept
 
     # b/i to semantic equivalents.

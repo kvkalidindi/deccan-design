@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
+
+# Browser-marked tests render through headless Chromium; on root/container
+# test hosts the Chromium sandbox is unavailable, so opt into the gated
+# --no-sandbox retry for the test session only.
+os.environ.setdefault("DECCAN_CONVERT_ALLOW_NO_SANDBOX", "1")
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

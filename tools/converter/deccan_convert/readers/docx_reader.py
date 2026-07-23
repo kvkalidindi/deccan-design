@@ -14,6 +14,7 @@ import mammoth
 from docx import Document
 
 from deccan_convert.ir import DOCUMENT_TYPES, DocumentIR, Metadata
+from deccan_convert.limits import guard_no_doctype, guard_zip
 from deccan_convert.readers._sections import build_sections
 
 # Word style names (including the deccan .dotx custom styles) -> components.
@@ -30,6 +31,11 @@ r[style-name='Code Inline'] => code
 
 def read_docx(path: Path) -> DocumentIR:
     warnings: list[str] = []
+
+    # docx is a ZIP; guard against decompression bombs, and reject a DTD in
+    # document.xml (mammoth's minidom parser expands internal entities).
+    guard_zip(path)
+    guard_no_doctype(path, "word/document.xml")
 
     with open(path, "rb") as fh:
         result = mammoth.convert_to_html(fh, style_map=_STYLE_MAP)

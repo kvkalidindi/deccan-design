@@ -118,3 +118,13 @@ Builds run in `.github/workflows/release-converter.yml`: unit tests on Ubuntu, P
 - **No Office COM automation** — restyling uses python-docx / openpyxl / python-pptx only.
 - **No font embedding** — typefaces are referenced by name; the OS-native chains resolve them.
 - **PDF via browser headless print only**, per the print policy.
+
+### Security posture (untrusted input)
+
+The converter treats every input document as untrusted. Hardening applied (see `deccan_convert/limits.py` and `tests/test_security.py`):
+
+- **No render-time network access.** The HTML sanitizer drops all remote and `file:` image references (only inline `data:image/` survives) and scheme-allow-lists links, so a converted document cannot beacon out, reach internal hosts (SSRF), or probe the local filesystem. The headless PDF render additionally runs with all DNS blackholed (`--host-resolver-rules=MAP * ~NOTFOUND`) as defense-in-depth, and the Chromium sandbox stays on (the `--no-sandbox` retry is opt-in via `DECCAN_CONVERT_ALLOW_NO_SANDBOX=1`, for root/CI only).
+- **Resource-exhaustion guards.** Inputs over 100 MB are rejected; Office files are checked for zip-bomb decompression (per-entry size, total size, ratio, entry count) before opening; a DTD/entity declaration in `word/document.xml` is rejected (blocks mammoth billion-laughs expansion); spreadsheet styling is capped to a sane row/column region; PDF parsing is page-capped; and data-URI images are size-bounded before decode.
+- **XXE is not exploitable** — python-docx, openpyxl, and python-pptx all parse with external-entity resolution disabled.
+- **No source overwrite.** The input-equals-output guard uses filesystem identity (`os.path.samefile`), which also catches case-insensitive filesystems.
+- HTML metadata is HTML-escaped; `<script>`/`<style>`/`<svg>`/`<iframe>` and inline `style` attributes are stripped with content.

@@ -25,6 +25,24 @@ from docx.shared import Inches, Pt, RGBColor
 
 from deccan_convert.assets import asset_path
 from deccan_convert.ir import DocumentIR
+from deccan_convert.limits import MAX_DATA_URI_B64
+
+
+def _decode_data_image(src: str) -> io.BytesIO | None:
+    """Decode a data:image/ URI to a stream, or None if absent/oversized.
+
+    The encoded length is checked before decoding so an attacker-supplied
+    multi-hundred-MB data URI cannot force a huge allocation.
+    """
+    if not src.startswith("data:image/") or "," not in src:
+        return None
+    payload = src.split(",", 1)[1]
+    if len(payload) > MAX_DATA_URI_B64:
+        return None
+    try:
+        return io.BytesIO(base64.b64decode(payload))
+    except Exception:
+        return None
 
 # Design tokens (skill/references/tokens.md) needed for direct formatting
 # where the template styles don't reach (table cells, hyperlinks).
@@ -349,10 +367,9 @@ class _BodyBuilder:
 
     def _image(self, node: Tag) -> None:
         src = node.get("src", "")
-        if src.startswith("data:image/"):
+        stream = _decode_data_image(src)
+        if stream is not None:
             try:
-                payload = src.split(",", 1)[1]
-                stream = io.BytesIO(base64.b64decode(payload))
                 p = self.doc.add_paragraph()
                 run = p.add_run()
                 run.add_picture(stream, width=Inches(5.3))
@@ -400,10 +417,9 @@ class _BodyBuilder:
 
     def _inline_image(self, paragraph, node: Tag) -> None:
         src = node.get("src", "")
-        if src.startswith("data:image/"):
+        stream = _decode_data_image(src)
+        if stream is not None:
             try:
-                payload = src.split(",", 1)[1]
-                stream = io.BytesIO(base64.b64decode(payload))
                 paragraph.add_run().add_picture(stream, width=Inches(5.3))
                 return
             except Exception:

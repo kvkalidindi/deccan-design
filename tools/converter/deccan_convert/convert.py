@@ -2,12 +2,21 @@
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Callable
 
 from deccan_convert import matrix
 from deccan_convert.ir import DocumentIR, Metadata
+from deccan_convert.limits import guard_input_size, guard_zip
+
+
+def _same_file(a: Path, b: Path) -> bool:
+    try:
+        return os.path.samefile(a, b)
+    except OSError:
+        return a.resolve() == b.resolve()
 
 
 @dataclass
@@ -22,6 +31,9 @@ def extract_metadata(input_path: Path) -> Metadata:
     fmt = matrix.detect_format(input_path)
     if fmt not in matrix.DOCUMENT_FORMATS:
         return Metadata()
+    # The GUI calls this on file selection, before convert() runs — apply the
+    # same input guard so a bomb picked in the picker can't hang the UI.
+    guard_input_size(Path(input_path))
     from deccan_convert.readers import read_document
 
     return read_document(input_path, fmt).metadata
@@ -42,11 +54,16 @@ def convert(
     if not input_path.is_file():
         raise FileNotFoundError(f"Input file not found: {input_path}")
 
-    if output_path.exists() and output_path.resolve() == input_path.resolve():
+    # Identity check, not string equality: resolve() misses case-insensitive
+    # filesystems (Windows/macOS), where Report.docx and report.docx are the
+    # same file and the writer would otherwise overwrite the source.
+    if output_path.exists() and _same_file(output_path, input_path):
         raise ValueError(
             "The output path is the input file itself; choose a different "
             "name so the source is not overwritten."
         )
+
+    guard_input_size(input_path)
 
     in_fmt = matrix.detect_format(input_path)
     out_fmt = matrix.detect_format(output_path)
@@ -124,6 +141,7 @@ def _restyle(
     logo: bool = False,
 ) -> ConversionResult:
     say(f"Restyling {in_fmt}: {input_path.name}")
+    guard_zip(input_path)  # xlsx/pptx are ZIP containers — reject bombs first
     if in_fmt == "xlsx":
         from deccan_convert.writers.xlsx_writer import restyle_xlsx
 

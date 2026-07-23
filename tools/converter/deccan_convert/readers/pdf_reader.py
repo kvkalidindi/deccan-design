@@ -18,6 +18,7 @@ from pathlib import Path
 import pdfplumber
 
 from deccan_convert.ir import DocumentIR, Metadata
+from deccan_convert.limits import MAX_PDF_PAGES, guard_input_size
 
 FIDELITY_WARNING = (
     "PDF input is text extraction only: images are dropped, exact styling is "
@@ -34,6 +35,10 @@ def read_pdf(path: Path) -> DocumentIR:
     warnings = [FIDELITY_WARNING]
     metadata = Metadata()
 
+    # Bound the untrusted PDF: raw size, and the number of pages actually
+    # parsed (pdfminer has quadratic/recursive DoS history on crafted files).
+    guard_input_size(path)
+
     lines: list[tuple[float, str]] = []  # (font size, text)
     body_size = 12.0
     with pdfplumber.open(path) as pdf:
@@ -43,9 +48,17 @@ def read_pdf(path: Path) -> DocumentIR:
         if info.get("Author"):
             metadata.prepared_by = str(info["Author"]).strip()
 
+        pages = pdf.pages
+        if len(pages) > MAX_PDF_PAGES:
+            warnings.append(
+                f"PDF has {len(pages)} pages; only the first {MAX_PDF_PAGES} "
+                "were processed."
+            )
+            pages = pages[:MAX_PDF_PAGES]
+
         size_counter: Counter[float] = Counter()
         page_lines: list[list[tuple[float, str]]] = []
-        for page in pdf.pages:
+        for page in pages:
             current: list[tuple[float, str]] = []
             words = page.extract_words(extra_attrs=["size", "top"])
             if not words:

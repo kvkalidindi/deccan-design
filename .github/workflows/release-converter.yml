@@ -86,6 +86,10 @@ jobs:
       - name: Smoke test — md to pdf with print-contract verification (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
+        env:
+          # CI runners may need the Chromium sandbox disabled; end-user
+          # machines never take this path (it is opt-in only).
+          DECCAN_CONVERT_ALLOW_NO_SANDBOX: '1'
         run: |
           @'
           # Smoke Test
