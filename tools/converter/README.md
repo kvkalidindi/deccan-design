@@ -92,10 +92,33 @@ Markdown front matter keys: `title`, `subtitle`, `type`, `author`, `date`, `vers
 
 ## The binaries are unsigned (by design)
 
-Same policy as the MSI/PKG installers (admin guide, PRD §1.4 Decision 5):
+Same policy as the MSI/PKG installers (admin guide, PRD §1.4 Decision 5). The binaries carry no code-signing certificate, so SmartScreen and Gatekeeper flag them as from an unknown publisher with no download reputation — this is expected, not a fault in the file. Verify the SHA256 and proceed.
 
-- **Windows — SmartScreen:** *"Windows protected your PC"* → **More info** → **Run anyway**. IT can whitelist the release SHA256 in Intune / Endpoint Central.
-- **macOS — Gatekeeper:** unzip, then right-click `Deccan Convert.app` → **Open** → **Open** on first launch (or System Settings → Privacy & Security → **Open Anyway**). Jamf pushes bypass the prompt.
+### Windows — the download and the first run each warn once
+
+1. **Edge download** shows *"deccan-convert-windows-x64.exe isn't commonly downloaded"*. Click the **⋯** on that download entry → **Keep** → **Keep anyway**. (Chrome shows a **▲** → **Keep**.)
+2. **On first launch**, SmartScreen shows *"Windows protected your PC"* with only a **Don't run** button visible. Click the **More info** link — a **Run anyway** button appears. Click it. (SmartScreen remembers the choice; it won't prompt again for that copy.)
+3. **To avoid the prompt entirely**, clear the mark-of-the-web before launching, in PowerShell:
+
+   ```powershell
+   Unblock-File .\deccan-convert-windows-x64.exe
+   ```
+
+4. **Verify the download** matches the release build:
+
+   ```powershell
+   Get-FileHash .\deccan-convert-windows-x64.exe -Algorithm SHA256
+   ```
+
+   Compare the hash against `SHA256SUMS.txt` on the release page.
+
+### macOS — Gatekeeper
+
+Unzip, then right-click `Deccan Convert.app` → **Open** → **Open** on first launch (or System Settings → Privacy & Security → **Open Anyway**). Verify with `shasum -a 256 deccan-convert-macos-arm64.zip`.
+
+### Managed fleet (no prompts)
+
+Deploy via Microsoft Intune, ManageEngine Endpoint Central, or Jamf. MDM-deployed apps bypass SmartScreen / Gatekeeper entirely, and IT can whitelist the release SHA256 for reputation. This is the sanctioned path for wide rollout; the per-user download warnings above only affect people downloading the binary directly from GitHub.
 
 Checksums for every release are in the attached `SHA256SUMS.txt`.
 

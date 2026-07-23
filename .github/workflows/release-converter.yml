@@ -198,17 +198,36 @@ jobs:
             | `deccan-convert-windows-x64.exe` | Windows 11 (also Windows 10) |
             | `deccan-convert-macos-arm64.zip` | macOS (Apple silicon) |
 
-            Verify downloads against `SHA256SUMS.txt`.
+            Verify downloads against `SHA256SUMS.txt` (see below).
 
             ### The binaries are unsigned (by design)
 
-            **Windows — SmartScreen:** on first run, select **More info →
-            Run anyway**. IT can whitelist the SHA256 above in Intune /
-            Endpoint Central for silent rollout.
+            SmartScreen / Gatekeeper flag these because the binaries carry no
+            code-signing certificate ("Publisher: Unknown") and have no
+            download reputation yet — not because anything is wrong with the
+            file. Verify the SHA256 and proceed.
+
+            **Windows — the download and first run each prompt once:**
+            1. **Edge download** shows *"isn't commonly downloaded"*. Click the
+               **⋯** on that download → **Keep** → **Keep anyway**.
+               (Chrome: **▲** → **Keep**.)
+            2. **On first launch** SmartScreen shows *"Windows protected your
+               PC"* with only a **Don't run** button. Click the **More info**
+               link — a **Run anyway** button then appears. Click it.
+            3. **Prefer no prompt?** In PowerShell, clear the mark-of-the-web
+               first: `Unblock-File .\deccan-convert-windows-x64.exe`
+            4. **Verify** before trusting:
+               `Get-FileHash .\deccan-convert-windows-x64.exe -Algorithm SHA256`
+               and compare against `SHA256SUMS.txt`.
+
+            For the managed fleet, IT can whitelist the SHA256 in Intune /
+            Endpoint Central; MDM-deployed apps bypass SmartScreen entirely.
 
             **macOS — Gatekeeper:** unzip, then **right-click → Open → Open**
             on first launch (or System Settings → Privacy & Security →
-            **Open Anyway**). Jamf deployments bypass the prompt.
+            **Open Anyway**). Verify with
+            `shasum -a 256 deccan-convert-macos-arm64.zip`. Jamf deployments
+            bypass the prompt.
 
             ### Usage
 
