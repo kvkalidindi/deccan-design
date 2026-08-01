@@ -10,7 +10,7 @@ This document covers Claude.ai only. The Windows MSI (Office templates, Outlook 
 |---|---|
 | Plan | Claude **Team** or **Enterprise**. Org-level Skills upload requires Enterprise; some Team plans see it in private preview. Org-level Custom instructions are available on both. |
 | Role | Workspace admin (formerly "Owner") for the Deccan Fine Chemicals workspace. |
-| Bundle | `deccan-design-skill-bundle.zip` from the v2.0.1 GitHub release: <https://github.com/kvkalidindi/deccan-design/releases/download/v2.0.1/deccan-design-skill-bundle.zip>. 47 KB, 13 files, single top-level folder `deccan-design/`. |
+| Bundle | `deccan-design-skill-bundle.zip` from the v2.0.2 GitHub release: <https://github.com/kvkalidindi/deccan-design/releases/download/v2.0.2/deccan-design-skill-bundle.zip>. 48 KB, 13 files, single top-level folder `deccan-design/`. Built from the tagged tree by the `release-design-system` workflow. |
 | Preferences text | `claude/personal-preferences.md` in the repo, also bundled in the MSI at `%APPDATA%\deccan-design\docs\personal-preferences.md`. |
 
 ## Step 1 — Verify availability
@@ -28,7 +28,7 @@ This document covers Claude.ai only. The Windows MSI (Office templates, Outlook 
 3. Drop the zip into the upload area, or browse to it.
 4. Claude.ai validates the bundle:
    - Checks `SKILL.md` is present at the root of `deccan-design/` inside the zip.
-   - Parses the frontmatter — expects `name`, `description`, `version`. The skill ships with `name: deccan-design`, `version: 2.0.0`.
+   - Parses the frontmatter — expects `name`, `description`, `version`. The skill ships with `name: deccan-design`, `version: 2.0.2`.
    - Refuses bundles that contain executable code, oversized assets, or invalid frontmatter. The deccan-design bundle is markdown + HTML + image / vector assets only and passes cleanly.
 5. **Distribution scope.** Select **All workspace members**. (If the workspace uses SCIM-synced groups, scoping by group is supported; for the design system, all-members is correct.)
 6. **Activation behaviour.** Select **Auto-activate** so the skill loads in every member's session by default. The alternative — *Discoverable* — requires each user to enable it manually and slows adoption to a crawl.
@@ -78,7 +78,9 @@ Use the procedure in `verification-prompt.md` (next to this file). Hand the prom
 
 ## Maintenance
 
-- **Skill updates.** When a new version of `deccan-design` ships (e.g., v2.1), rebuild the bundle (the GitHub release for the new tag will carry it), and re-upload via **Settings → Workspace → Skills → deccan-design → Replace bundle**. Members pick up the new version on next session.
+- **Skill updates.** When a new version of `deccan-design` ships, push the `v*` tag: the `release-design-system` workflow builds `deccan-design-skill-bundle.zip` from the tagged tree and attaches it to the release. Download it and re-upload via **Settings → Workspace → Skills → deccan-design → Replace bundle**. Members pick up the new version on next session — the frontmatter `version` in the skill list is how you confirm which bundle is live.
+
+  A workspace re-upload is independent of the endpoint installers. The MSI / PKG carry their own copy of the skill to `%APPDATA%\Anthropic\Claude\skills\deccan-design\` for Claude Code and Claude Desktop, and only refresh when IT rebuilds and pushes a new package.
 - **Preferences updates.** Edit the workspace custom instructions in place. Changes take effect immediately for new sessions.
 - **Deprecation.** To retire `deccan-design`, remove the skill via **Settings → Workspace → Skills → deccan-design → Remove** and clear the workspace custom instructions. Members fall back to per-user preferences. No data is destroyed.
 

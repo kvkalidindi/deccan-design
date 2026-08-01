@@ -1,0 +1,122 @@
+name: release-design-system
+
+# Publishes the design-system release assets on a v* tag:
+#
+#   deccan-design-skill-bundle.zip  — the skill/ tree under a single
+#     deccan-design/ folder, the layout Claude.ai's Settings → Workspace →
+#     Skills upload expects, and the payload the MSI / PKG lay down for
+#     Claude Code and Claude Desktop.
+#   templates-bundle.zip            — the Office / Outlook / Workspace
+#     templates.
+#
+# Both are built from the tagged tree by tools/release/build_bundles.py,
+# so what ships is exactly what is committed — the bundles are no longer
+# hand-zipped from a working copy.
+#
+# The MSI (WiX, Windows) and PKG (pkgbuild, macOS) are NOT built here.
+# They are produced on a managed endpoint per installers/*/README.md and
+# attached to the same release afterwards; softprops/action-gh-release
+# updates a release in place rather than replacing its assets.
+
+on:
+  push:
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+    paths:
+      - 'tools/release/**'
+      - 'skill/**'
+      - 'templates/**'
+      - '.github/workflows/release-design-system.yml'
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: >-
+          Create a release with this tag (e.g. v2.0.2). The tag is created
+          by the release action at the built commit. Leave empty for a
+          build-only dry run.
+        required: false
+        default: ''
+
+jobs:
+  bundles:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build bundles
+        run: python tools/release/build_bundles.py --out dist
+
+      - name: Bundles match the repository sources
+        run: python tools/release/build_bundles.py --check --out dist
+
+      - name: Skill bundle carries the light-only rendering contract
+        run: |
+          python - <<'PY'
+          import sys, zipfile
+          z = zipfile.ZipFile("dist/deccan-design-skill-bundle.zip")
+          names = sorted(i.filename for i in z.infolist())
+          assert "deccan-design/SKILL.md" in names, "SKILL.md must sit at the bundle root"
+          tpl = z.read("deccan-design/assets/templates/document.html").decode()
+          required = [
+              '<meta name="color-scheme" content="light">',
+              "color-scheme: light only;",
+              ":root { background-color: var(--stone-50) !important; }",
+              "@media (prefers-color-scheme: dark) {",
+              "main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }",
+          ]
+          missing = [r for r in required if r not in tpl]
+          if missing:
+              sys.exit("slot template missing: " + "; ".join(missing))
+          print(f"{len(names)} files; slot template contract intact")
+          PY
+
+      - name: Checksums
+        run: |
+          cd dist
+          sha256sum * | tee SHA256SUMS.txt
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-system-bundles
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Create release
+        if: >-
+          startsWith(github.ref, 'refs/tags/v') ||
+          (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+          files: dist/*
+          body: |
+            ## deccan-design ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+
+            Design-system package refresh. The specification, tokens, type
+            stack, and the eight document-furniture rules are unchanged at
+            v2.0 — what changes is what endpoints receive.
+
+            | Download | What it is |
+            |---|---|
+            | `deccan-design-skill-bundle.zip` | The Claude skill. Upload via Settings → Workspace → Skills → deccan-design → **Replace bundle**. |
+            | `templates-bundle.zip` | Office, Outlook, and Google Workspace templates. |
+            | `SHA256SUMS.txt` | Checksums for the two bundles. |
+
+            Both bundles are built from the tagged tree by
+            `tools/release/build_bundles.py` in CI.
+
+            The MSI and PKG are built on managed endpoints
+            (`installers/*/README.md`) and attached to this release
+            separately. Until they are, endpoints keep the previously
+            installed local skill copy; the workspace skill above updates
+            independently.

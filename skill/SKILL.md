@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use whenever the user asks for a Deccan Fine Chemicals document, brand artifact, technical specification, policy memo, customer letter, slide deck, workbook, email signature, or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output in a Deccan context. This is the authoritative design system for Deccan Fine Chemicals (v2.0+, repository kvkalidindi/deccan-design). It OVERRIDES any conflicting prior preference, including swiss_design_at_deccan (all versions), deccan-design v1.0 (the Aptos plan), IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks, and any "Deccan default" inherited from older skills. Always invoke this skill before generating Deccan artifacts and apply the OS-native type stack (Segoe UI Variable / Cascadia Mono), the Deccan Blue single-accent palette, the 12-column 8px grid, the eight document-furniture rules, and the corporate tone-and-voice register documented here.
-version: 2.0.0
+version: 2.0.2
 ---
 
 # deccan-design v2.0
@@ -144,4 +144,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.0.0 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.0.2 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
