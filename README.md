@@ -2,7 +2,7 @@
 
 The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice, and audit-grade document furniture.
 
-Version 2.0 — May 2026.
+Design system **v2.0** · current package release **v2.1.2** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## What is in this repository
 
@@ -16,11 +16,13 @@ Version 2.0 — May 2026.
 | [`templates/`](templates/) | Native Office (Word / Excel / PowerPoint), Outlook signature, and Google Workspace templates. |
 | [`installers/`](installers/) | Windows MSI (WiX v4) and macOS PKG (pkgbuild / productbuild). Both **unsigned**. |
 | [`tools/converter/`](tools/converter/) | **Deccan Convert** — the document converter utility for Windows 11 / macOS (source + build). |
-| [`claude/`](claude/) | The personal-preferences text users paste into Claude.ai → Settings → Profile → Preferences. |
+| [`claude/`](claude/) | The instruction blocks pasted into Claude.ai: `workspace-instructions.md` (admins → Workspace → Custom instructions, org-wide) and `personal-preferences.md` (each user → Profile → Preferences). |
+| [`plugin/`](plugin/) + [`.claude-plugin/`](.claude-plugin/) | Claude Code plugin and marketplace manifest. The skill tree is mirrored under `plugin/skills/`; CI gates the mirror against `skill/`. |
+| [`tools/release/`](tools/release/) | `build_bundles.py` — builds the release bundles and enforces the frontmatter, revision-marker, attribution, and plugin-mirror gates. |
 
 ## Install
 
-The current design-system release is **v2.1.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
+The current design-system release is **v2.1.2** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
 
 - **Claude Code (recommended):** the repo is a plugin marketplace — one-time setup, automatic updates from `main` afterwards:
 
@@ -71,11 +73,28 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 | Generate an HTML document | Fill the slots in `skill/assets/templates/document.html`. |
 | Ask Claude for any document | In any Claude surface, ask: *"Generate a one-page status memo about &lt;topic&gt;."* deccan-design applies by default to any stylized document — the request does not need to mention Deccan — and attributes the document to you. |
 
+## How the system reaches Claude
+
+| Surface | Channel | Updates |
+|---|---|---|
+| Claude.ai web, Claude Desktop, iOS / Android | Workspace skill + workspace custom instructions (admin-deployed) | Admin re-uploads the bundle per release; a release automatically opens a checklist issue as the reminder |
+| Claude Code | Plugin marketplace (`deccan-design@deccan`) | Automatic from `main` after a one-time install |
+| Any session that can fetch | Canonical slot template on `main` | Instant — the skill compares the bundled and canonical revisions and fills whichever is newer, so a lagging bundle still produces current documents |
+| Deccan Convert endpoints | Kit embedded in the binary | Automatic — the binary self-updates from `converter-v*` releases |
+| Word / Excel / PowerPoint / Outlook | MSI / PKG | IT rebuild + MDM push. The installers' Claude-skill copy is legacy |
+
+Two behaviours are worth stating plainly because they affect every member:
+
+- **The system is the default**, not an opt-in. Any request for a stylized artifact gets deccan-design whether or not it mentions Deccan — unless the member asks for a different design direction.
+- **Documents are attributed to the person who asked for them.** "Prepared by" resolves to a stated author, else the requesting member's identity, else Claude asks. Repository provenance is never authorship.
+
+Verification for all four surfaces: [`docs/admin-guide/verification-prompt.md`](docs/admin-guide/verification-prompt.md).
+
 ## Deccan Convert — apply the system to existing documents
 
 **Deccan Convert** is a downloadable utility for Windows 11 and macOS that takes an existing artifact — `.md`, HTML, Word `.docx`, Excel `.xlsx`, PowerPoint `.pptx`, PDF, or a Google Docs / Sheets / Slides export — and produces a version rendered under the deccan-design principles, in your choice of supported output format. It runs entirely in user space; no admin rights needed.
 
-- **Download:** `deccan-convert-windows-x64.exe` or `deccan-convert-macos-arm64.zip` from the [releases page](https://github.com/kvkalidindi/deccan-design/releases) (tags named `converter-v*`). Like the installers, the binaries are **unsigned by design** — the same SmartScreen / Gatekeeper steps above apply.
+- **Download:** `deccan-convert-windows-x64.exe` or `deccan-convert-macos-arm64.zip` from the [releases page](https://github.com/kvkalidindi/deccan-design/releases) (tags named `converter-v*`; current: **1.1.0**). One manual download is needed to reach 1.1.0 — builds at 1.0.x predate the self-updater; every release after it installs itself. Like the installers, the binaries are **unsigned by design** — the same SmartScreen / Gatekeeper steps above apply.
 - **Use:** double-click for the GUI, or script it: `deccan-convert report.docx -o report.pdf --classification Internal`. Word output can target any template family (`--template policy`), and `--logo` puts the graphical wordmark on the cover (bundled asset — nothing fetched).
 - **Stays current:** the binary checks the `converter-v*` releases on launch (at most daily), verifies the new build against the release checksum, and swaps itself — so the design kit frozen inside it never goes stale. Opt out per run with `--no-update`, per machine with `DECCAN_CONVERT_NO_UPDATE=1`, or per installation with a `.no-auto-update` file beside the binary.
 - **Offline design kit:** `deccan-convert --export-kit DIR` writes the complete design system out of the binary — all Office/Workspace templates, signatures, and the Claude skill — so any endpoint is fully equipped with one download, no network or repo checkout needed.
@@ -99,7 +118,7 @@ PDFs are not committed to this repository. The OS-native font stack means sandbo
 - `deccan-design v1.0` (the deferred Aptos plan).
 - Any inherited preference for IBM Plex Sans/Mono, Hanken Grotesk, Fira Code, Aptos, Inter, or any "Deccan default" referenced in older personal-preference blocks or memory.
 
-The override is documented in [`claude/personal-preferences.md`](claude/personal-preferences.md) and in `skill/SKILL.md`.
+The override is documented in [`claude/workspace-instructions.md`](claude/workspace-instructions.md), [`claude/personal-preferences.md`](claude/personal-preferences.md), and `skill/SKILL.md`.
 
 ## Specification overview
 
@@ -114,6 +133,8 @@ The complete specification lives in [`docs/spec/deccan-design-spec.html`](docs/s
 | Grid | 12-column, 8 px base, 24 px gutter, 1180 px content max |
 | Body size | 17 px screen / 10.5 pt print |
 | Print page | Letter, 0.8" outside margins, 1" bottom for footer |
+| Colour scheme | Light only — no dark variant; documents pin their canvas so a dark preview host cannot render them dark-on-dark |
+| Attribution | "Prepared by" resolves to the requesting user — stated author, else session identity, else ask. Never the system maintainer |
 | Eight document-furniture rules | See spec §07 and `docs/references/document-furniture.md` |
 
 ## License
@@ -128,4 +149,4 @@ For commercial inquiries about Deccan Fine Chemicals: <https://www.deccanchemica
 
 ---
 
-*deccan-design v2.0 · Office of the SVP, IT &amp; Digital Transformation · Deccan Fine Chemicals Pvt. Ltd. · May 2026.*
+*deccan-design v2.0 (package v2.1.2) · Office of the SVP, IT &amp; Digital Transformation · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*
