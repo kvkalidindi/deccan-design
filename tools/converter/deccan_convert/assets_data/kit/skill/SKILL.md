@@ -45,6 +45,7 @@ Pull these into the artifact every time:
 | Reserved colour | `--deccan-green: #71BF4D` — **logo and sustainability content only**, never a UI accent |
 | Neutral scale | `--stone-50` `#FAFAF9` through `--stone-900` `#1C1917` (ten stops) |
 | Page background | `--paper: #FFFFFF` |
+| Colour scheme | Light only — `color-scheme: light only`, the two `<meta>` declarations, and the pinned canvas rules in `references/tokens.md`. There is no dark variant of this system. |
 | Grid | 12-column, 8px base, 24px gutter, 1180px content max |
 | Body measure | 70 characters on screen, full live content area in print |
 | Body size | 17px screen / 10.5pt print |
@@ -133,6 +134,7 @@ Run this checklist mentally against any artifact before saying it is complete:
 - [ ] Accent is `--deccan-blue`; no secondary accent.
 - [ ] `--deccan-green` only inside logo or sustainability content.
 - [ ] Print background is `#FFFFFF`; stone tints confined to callouts / code / banded rows.
+- [ ] If the artifact is HTML, the light-only rendering contract is present (`color-scheme: light only`, both `<meta>` declarations, pinned canvas rules, print restore) so no section renders dark-on-dark in an in-app or webview preview.
 - [ ] Footer page numbers are bare integers, right-aligned.
 - [ ] End page present, no footer.
 - [ ] No conversational subtitle, no first-person narrator, no exclamation mark, no decorative emoji.

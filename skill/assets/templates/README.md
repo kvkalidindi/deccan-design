@@ -33,6 +33,7 @@ The slot list lives in `document-slots.md`.
 - The deccan-design v2.0 colour and type tokens, declared once at the top.
 - Cover, body, and end-page structure that conforms to the eight document-furniture rules.
 - `@page` print rules for Letter (and A4 by extension).
+- The light-only rendering contract (`references/tokens.md`), so the document previews light-on-white inside hosts that theme their content area dark — the Claude iOS in-app viewer, chat and mail webviews — instead of rendering dark stone text on a dark canvas.
 - All component CSS — headings, body, lists, tables, callouts, code, pull quotes, TOC.
 
 You write the body; the template handles the rest.

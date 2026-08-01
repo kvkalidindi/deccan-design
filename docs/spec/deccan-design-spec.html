@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
   <title>deccan-design v2.0 — design specification</title>
   <style>
     /* ================================================================
        swiss_design_at_deccan v2.0 — design tokens
        ================================================================ */
     :root {
+      color-scheme: light only;
+
       /* Color */
       --deccan-blue:     #164999;
       --deccan-blue-90:  rgba(22, 73, 153, 0.90);
@@ -96,6 +99,32 @@
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
+    }
+
+    /* ----------------------------------------------------------------
+       Light-only rendering contract (skill/references/tokens.md).
+       Preview hosts that paint their own dark canvas — the Claude iOS
+       in-app viewer, chat and mail webviews — would otherwise leave this
+       document's dark stone text on a dark background, readable only
+       where a block declares a background of its own. The canvas is
+       therefore pinned light at a specificity an injected `html` / `body`
+       rule cannot beat, and the @media print block below restores the
+       pure-white paper over it. */
+    :root { background-color: var(--stone-50) !important; }
+    html body {
+      background-color: var(--stone-50) !important;
+      color: var(--stone-800) !important;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { background-color: var(--stone-50) !important; }
+      html body {
+        background-color: var(--stone-50) !important;
+        color: var(--stone-800) !important;
+      }
+      html body .cover,
+      html body .end-page,
+      html body .toc,
+      html body table { background-color: var(--paper) !important; }
     }
 
     /* No rounded structural corners */
@@ -542,6 +571,13 @@
     .end-page { page: end-of-doc; }
 
     @media print {
+
+      /* Pure white paper, over the light-only rendering contract. */
+      :root { background-color: var(--paper) !important; }
+      html body {
+        background-color: var(--paper) !important;
+        color: var(--stone-800) !important;
+      }
       /* Print: keep the cover and end page each on exactly one physical page.
          100vh resolves to the full paper height in print (not the live content
          area), so min-height:100vh causes the cover to overflow into page 2.

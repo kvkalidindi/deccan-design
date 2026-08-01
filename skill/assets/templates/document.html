@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
        deccan-design v2.0 — slot-fill document template
        ================================================================ */
     :root {
+      color-scheme: light only;
+
       --deccan-blue:     #164999;
       --deccan-blue-90:  rgba(22, 73, 153, 0.90);
       --deccan-blue-60:  rgba(22, 73, 153, 0.60);
@@ -76,6 +79,72 @@
       -moz-osx-font-smoothing: grayscale;
       text-rendering: optimizeLegibility;
     }
+    /* ----------------------------------------------------------------
+       Light-only rendering contract  (skill/references/tokens.md)
+       ----------------------------------------------------------------
+       Some hosts preview an HTML document inside their own dark chrome
+       (the Claude iOS in-app viewer, chat and mail webviews, embedded
+       WKWebViews). They darken the page canvas, or inject a dark
+       `body { background: ... !important }` of their own. Every text
+       colour in this system is dark stone on a light surface, so a
+       darkened canvas leaves whole sections rendering dark-on-dark —
+       readable only where a block declares its own background (the TOC,
+       the cover, tables). Three defences, in order:
+
+         1. `color-scheme: light only` plus the matching <meta> — opts the
+            document out of forced darkening wherever the host honours it.
+         2. Canvas backgrounds declared at a specificity above a bare
+            `html` / `body` selector (`:root`, `html body`) and marked
+            !important, so an injected dark rule cannot win the cascade
+            regardless of injection order.
+         3. Opaque light surfaces on the structural blocks, so no section
+            depends on the canvas colour at all.
+
+       The @media print block at the end of this stylesheet restores the
+       pure-white print background over these rules. */
+    :root { background-color: var(--stone-50) !important; }
+    html body {
+      background-color: var(--stone-50) !important;
+      color: var(--stone-800) !important;
+    }
+    main.body, section.section { background-color: var(--stone-50); }
+
+    /* A host that themes embedded content through the dark-mode media
+       query gets the light values re-asserted here. */
+    @media (prefers-color-scheme: dark) {
+      :root { background-color: var(--stone-50) !important; }
+      html body {
+        background-color: var(--stone-50) !important;
+        color: var(--stone-800) !important;
+      }
+      html body .cover,
+      html body .end-page,
+      html body .toc,
+      html body table { background-color: var(--paper) !important; }
+      html body main.body,
+      html body section.section { background-color: var(--stone-50) !important; }
+      html body .callout,
+      html body pre.code-block,
+      html body code,
+      html body thead th,
+      html body tbody tr:nth-child(even) td { background-color: var(--stone-100) !important; }
+      html body h1, html body h2, html body h3, html body h4,
+      html body strong, html body .mark-text, html body .end-mark,
+      html body dl.def dt, html body .cover-meta dd,
+      html body code, html body pre.code-block { color: var(--stone-900) !important; }
+      html body p, html body li, html body em,
+      html body ul, html body ol,
+      html body tbody td, html body .toc li { color: var(--stone-800) !important; }
+      html body .lead, html body dl.def dd, html body .pullquote p,
+      html body thead th, html body .toc-label { color: var(--stone-700) !important; }
+      html body .cover-eyebrow, html body .end-contact { color: var(--stone-600) !important; }
+      html body h1 .num, html body .cover-meta dt, html body .callout .label,
+      html body .end-classification, html body .toc li::before,
+      html body li::marker { color: var(--stone-500) !important; }
+      html body .cover-title { color: var(--deccan-blue) !important; }
+      html body a { color: var(--deccan-blue) !important; }
+    }
+
     img, table, th, td, pre, blockquote, hr,
     .cover, .end-page, .callout, .swatch, .badge,
     .toc, .pullquote, .figure { border-radius: 0; }
@@ -362,7 +431,19 @@
         break-inside: avoid;
       }
 
-      body { background: var(--paper); font-size: 10.5pt; line-height: 1.5; }
+      /* Pure white paper. These selectors match the specificity and
+         !important of the light-only rendering contract above so the
+         stone-50 screen background never reaches print — including when
+         the printing browser is itself in dark mode. */
+      :root { background-color: var(--paper) !important; }
+      html body {
+        background-color: var(--paper) !important;
+        color: var(--stone-800) !important;
+      }
+      html body main.body,
+      html body section.section { background-color: transparent !important; }
+
+      body { font-size: 10.5pt; line-height: 1.5; }
       .shell { padding: 0; max-width: 100%; }
       h1 { font-size: 24pt; }
       h2 { font-size: 16pt; }

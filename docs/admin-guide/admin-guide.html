@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <title>deccan-design v2.0 — administration guide</title>
 <style>
 :root {
+  color-scheme:light only;
   --deccan-blue:#164999; --deccan-blue-30:rgba(22,73,153,0.30);
   --stone-50:#FAFAF9; --stone-100:#F5F5F4; --stone-200:#E7E5E4;
   --stone-500:#78716C; --stone-700:#44403C; --stone-800:#292524; --stone-900:#1C1917;
@@ -16,6 +18,16 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:16px;}
 body{background:var(--stone-50);color:var(--stone-800);font-family:var(--font-sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+/* Light-only rendering contract (skill/references/tokens.md): preview hosts
+   that paint their own dark canvas would otherwise leave dark stone text on a
+   dark background. The @media print block below restores pure white paper. */
+:root{background-color:var(--stone-50)!important;}
+html body{background-color:var(--stone-50)!important;color:var(--stone-800)!important;}
+@media (prefers-color-scheme:dark){
+  :root{background-color:var(--stone-50)!important;}
+  html body{background-color:var(--stone-50)!important;color:var(--stone-800)!important;}
+  html body .cover,html body .end-page,html body .toc,html body table{background-color:var(--paper)!important;}
+}
 .shell{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,64px);}
 .cover{background:var(--paper);min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:96px clamp(20px,4vw,64px) 48px;page-break-after:always;border-bottom:1px solid var(--stone-200);}
 .mark{display:flex;align-items:center;gap:12px;}
@@ -86,6 +98,10 @@ tbody tr:nth-child(even) td{background:var(--stone-50);}
     }
     .end-page { page: end-of-doc; }
 @media print{
+      /* Pure white paper, over the light-only rendering contract. */
+      :root{background-color:var(--paper)!important;}
+      html body{background-color:var(--paper)!important;color:var(--stone-800)!important;}
+
       /* Print: keep the cover and end page each on exactly one physical page.
          100vh resolves to the full paper height in print (not the live content
          area), so min-height:100vh causes the cover to overflow into page 2.
