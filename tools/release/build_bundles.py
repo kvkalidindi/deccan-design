@@ -128,6 +128,37 @@ def verify_revision() -> str:
     return version
 
 
+def verify_frontmatter() -> None:
+    """The frontmatter must pass Claude.ai's skill-upload validation.
+
+    The uploader rejects bundles whose SKILL.md `description` exceeds 1024
+    characters (observed in the admin UI, v2.1.0 bundle refused). Catch it
+    here, where the release is built, instead of at the workspace upload —
+    the one manual step in the pipeline is the worst place to discover it.
+    """
+    text = (REPO / "skill" / "SKILL.md").read_text("utf-8")
+    if not text.startswith("---\n"):
+        raise SystemExit("SKILL.md: frontmatter block missing")
+    front = text.split("---", 2)[1]
+    fields = {}
+    for line in front.splitlines():
+        if line.startswith(("name:", "description:", "version:")):
+            key, _, value = line.partition(":")
+            fields[key] = value.strip()
+    problems = []
+    for required in ("name", "description", "version"):
+        if not fields.get(required):
+            problems.append(f"frontmatter field missing: {required}")
+    description = fields.get("description", "")
+    if len(description) > 1024:
+        problems.append(
+            f"description is {len(description)} characters; Claude.ai's "
+            "skill upload rejects anything over 1024"
+        )
+    if problems:
+        raise SystemExit("SKILL.md frontmatter invalid:\n  " + "\n  ".join(problems))
+
+
 def verify_attribution() -> None:
     """The skill must ship its attribution and default-application policy.
 
@@ -200,6 +231,7 @@ def check_plugin() -> list[str]:
 
 
 def bundles() -> dict[str, dict[str, bytes]]:
+    verify_frontmatter()
     verify_revision()
     verify_attribution()
     return {
