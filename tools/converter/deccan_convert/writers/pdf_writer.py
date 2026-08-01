@@ -109,7 +109,22 @@ def _run_render(args: list[str], log_path: Path) -> int:
 
 def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None:
     uri = html_path.resolve().as_uri()
-    with tempfile.TemporaryDirectory(prefix="deccan-render-") as profile:
+    # Two separate temp directories, both cleaned up leniently.
+    #
+    # The render log is the file the browser's stdout/stderr is redirected
+    # into, so every helper process Chromium spawns inherits that handle and
+    # can outlive the parent that subprocess.run() waited on. Keeping the log
+    # inside the browser's own --user-data-dir therefore made cleanup delete a
+    # file another process still held: on Windows that is a hard
+    # PermissionError (WinError 32), and it fired *after* a successful render,
+    # failing the conversion over a temp file. Separate directories plus
+    # ignore_cleanup_errors mean a lingering handle leaves the OS to reclaim
+    # the directory later instead of destroying a finished document.
+    with tempfile.TemporaryDirectory(
+        prefix="deccan-render-", ignore_cleanup_errors=True
+    ) as profile, tempfile.TemporaryDirectory(
+        prefix="deccan-render-log-", ignore_cleanup_errors=True
+    ) as logdir:
         base_args = [
             str(browser),
             "--headless=new",
@@ -137,7 +152,7 @@ def render_pdf_from_html(html_path: Path, pdf_path: Path, browser: Path) -> None
             f"--print-to-pdf={pdf_path.resolve()}",
             uri,
         ]
-        log_path = Path(profile) / "render.log"
+        log_path = Path(logdir) / "render.log"
         returncode = _run_render(base_args, log_path)
         if returncode != 0 or not pdf_path.is_file():
             # The Chromium sandbox is a key defense when rendering untrusted
