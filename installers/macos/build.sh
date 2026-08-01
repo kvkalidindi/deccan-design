@@ -1,7 +1,7 @@
 #!/bin/bash
 # deccan-design v2.0 — macOS .pkg build
 #
-# Produces an unsigned per-user .pkg at ./deccan-design-2.0.2.pkg.
+# Produces an unsigned per-user .pkg at ./deccan-design-2.1.2.pkg.
 #
 # Run on a macOS machine. Two routes are supported:
 #   1. Packages.app (preferred). Open deccan-design.pkgproj, Build → Build.
@@ -14,7 +14,7 @@ set -e
 
 cd "$(dirname "$0")"
 
-VERSION="2.0.2"
+VERSION="2.1.2"
 PKG_OUT="deccan-design-${VERSION}.pkg"
 ROOT="../.."
 STAGE="build/stage"
