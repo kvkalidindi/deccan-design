@@ -183,6 +183,15 @@ def verify_attribution() -> None:
         problems.append("SKILL.md: description no longer covers non-Deccan-named requests")
     if "## PREPARED_BY resolution" not in slots:
         problems.append("document-slots.md: '## PREPARED_BY resolution' section missing")
+    # A revision of an existing document must be re-based on the template.
+    # Without this rule a session reuses the prior version's stylesheet and
+    # silently reintroduces every rendering defect fixed since that version
+    # was issued — the template-side fixes never apply, because the template
+    # is never opened.
+    if "## Revising an existing document" not in skill:
+        problems.append("SKILL.md: '## Revising an existing document' section missing")
+    if 'name="generator"' not in skill:
+        problems.append("SKILL.md: the generator-meta self-check is missing")
     if problems:
         raise SystemExit(
             "Attribution/default-application policy incomplete:\n  " + "\n  ".join(problems)

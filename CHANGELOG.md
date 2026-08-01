@@ -9,6 +9,12 @@ Two release lines share this repository:
 
 ---
 
+## v2.1.3 — 1 August 2026
+
+**A revised document no longer inherits the old stylesheet.** A v2.0 of a brief first issued in July came out rendering dark-on-dark despite every surface being current. The artifact carried no `color-scheme`, no revision marker, no generator meta and the zero-gutter `main.body` rule — it was the 14 May template verbatim. The skill was not at fault and was demonstrably loaded: the document carries all nine audit-grade elements that shipped hours earlier in v2.1.2. What happened is that the session built the new version from the *previous version of the document* and reused its `<style>` block, so the template was never opened and no template-side fix could apply.
+
+`SKILL.md` § "Revising an existing document" now states the rule: content carries forward, presentation never does — never copy the prior version's stylesheet, head, cover, or end page. It adds a self-check with a single observable: the output must contain the `<meta name="generator">` line, whose absence proves the template was not used. The release build fails if either the section or the self-check is dropped.
+
 ## v2.1.2 — 1 August 2026
 
 **Audit-grade rule moved into the skill.** ISMS / ISO / policy / procedure deliverables must carry a document-control block, revision history, numbered clauses, enforceable "shall" statements, defined terms, RACI, records and retention, control cross-references, and appendices with real instruments. This existed only in the Claude.ai workspace instructions, so it applied on one surface; it is now `SKILL.md` § "Formal deliverables are audit-grade" and reaches every surface, with a verification-checklist item.
