@@ -28,7 +28,7 @@ This document covers Claude.ai only. The Windows MSI (Office templates, Outlook 
 3. Drop the zip into the upload area, or browse to it.
 4. Claude.ai validates the bundle:
    - Checks `SKILL.md` is present at the root of `deccan-design/` inside the zip.
-   - Parses the frontmatter — expects `name`, `description`, `version`. The skill ships with `name: deccan-design`, `version: 2.0.2`.
+   - Parses the frontmatter — expects `name`, `description`, `version`. The skill ships with `name: deccan-design` and the `version` of the release you downloaded — that value is what the workspace skill list shows, so it is how you confirm which bundle is live.
    - Refuses bundles that contain executable code, oversized assets, or invalid frontmatter. The deccan-design bundle is markdown + HTML + image / vector assets only and passes cleanly.
 5. **Distribution scope.** Select **All workspace members**. (If the workspace uses SCIM-synced groups, scoping by group is supported; for the design system, all-members is correct.)
 6. **Activation behaviour.** Select **Auto-activate** so the skill loads in every member's session by default. The alternative — *Discoverable* — requires each user to enable it manually and slows adoption to a crawl.
