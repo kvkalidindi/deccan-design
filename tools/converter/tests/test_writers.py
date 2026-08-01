@@ -46,6 +46,17 @@ class TestHtmlWriter:
         assert ":root { background-color: var(--paper) !important; }" in html
         assert "html body {\n        background-color: var(--paper) !important;" in html
 
+    def test_output_identifies_its_template_revision(self, sample_md):
+        """A produced document must say which slot template made it.
+
+        The template is fetched straight from the raw GitHub URL by sessions
+        that have no installed skill; without a marker there is no way to
+        tell a current copy from the one that renders dark-on-dark.
+        """
+        html = render_html(_ir(sample_md))
+        assert "slot-fill document template · revision " in html
+        assert '<meta name="generator" content="deccan-design v2.0 · slot template ' in html
+
     def test_body_keeps_its_side_gutter(self, sample_md):
         """`main.body` outranks `.shell`, so it must restate the gutter.
 

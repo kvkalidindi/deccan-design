@@ -86,7 +86,40 @@ def _entries(src_root: str, files: list[str], dst_root: str) -> dict[str, bytes]
     return out
 
 
+def skill_version() -> str:
+    """The `version:` from the skill frontmatter — the release's identity."""
+    for line in (REPO / "skill" / "SKILL.md").read_text("utf-8").splitlines():
+        if line.startswith("version:"):
+            return line.split(":", 1)[1].strip()
+    raise SystemExit("skill/SKILL.md has no version in its frontmatter")
+
+
+def verify_revision() -> str:
+    """The slot template must name the revision it ships as.
+
+    Sessions fetch document.html straight from the raw URL, where the only
+    thing that says which copy they got is the marker in the file. A marker
+    left behind at the previous release is worse than none: it reads as
+    current. Both the header comment and the generator meta must agree with
+    the skill version, or the release does not build.
+    """
+    version = skill_version()
+    template = (REPO / "skill" / "assets" / "templates" / "document.html").read_text("utf-8")
+    required = [
+        f"slot-fill document template · revision {version}",
+        f'<meta name="generator" content="deccan-design v2.0 · slot template {version}">',
+    ]
+    missing = [marker for marker in required if marker not in template]
+    if missing:
+        raise SystemExit(
+            "document.html does not identify itself as revision "
+            f"{version}; missing:\n  " + "\n  ".join(missing)
+        )
+    return version
+
+
 def bundles() -> dict[str, dict[str, bytes]]:
+    verify_revision()
     return {
         SKILL_BUNDLE: _entries("skill", SKILL_FILES, "deccan-design"),
         TEMPLATES_BUNDLE: _entries("templates", TEMPLATE_FILES, "templates"),
@@ -103,6 +136,7 @@ def _write(path: Path, entries: dict[str, bytes]) -> None:
 
 
 def build(out_dir: Path) -> None:
+    print(f"  slot template identifies as revision {verify_revision()}")
     out_dir.mkdir(parents=True, exist_ok=True)
     for name, entries in bundles().items():
         path = out_dir / name
