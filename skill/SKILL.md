@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+, repo kvkalidindi/deccan-design); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including swiss_design_at_deccan (all versions), deccan-design v1.0 (the Aptos plan), IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks, and any older "Deccan default". Attribute every document to the requesting user, never to the system maintainer (see Attribution). Apply the OS-native type stack (Segoe UI Variable / Cascadia Mono), the Deccan Blue single-accent palette, the 12-column 8px grid, the eight document-furniture rules, and the corporate tone-and-voice register documented here.
-version: 2.1.1
+version: 2.1.2
 ---
 
 # deccan-design v2.0
@@ -130,6 +130,22 @@ The read-aloud test: if a sentence would feel out of place in a board paper, an 
 
 PDF is **on-demand by the user**. Do not invoke COM automation (`Word.Application`, `PowerPoint.Application`) to produce PDFs on this machine — those calls hang on the Trust Center dialog. Document the export path instead: File → Export → Create PDF/XPS, or `wkhtmltopdf` against HTML.
 
+## Formal deliverables are audit-grade
+
+A management-system, standards, or governance document — ISMS, ISO, policy, procedure, control standard, SOP — is written to be audited, not skimmed. Summary-level output fails these on contact with an assessor. When the user asks for one, produce all of:
+
+- **Document-control block** on or immediately after the cover: owner, approver, effective date, review cycle, document ID.
+- **Revision history** table: version, date, author, summary of change, approver.
+- **Numbered clauses** (1, 1.1, 1.1.1) so every statement is individually citable.
+- **Enforceable language**: "shall" for requirements, "should" for recommendations, "may" for options — used consistently and never interchangeably.
+- **Defined terms** section for every term carrying normative weight in the document.
+- **RACI** for the roles the document assigns work to.
+- **Records and retention**: what evidence the process produces, where it lives, how long it is kept.
+- **Control cross-references** to the framework being satisfied (ISO 27001 Annex A, NIST, internal control IDs).
+- **Appendices** with the real instruments — scales, matrices, worked examples — not placeholders.
+
+Scope, not padding: a two-page procedure still carries control, revision history, clause numbering, and "shall". Omit an element only when the user says the document does not need it.
+
 ## Logo
 
 Wordmark assets live in `assets/`:
@@ -155,6 +171,7 @@ Run this checklist mentally against any artifact before saying it is complete:
 
 - [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
 - [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented (see Attribution).
+- [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
 - [ ] Every H1 forces a page break before.
 - [ ] Sans face declared with the v2.0 chain.
 - [ ] Mono face declared with the v2.0 chain.
@@ -172,4 +189,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.1.1 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.1.2 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*

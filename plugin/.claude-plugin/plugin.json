@@ -1,6 +1,6 @@
 {
   "name": "deccan-design",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "The Deccan Fine Chemicals corporate design system (v2.1+). Default for any stylized deliverable — documents, reports, memos, specs, policies, letters, proposals, decks, workbooks, dashboards, signatures — in HTML / PDF / Word / Excel / PowerPoint / Google Workspace, whether or not Deccan is mentioned. Attributes every document to the requesting user.",
   "author": {
     "name": "Office of the SVP, IT & Digital Transformation"
