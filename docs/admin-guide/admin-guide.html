@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light">
 <title>deccan-design v2.0 — administration guide</title>
 <style>
 :root {
+  color-scheme:light only;
   --deccan-blue:#164999; --deccan-blue-30:rgba(22,73,153,0.30);
   --stone-50:#FAFAF9; --stone-100:#F5F5F4; --stone-200:#E7E5E4;
   --stone-500:#78716C; --stone-700:#44403C; --stone-800:#292524; --stone-900:#1C1917;
@@ -16,6 +18,16 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:16px;}
 body{background:var(--stone-50);color:var(--stone-800);font-family:var(--font-sans);font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;}
+/* Light-only rendering contract (skill/references/tokens.md): preview hosts
+   that paint their own dark canvas would otherwise leave dark stone text on a
+   dark background. The @media print block below restores pure white paper. */
+:root{background-color:var(--stone-50)!important;}
+html body{background-color:var(--stone-50)!important;color:var(--stone-800)!important;}
+@media (prefers-color-scheme:dark){
+  :root{background-color:var(--stone-50)!important;}
+  html body{background-color:var(--stone-50)!important;color:var(--stone-800)!important;}
+  html body .cover,html body .end-page,html body .toc,html body table{background-color:var(--paper)!important;}
+}
 .shell{max-width:1180px;margin:0 auto;padding:0 clamp(20px,4vw,64px);}
 .cover{background:var(--paper);min-height:100vh;display:grid;grid-template-rows:auto 1fr auto;padding:96px clamp(20px,4vw,64px) 48px;page-break-after:always;border-bottom:1px solid var(--stone-200);}
 .mark{display:flex;align-items:center;gap:12px;}
@@ -42,7 +54,9 @@ body{background:var(--stone-50);color:var(--stone-800);font-family:var(--font-sa
 .cover-meta{display:grid;grid-template-columns:1.1fr 3fr 1.3fr 0.8fr 1.4fr;gap:24px;padding-top:24px;border-top:1px solid var(--stone-200);}
 .cover-meta dt{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);margin-bottom:6px;}
 .cover-meta dd{font-size:14px;color:var(--stone-900);font-weight:600;}
-main.body{padding:64px 0 32px;}
+/* Horizontal padding restated: main.body outranks .shell, so a zero inline
+   value would run body copy into the edge of the screen on a phone. */
+main.body{padding:64px clamp(20px,4vw,64px) 32px;}
 section.section{margin-bottom:64px;}
 section.section:first-of-type h1{page-break-before:auto;}
 h1{font-size:44px;font-weight:350;letter-spacing:-0.022em;line-height:1.15;color:var(--stone-900);margin:24px 0;padding-bottom:16px;border-bottom:2px solid var(--stone-900);page-break-before:always;}
@@ -86,6 +100,10 @@ tbody tr:nth-child(even) td{background:var(--stone-50);}
     }
     .end-page { page: end-of-doc; }
 @media print{
+      /* Pure white paper, over the light-only rendering contract. */
+      :root{background-color:var(--paper)!important;}
+      html body{background-color:var(--paper)!important;color:var(--stone-800)!important;}
+
       /* Print: keep the cover and end page each on exactly one physical page.
          100vh resolves to the full paper height in print (not the live content
          area), so min-height:100vh causes the cover to overflow into page 2.
@@ -122,7 +140,7 @@ tbody tr:nth-child(even) td{background:var(--stone-50);}
         page-break-inside: avoid;
         break-inside: avoid;
       }
-body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
+body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}main.body{padding-left:0;padding-right:0;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
 </style>
 </head>
 <body>

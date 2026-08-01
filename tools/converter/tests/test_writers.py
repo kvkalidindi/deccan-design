@@ -28,6 +28,35 @@ class TestHtmlWriter:
         assert "@page end-of-doc" in html
         assert "size: Letter" in html
 
+    def test_light_only_rendering_contract(self, sample_md):
+        """Previews that paint a dark canvas must not darken the document.
+
+        The Claude iOS in-app viewer (and comparable webviews) render an
+        embedded page against dark chrome; with the canvas left to a bare
+        `body { background }` the dark stone text lands on a dark background.
+        """
+        html = render_html(_ir(sample_md))
+        assert '<meta name="color-scheme" content="light">' in html
+        assert "color-scheme: light only;" in html
+        # Canvas pinned above the specificity of an injected html/body rule.
+        assert ":root { background-color: var(--stone-50) !important; }" in html
+        assert "html body {\n      background-color: var(--stone-50) !important;" in html
+        assert "@media (prefers-color-scheme: dark) {" in html
+        # ...and print still gets pure white paper over those rules.
+        assert ":root { background-color: var(--paper) !important; }" in html
+        assert "html body {\n        background-color: var(--paper) !important;" in html
+
+    def test_body_keeps_its_side_gutter(self, sample_md):
+        """`main.body` outranks `.shell`, so it must restate the gutter.
+
+        With a zero inline value the shorthand wins over `.shell`'s padding
+        and body copy runs into the edge of the screen on a phone. Print
+        drops the gutter again — there the @page margins own it.
+        """
+        html = render_html(_ir(sample_md))
+        assert "main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }" in html
+        assert "main.body { padding-left: 0; padding-right: 0; }" in html
+
     def test_metadata_escaped(self, sample_md):
         ir = _ir(sample_md)
         ir.metadata.title = 'A <b>"bold"</b> & risky title'

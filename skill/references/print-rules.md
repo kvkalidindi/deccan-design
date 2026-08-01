@@ -144,6 +144,18 @@ Body background is `#FFFFFF` regardless of screen background. The stone-50 scree
 
 No stone-tinted page backgrounds in print.
 
+The light-only rendering contract (`tokens.md`) pins the screen canvas to stone-50 with `!important`, so the print block must restore paper at the same specificity or the screen tint leaks into the PDF:
+
+```css
+@media print {
+  :root     { background-color: var(--paper) !important; }
+  html body { background-color: var(--paper) !important; color: var(--stone-800) !important; }
+  html body main.body, html body section.section { background-color: transparent !important; }
+}
+```
+
+These selectors also cover the case of printing from a browser that is itself in dark mode.
+
 ## Print body size
 
 Body type drops from 17 px (screen) to 10.5 pt (print). The reduction is empirical, not arithmetic — 10.5 pt produces 70-character lines on Letter at 0.8" margins, which is the editorial target.

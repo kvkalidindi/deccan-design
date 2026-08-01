@@ -46,10 +46,45 @@ Ten stops. Use:
 
 `--paper: #FFFFFF`. Cover background, end-page background, table-cell background, print page background. Not aliased to a stone.
 
+### Light-only rendering contract
+
+Every colour in this system is dark ink on a light surface. There is no dark palette, so a host that darkens the page renders the document dark-on-dark: only blocks that declare a background of their own (cover, TOC, tables, callouts) stay readable, and everything between them disappears. This is what an HTML deliverable looks like in the Claude iOS in-app preview, and in any chat, mail, or embedded webview that themes its content area.
+
+Declaring `body { background: … }` alone is not sufficient — the canvas colour a host paints, or a `body` rule it injects, wins over it. Every HTML deliverable therefore carries all four of the following:
+
+```html
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
+```
+
+```css
+:root { color-scheme: light only; }
+
+/* Pinned above a bare `html` / `body` selector, so an injected dark canvas
+   rule cannot win the cascade whatever order it arrives in. */
+:root      { background-color: var(--stone-50) !important; }
+html body  { background-color: var(--stone-50) !important; color: var(--stone-800) !important; }
+
+/* Structural blocks carry opaque surfaces — nothing relies on the canvas. */
+main.body, section.section { background-color: var(--stone-50); }
+
+@media (prefers-color-scheme: dark) {
+  /* Re-assert the light values for hosts that theme through the media query. */
+  :root      { background-color: var(--stone-50) !important; }
+  html body  { background-color: var(--stone-50) !important; color: var(--stone-800) !important; }
+  html body .cover, html body .end-page,
+  html body .toc,   html body table { background-color: var(--paper) !important; }
+}
+```
+
+The `@media print` block must then restore `--paper` at the same specificity and `!important` — see `print-rules.md`, "Print background". `assets/templates/document.html` implements the full contract; filling that template gets it for free.
+
 ### Token CSS block (copy-paste)
 
 ```css
 :root {
+  color-scheme: light only;
+
   --deccan-blue:     #164999;
   --deccan-blue-90:  rgba(22, 73, 153, 0.90);
   --deccan-blue-60:  rgba(22, 73, 153, 0.60);
