@@ -114,6 +114,8 @@ following launch, so a bad update can be rolled back by hand.
 
 Force a check with `deccan-convert --check-update` (installs and exits).
 
+Reaching 1.1.0 takes one manual download — 1.0.x predates the updater and cannot pull itself forward. Every release after it installs itself.
+
 ### Turning it off
 
 | Method | Scope | Use for |
