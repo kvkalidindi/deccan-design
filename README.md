@@ -20,11 +20,19 @@ Version 2.0 — May 2026.
 
 ## Install
 
-The current release is **v2.0.0**. Download the installer for your platform from the [GitHub release page](https://github.com/kvkalidindi/deccan-design/releases/tag/v2.0.0):
+The current design-system release is **v2.0.2** — [release page](https://github.com/kvkalidindi/deccan-design/releases/tag/v2.0.2):
 
-- **Windows:** `deccan-design-2.0.0.msi`
-- **macOS:** `deccan-design-2.0.0.pkg`
+- **The Claude skill:** `deccan-design-skill-bundle.zip` (upload to a Claude.ai workspace, or unzip to `%APPDATA%\Anthropic\Claude\skills\`).
 - **All templates as a zip:** `templates-bundle.zip`
+
+Both bundles are built from the tagged tree by CI, so they carry exactly what is committed.
+
+The installers are still at **v2.0.1** — [release page](https://github.com/kvkalidindi/deccan-design/releases/tag/v2.0.1):
+
+- **Windows:** `deccan-design-2.0.1.msi`
+- **macOS:** `deccan-design-2.0.0.pkg`
+
+They are built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to a release afterwards; the v2.0.2 packages land on the v2.0.2 release once IT rebuilds them. Until then, install v2.0.1 and take the v2.0.2 skill bundle from the zip above.
 
 Per-user install. No admin elevation required.
 

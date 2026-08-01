@@ -19,7 +19,7 @@
 ./build.sh
 ```
 
-Output: `deccan-design-2.0.0.pkg` (unsigned).
+Output: `deccan-design-2.0.2.pkg` (unsigned).
 
 The script uses `pkgbuild` + `productbuild`. If you have Packages.app installed (http://s.sudre.free.fr/Software/Packages/), you can also open `deccan-design.pkgproj` in the GUI and Build → Build there.
 
@@ -27,7 +27,7 @@ The script uses `pkgbuild` + `productbuild`. If you have Packages.app installed 
 
 On every user's first install, Gatekeeper blocks the `.pkg` with:
 
-> "deccan-design-2.0.0.pkg cannot be opened because Apple cannot check it for malicious software."
+> "deccan-design-2.0.2.pkg cannot be opened because Apple cannot check it for malicious software."
 
 This is expected — the installer is unsigned per Decision 5 in PRD §1.4. Instruct the user to:
 
