@@ -70,6 +70,14 @@ def build_parser() -> argparse.ArgumentParser:
         help="skip the print-contract verification after PDF output",
     )
     parser.add_argument(
+        "--no-update", action="store_true",
+        help="skip the launch-time update check (same as DECCAN_CONVERT_NO_UPDATE=1)",
+    )
+    parser.add_argument(
+        "--check-update", action="store_true",
+        help="check for a newer build, install it, and exit",
+    )
+    parser.add_argument(
         "--tool-version", action="version", version=f"deccan-convert {__version__}"
     )
     return parser
@@ -79,6 +87,66 @@ def run_cli(argv: list[str]) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    from deccan_convert import update as updater
+
+    updater.cleanup_previous()
+
+    if args.check_update:
+        return _check_update_now(updater, force=True, no_update=args.no_update)
+
+    # The check runs alongside the requested work and is applied only once
+    # that work has finished: a scripted run is never delayed, interrupted,
+    # or restarted by it. The new build takes effect on the next invocation.
+    update_check = updater.start_background(no_update=args.no_update)
+    try:
+        return _run(parser, args)
+    finally:
+        _apply_background_update(updater, update_check)
+
+
+def _console(message: str) -> None:
+    """Print only when a console is attached (the Windows build is windowed)."""
+    if sys.stdout is None:
+        return
+    try:
+        print(message)
+    except OSError:
+        pass
+
+
+def _apply_background_update(updater, update_check) -> None:
+    if update_check is None:
+        return
+    staged = update_check.wait(timeout=2.0)
+    if staged is None:
+        return  # still downloading, nothing found, or the check failed
+    if updater.apply_staged(staged.path, staged.target):
+        _console(
+            f"deccan-convert updated to {staged.update.version} — "
+            "it takes effect on the next run."
+        )
+
+
+def _check_update_now(updater, force: bool, no_update: bool) -> int:
+    reason = updater.disabled_reason(no_update)
+    if reason is not None:
+        _console(f"Update check skipped: {reason}.")
+        return 0
+    staged = updater.prepare(force=force, no_update=no_update)
+    if staged is None:
+        _console(f"deccan-convert {__version__} is current (or the check could not run).")
+        return 0
+    if not updater.apply_staged(staged.path, staged.target):
+        _console(
+            f"error: could not install {staged.update.version}; "
+            "the current build is intact"
+        )
+        return 1
+    _console(f"Updated to deccan-convert {staged.update.version} ({staged.update.page_url}).")
+    return 0
+
+
+def _run(parser: argparse.ArgumentParser, args: argparse.Namespace) -> int:
     if args.export_kit:
         from deccan_convert.kit import export_kit
 

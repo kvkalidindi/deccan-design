@@ -49,8 +49,9 @@ deccan-convert INPUT (-o OUTPUT | --to FORMAT)
                [--title T] [--subtitle S] [--type Report] [--prepared-by WHO]
                [--date "July 2026"] [--version 1.0] [--classification Internal]
                [--template document|technical-spec|policy|customer-letter]
-               [--logo] [--no-verify]
+               [--logo] [--no-verify] [--no-update]
 deccan-convert --export-kit DIR
+deccan-convert --check-update
 ```
 
 Examples:
@@ -83,6 +84,46 @@ By default covers carry the sanctioned *text* wordmark ("Deccan Fine Chemicals" 
 ## Export kit — equip any offline endpoint (`--export-kit DIR`)
 
 The binary carries the complete design system, not just what it needs to convert. `deccan-convert --export-kit DIR` writes `DIR/deccan-design-kit/` containing every Office template (4 Word, 3 Excel, 3 PowerPoint), the Google Workspace files, both email signatures, and the Anthropic Claude skill (rules, tokens, print contract, slot template, logo assets), plus a README covering per-user template installation and how to equip a Claude environment offline (copy `skill/` to `<repo>/.claude/skills/deccan-design/`). One downloaded binary makes any machine a fully-equipped deccan-design endpoint — no repo checkout, no network, no admin rights.
+
+## Automatic updates
+
+The binary keeps itself current. On every launch it checks the repository's
+`converter-v*` releases (at most once every 24 hours), and when a newer build
+exists it downloads the artifact for this platform, verifies it against the
+SHA-256 in that release's `SHA256SUMS.txt`, and swaps it into place. This
+matters beyond the converter's own code: the design kit — slot template,
+tokens, Office templates, Claude skill — is frozen inside the binary, so a
+build that never updates keeps producing documents from a superseded system.
+
+What it will not do:
+
+- **Interrupt work.** The CLI applies the new build after the conversion it
+  was asked for, and reports `updated to X — takes effect on the next run`.
+  The GUI restarts into the new build only if the window is still untouched;
+  once a file is selected the swap waits for the next launch.
+- **Run downloaded code.** The verified artifact replaces the installed one
+  on disk; it executes only when the app is launched again.
+- **Fail loudly.** An offline endpoint, a TLS-intercepting proxy, or a
+  GitHub rate limit ends the check silently. Conversions are unaffected.
+- **Widen its reach.** HTTPS only, GitHub hosts only, the pinned repository
+  only, and only the exact release artifact names. A checksum mismatch
+  aborts and leaves the installed build alone.
+
+The previous build is kept beside the new one as `.old` and removed on the
+following launch, so a bad update can be rolled back by hand.
+
+Force a check with `deccan-convert --check-update` (installs and exits).
+
+### Turning it off
+
+| Method | Scope | Use for |
+|---|---|---|
+| `--no-update` | one invocation | scripts and CI that must not touch the network |
+| `DECCAN_CONVERT_NO_UPDATE=1` | user or machine, via environment | locked-down profiles |
+| `.no-auto-update` file beside the binary | that installation | fleets where Intune / Jamf owns the version |
+
+Updates also switch themselves off when the install directory is not
+writable — the managed-install case — and when running from source.
 
 ## Document metadata
 

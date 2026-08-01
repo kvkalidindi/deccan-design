@@ -107,6 +107,16 @@ jobs:
           if (-not (Test-Path smoke.pdf)) { throw "smoke.pdf not produced" }
           if ((Test-Path smoke.pdf.log) -and (Select-String -Path smoke.pdf.log -Pattern 'FAIL' -Quiet)) { throw "print contract FAIL" }
 
+      # The self-updater lives behind a lazy import; this proves PyInstaller
+      # actually bundled it. The build under test is newer than any published
+      # release, so the check finds nothing to install.
+      - name: Smoke test — self-updater is bundled (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath ./dist/deccan-convert.exe -ArgumentList @('--check-update') -Wait -PassThru -NoNewWindow
+          if ($p.ExitCode -ne 0) { throw "--check-update exited $($p.ExitCode)" }
+
       # GitHub's macOS runners cannot run Chromium-family browsers in
       # headless print mode (Chrome and Edge both hang; reproduced across
       # keychain/first-run mitigations). The diagnostic below records the
@@ -133,6 +143,8 @@ jobs:
           ./dist/deccan-convert --export-kit kit-out
           test -f kit-out/deccan-design-kit/skill/SKILL.md
           test -f kit-out/deccan-design-kit/templates/word/deccan-document.dotx
+          # Self-updater is bundled and reachable (nothing newer to install).
+          ./dist/deccan-convert --check-update
 
       - name: Package artifact (Windows)
         if: runner.os == 'Windows'

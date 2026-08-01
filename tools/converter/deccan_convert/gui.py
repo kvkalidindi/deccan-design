@@ -140,6 +140,17 @@ class ConverterApp:
         )
         self.root.after(150, self._poll_queue)
 
+        # Launch-time update check. Runs on a daemon thread; the result is
+        # picked up by _poll_update below.
+        from deccan_convert import update as updater
+
+        self.updater = updater
+        self.update_handled = False
+        updater.cleanup_previous()
+        self.update_check = updater.start_background()
+        if self.update_check is not None:
+            self.root.after(3000, self._poll_update)
+
     # --- widget helpers ---
 
     def _detail_row(self, row: int, label: str, field: str) -> None:
@@ -327,6 +338,39 @@ class ConverterApp:
         self.working = False
         self.progress.stop()
         self.convert_btn.configure(state="normal")
+
+    # --- self-update ---
+
+    def _poll_update(self) -> None:
+        """Install a staged update once one is ready.
+
+        An untouched window restarts into the new build straight away. A
+        window the user has already started working in is left alone — the
+        swap still happens on disk, it just takes effect next launch.
+        """
+        if self.update_handled or self.update_check is None:
+            return
+        if not self.update_check.done():
+            self.root.after(3000, self._poll_update)
+            return
+
+        staged = self.update_check.wait(0)
+        self.update_handled = True
+        if staged is None:
+            return
+
+        version = staged.update.version
+        if not self.updater.apply_staged(staged.path, staged.target):
+            self.log(f"Update to {version} could not be installed — running build is intact.",
+                     "warning")
+            return
+
+        idle = not self.working and not self.input_var.get()
+        if idle and self.updater.relaunch(staged.target):
+            self.log(f"Updated to {version} — restarting…")
+            self.root.after(400, self.root.destroy)
+            return
+        self.log(f"Updated to {version} — it takes effect the next time you open the app.")
 
 
 def run_gui() -> int:

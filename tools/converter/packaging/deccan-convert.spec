@@ -16,6 +16,12 @@ from pathlib import Path
 SPEC_DIR = Path(SPECPATH).resolve()
 PKG_DIR = SPEC_DIR.parent
 
+# Single source of truth for the shipped version — the updater compares the
+# release tag against it, so a stale literal here would make macOS builds
+# advertise the wrong version in Finder.
+sys.path.insert(0, str(PKG_DIR))
+from deccan_convert import __version__ as APP_VERSION
+
 block_cipher = None
 
 _icon_ico = SPEC_DIR / "icon.ico"
@@ -30,6 +36,7 @@ a = Analysis(
         # lazy imports inside the dispatchers
         "deccan_convert.cli",
         "deccan_convert.gui",
+        "deccan_convert.update",
         "deccan_convert.readers.md_reader",
         "deccan_convert.readers.html_reader",
         "deccan_convert.readers.docx_reader",
@@ -87,7 +94,7 @@ if sys.platform == "darwin":
         icon=str(_icon_icns) if _icon_icns.is_file() else None,
         bundle_identifier="com.deccanchemicals.deccan-convert",
         info_plist={
-            "CFBundleShortVersionString": "1.0.1",
+            "CFBundleShortVersionString": APP_VERSION,
             "NSHighResolutionCapable": True,
         },
     )
