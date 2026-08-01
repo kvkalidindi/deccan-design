@@ -57,6 +57,8 @@ First release of the v2.0 system: OS-native type stack, Deccan Blue single accen
 
 ## 1.1.0 — 1 August 2026
 
+**A finished render no longer dies cleaning up its own log.** The browser's stdout was redirected into a file inside the browser's own profile directory; helper processes inherit that handle and outlive the parent, so temp-directory cleanup tried to delete a file still held open — a hard `PermissionError` on Windows, raised *after* the PDF was written. The log now gets its own directory and both are cleaned leniently.
+
 **Self-update on launch.** The binary had no update path, so an endpoint kept whatever build it first downloaded — including the design kit frozen inside it. It now checks the pinned repository's `converter-v*` releases at most once a day, verifies the artifact against the SHA-256 in that release's own `SHA256SUMS.txt`, and swaps itself by rename, keeping the previous build as `.old`. HTTPS and GitHub hosts only; a checksum mismatch aborts. The CLI applies the update after the conversion it was asked for; the GUI restarts into it only while the window is untouched. Opt out with `--no-update`, `DECCAN_CONVERT_NO_UPDATE=1`, or a `.no-auto-update` marker beside the binary.
 
 Reaching 1.1.0 requires one manual download — 1.0.x has no updater. Every release after it installs itself.
