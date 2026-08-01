@@ -36,7 +36,7 @@ The current design-system release is **v2.1.2** — [latest release](https://git
 
 Both bundles are built from the tagged tree by CI, so they carry exactly what is committed.
 
-The MSI / PKG installers (releases page) remain the channel for the **Office templates and Outlook signature**. Their bundled Claude-skill copy is legacy — Claude Code takes the skill from the plugin marketplace, Claude Desktop from the workspace. Built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to a release afterwards.
+The MSI / PKG installers remain the channel for the **Office templates and Outlook signature**. Their bundled Claude-skill copy is legacy — Claude Code takes the skill from the plugin marketplace, Claude Desktop from the workspace. The installer definitions track the package version (currently 2.1.2); they are built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to the matching release afterwards, so the packages on a given release may lag the bundles on it.
 
 Per-user install. No admin elevation required.
 

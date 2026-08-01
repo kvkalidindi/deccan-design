@@ -5,7 +5,8 @@
 
 .DESCRIPTION
     Runs `wix build` against deccan-design.wxs. Produces an unsigned
-    per-user MSI at .\deccan-design-2.0.0.msi.
+    per-user MSI named for the current package version (see the -Output
+    default; the version itself lives in deccan-design.wxs).
 
     Requires WiX Toolset v4 installed (https://wixtoolset.org/docs/).
     The MSI is intentionally unsigned per Decision 5 in PRD §1.4.
@@ -17,7 +18,7 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Release',
-    [string]$Output        = 'deccan-design-2.0.1.msi'
+    [string]$Output        = 'deccan-design-2.1.2.msi'
 )
 
 $ErrorActionPreference = 'Stop'
