@@ -240,7 +240,12 @@
     /* ================================================================
        Body
        ================================================================ */
-    main.body { padding: var(--s-8) 0 var(--s-6); }
+    /* The horizontal padding is restated here rather than inherited from
+       .shell: `main.body` outranks `.shell`, so a shorthand with a zero
+       inline value would zero the gutter and run body copy into the edge
+       of the screen on a phone. The @media print block drops it again —
+       @page margins own the print gutter. */
+    main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }
 
     section.section { margin-bottom: var(--s-8); }
     section.section:first-of-type h1 { page-break-before: auto; }
@@ -617,6 +622,7 @@
 
       body { background: var(--paper); font-size: 10.5pt; line-height: 1.5; }
       .shell { padding: 0; max-width: 100%; }
+      main.body { padding-left: 0; padding-right: 0; }
       h1 { font-size: 24pt; }
       h2 { font-size: 16pt; }
       h3 { font-size: 13pt; }

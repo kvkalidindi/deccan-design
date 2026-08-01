@@ -46,6 +46,17 @@ class TestHtmlWriter:
         assert ":root { background-color: var(--paper) !important; }" in html
         assert "html body {\n        background-color: var(--paper) !important;" in html
 
+    def test_body_keeps_its_side_gutter(self, sample_md):
+        """`main.body` outranks `.shell`, so it must restate the gutter.
+
+        With a zero inline value the shorthand wins over `.shell`'s padding
+        and body copy runs into the edge of the screen on a phone. Print
+        drops the gutter again — there the @page margins own it.
+        """
+        html = render_html(_ir(sample_md))
+        assert "main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }" in html
+        assert "main.body { padding-left: 0; padding-right: 0; }" in html
+
     def test_metadata_escaped(self, sample_md):
         ir = _ir(sample_md)
         ir.metadata.title = 'A <b>"bold"</b> & risky title'

@@ -54,7 +54,9 @@ html body{background-color:var(--stone-50)!important;color:var(--stone-800)!impo
 .cover-meta{display:grid;grid-template-columns:1.1fr 3fr 1.3fr 0.8fr 1.4fr;gap:24px;padding-top:24px;border-top:1px solid var(--stone-200);}
 .cover-meta dt{font-family:var(--font-mono);font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--stone-500);margin-bottom:6px;}
 .cover-meta dd{font-size:14px;color:var(--stone-900);font-weight:600;}
-main.body{padding:64px 0 32px;}
+/* Horizontal padding restated: main.body outranks .shell, so a zero inline
+   value would run body copy into the edge of the screen on a phone. */
+main.body{padding:64px clamp(20px,4vw,64px) 32px;}
 section.section{margin-bottom:64px;}
 section.section:first-of-type h1{page-break-before:auto;}
 h1{font-size:44px;font-weight:350;letter-spacing:-0.022em;line-height:1.15;color:var(--stone-900);margin:24px 0;padding-bottom:16px;border-bottom:2px solid var(--stone-900);page-break-before:always;}
@@ -138,7 +140,7 @@ tbody tr:nth-child(even) td{background:var(--stone-50);}
         page-break-inside: avoid;
         break-inside: avoid;
       }
-body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
+body{background:var(--paper);font-size:10.5pt;line-height:1.5;}.shell{padding:0;max-width:100%;}main.body{padding-left:0;padding-right:0;}h1{font-size:24pt;}h2{font-size:16pt;}h3{font-size:13pt;}h4{font-size:11pt;}p,.lead,pre.code-block,.callout,table,ul,ol{max-width:100%;}}
 </style>
 </head>
 <body>
