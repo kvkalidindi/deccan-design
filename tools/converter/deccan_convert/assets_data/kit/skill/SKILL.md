@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+, repo kvkalidindi/deccan-design); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including swiss_design_at_deccan (all versions), deccan-design v1.0 (the Aptos plan), IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks, and any older "Deccan default". Attribute every document to the requesting user, never to the system maintainer (see Attribution). Apply the OS-native type stack (Segoe UI Variable / Cascadia Mono), the Deccan Blue single-accent palette, the 12-column 8px grid, the eight document-furniture rules, and the corporate tone-and-voice register documented here.
-version: 2.1.2
+version: 2.1.3
 ---
 
 # deccan-design v2.0
@@ -59,6 +59,28 @@ The canonical copy of the slot template lives at:
 Before filling `document.html`, if the session can fetch URLs, GET the canonical copy, compare its `slot-fill document template · revision` header marker against the bundled copy's, and fill whichever is newer. If the session cannot fetch (offline, no network tool), use the bundled copy silently — do not warn or block. This keeps output current even when the installed skill bundle lags a release.
 
 The header comment and `<meta name="generator">` carry the template revision — `v2.0` there is the design system, not the file. A copy is current when it carries the light-only rendering contract (`color-scheme: light only` plus the pinned canvas rules) and the `main.body` side gutter; anything without them predates August 2026 and renders dark-on-dark in an in-app preview.
+
+## Revising an existing document
+
+A new version of an existing document — v1.1 → v2.0, a supersession, an amendment, "update this brief" — is built from the **template**, not from the previous file.
+
+**Content carries forward. Presentation never does.** Take the body content across: sections, clauses, tables, callouts, appendices, the revision-history rows. Then fill a fresh copy of `document.html` with it.
+
+Never copy from the previous version:
+
+- the `<style>` block or any part of it,
+- `<head>`, including the meta declarations,
+- the `.cover` markup or the `.end-page` markup.
+
+Those come from the template, which is versioned independently of the document and changes without the document changing. A prior version is evidence of what the document said, never of how it should look — the earlier file was produced under whatever template revision was current on its issue date, and reusing its stylesheet silently reintroduces every defect fixed since.
+
+**Self-check before returning the file.** The output must contain:
+
+```html
+<meta name="generator" content="deccan-design v2.0 · slot template …">
+```
+
+If that line is absent, the template was not used — the document was assembled from a prior version or from memory. Discard it and rebuild from the template. This is the one check that catches the failure from the artifact alone, which is why it is mandatory rather than advisory.
 
 ## The non-negotiables (cheat-sheet)
 
@@ -171,6 +193,8 @@ Run this checklist mentally against any artifact before saying it is complete:
 
 - [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
 - [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented (see Attribution).
+- [ ] The emitted HTML carries `<meta name="generator" content="deccan-design v2.0 · slot template …">`. Its absence means the template was not used — rebuild (see Revising an existing document).
+- [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
 - [ ] Every H1 forces a page break before.
 - [ ] Sans face declared with the v2.0 chain.
@@ -189,4 +213,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.1.2 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.1.3 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
