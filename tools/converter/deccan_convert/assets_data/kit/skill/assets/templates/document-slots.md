@@ -7,7 +7,7 @@ The bundled template `document.html` exposes eight placeholders. Fill them; do n
 | `{{TITLE}}` | string, ≤ 22 ch on cover | yes | "deccan-design v2.0" |
 | `{{SUBTITLE}}` | string, ≤ 50 ch | optional (use empty string if absent) | "A document standard for Deccan Fine Chemicals" |
 | `{{DOCUMENT_TYPE}}` | string, one of: Standard, Specification, Policy, Memo, Brief, Report, Letter, Proposal, Guide | yes | "Standard" |
-| `{{PREPARED_BY}}` | string | yes | "Office of the SVP, IT & Digital Transformation" |
+| `{{PREPARED_BY}}` | string | yes | "Priya Sharma" (the requesting user — see PREPARED_BY resolution below) |
 | `{{DATE}}` | string | yes | "May 2026" |
 | `{{VERSION}}` | string | yes | "2.0" |
 | `{{CLASSIFICATION}}` | one of: Public, Internal, Confidential, Restricted | yes | "Confidential" |
@@ -32,7 +32,17 @@ If a slot value is missing, **do not** invent one. Use a sensible default:
 - `{{DATE}}` → current month and year (e.g., "May 2026").
 - `{{CLASSIFICATION}}` → "Confidential" for internal documents, "Public" for externally distributed.
 
-Never invent an author, a document type, or a title.
+Never invent an author, a document type, or a title. In particular, never resolve an author from repository provenance: not the repo owner slug, not the maintainer's name, not names appearing in bundled documentation or examples.
+
+## PREPARED_BY resolution
+
+Resolve `{{PREPARED_BY}}` in this order (full policy: `SKILL.md` → Attribution):
+
+1. An explicit author stated in the request or the source content.
+2. The invoking user's session identity — account email on Claude.ai surfaces (`priya.sharma@…` → "Priya Sharma"; confirm derivations that are not clearly `firstname.lastname`), `git config user.name` in Claude Code.
+3. Neither → ask the user. Never fill silently.
+
+"Office of the SVP, IT & Digital Transformation" is an illustrative example of an *office-issued* document, not a default — use it only when the user says the document is issued by that office.
 
 ## Example fill
 
@@ -42,7 +52,7 @@ out = (template
        .replace("{{TITLE}}",          "Migration to deccan-design v2.0")
        .replace("{{SUBTITLE}}",       "An operations brief for the IT pilot cohort")
        .replace("{{DOCUMENT_TYPE}}",  "Brief")
-       .replace("{{PREPARED_BY}}",    "Office of the SVP, IT & Digital Transformation")
+       .replace("{{PREPARED_BY}}",    prepared_by)  # resolved per SKILL.md -> Attribution: the requesting user
        .replace("{{DATE}}",           "May 2026")
        .replace("{{VERSION}}",        "0.9 (pilot)")
        .replace("{{CLASSIFICATION}}", "Internal")

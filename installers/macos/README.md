@@ -1,5 +1,14 @@
 # macOS installer
 
+> **Claude-skill component is legacy.** The `deccan-design` skill copy this
+> installer lays down is superseded: Claude Code takes the skill from the
+> repository's plugin marketplace (`claude plugin marketplace add
+> kvkalidindi/deccan-design` + `claude plugin install deccan-design@deccan`,
+> auto-updating), and Claude Desktop from the Claude.ai workspace skill.
+> The installer remains the channel for the Office templates and the
+> Outlook signature.
+
+
 `deccan-design.pkgproj` and `build.sh` produce an **unsigned per-user `.pkg`** for deccan-design v2.0.
 
 ## What it installs

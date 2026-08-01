@@ -2,6 +2,8 @@
 
 Paste the text below into **Claude.ai → Settings → Profile → Preferences**, replacing the current block in its entirety. One-time configuration per Claude.ai account.
 
+> **Admins:** this is the *personal* block — the Role paragraph describes the individual account holder. Never paste it into **Workspace → Custom instructions**; at workspace scope it impersonates one person in every member's session and misattributes their documents. The workspace layer uses `claude/workspace-instructions.md` instead.
+
 This block is also the canonical reference loaded by the `deccan-design` skill across Claude Code, Claude Desktop, and Cowork. Keeping it in sync here keeps every Claude surface aligned.
 
 ---
@@ -10,9 +12,12 @@ This block is also the canonical reference loaded by the `deccan-design` skill a
 > I am a senior engineering leader at Deccan Fine Chemicals (Hyderabad, India), working on internal tooling, design-system work, and AI workflows. Address me at that level. Skip preambles and recap summaries. For non-trivial tasks (3+ steps), confirm the plan once before implementing. After corrections, capture the lesson rather than apologise.
 >
 > **Default design system.**
-> For any styled artifact (web pages, slide decks, Word/PDF reports, dashboards, mockups, brand collateral), default to the **`deccan-design`** system (v2.0+):
+> For any styled artifact (web pages, slide decks, Word/PDF reports, dashboards, mockups, brand collateral), whether or not the request mentions Deccan, default to the **`deccan-design`** system (v2.1+):
 > Deccan Blue `#164999` single accent, **Segoe UI Variable** sans with the documented `Segoe UI Variable Display → Segoe UI Variable Text → Segoe UI Variable → Segoe UI → system-ui → -apple-system → BlinkMacSystemFont → sans-serif` chain, and **Cascadia Mono** mono with the `Cascadia Code → Consolas → SF Mono → Menlo → DejaVu Sans Mono → Liberation Mono → ui-monospace → monospace` chain. 12-column 8px grid, opacity-based hierarchy, no rounded structural corners.
 > The secondary green `#71BF4D` is reserved for the Deccan logo and explicit sustainability content only — never as a UI accent.
+>
+> **Attribution.**
+> Attribute documents I request to me. Resolve "Prepared by" from my explicit statement in the request, else my account identity (display name derived from my email), else ask me. Never use the design-system maintainer's name, the repository owner slug, or an example office as the author.
 >
 > **Override clause.** Older instructions referencing `swiss_design_at_deccan` (any version), `deccan-design v1.0` (the Aptos plan), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks are superseded. Treat the `swiss-design-deccan` skill name as an alias for `deccan-design`. The type stack is OS-native; no font binaries ship with the system.
 >
@@ -73,7 +78,7 @@ This block is also the canonical reference loaded by the `deccan-design` skill a
 > **Working environment.**
 > I am on a managed corporate Windows machine with Microsoft Office. Do not attempt to render Word / Excel / PowerPoint files to PDF via COM automation (`Word.Application` etc.) — it hangs silently on Trust Center / license dialogs. Either ask me to do `File → Export → Create PDF/XPS` myself and report back, or suggest LibreOffice headless if available. Do not propose killing Office processes.
 >
-> **Installer registration (informational).** The `deccan-design` skill is installed at `%APPDATA%\Anthropic\Claude\skills\deccan-design\` on Windows and `~/Library/Application Support/Anthropic/Claude/skills/deccan-design/` on macOS by the v2.0.0 per-user MSI / PKG. The installers ship unsigned by design (PRD §1.4 Decision 5); first-install SmartScreen / Gatekeeper dismissal is documented in the admin guide.
+> **Claude Code registration (informational).** The `deccan-design` skill reaches Claude Code through the repository's plugin marketplace — `claude plugin marketplace add kvkalidindi/deccan-design` then `claude plugin install deccan-design@deccan`, one-time; updates arrive automatically from `main`. The MSI / PKG copy at `%APPDATA%\Anthropic\Claude\skills\deccan-design\` (Windows) / `~/Library/Application Support/Anthropic/Claude/skills/deccan-design/` (macOS) is legacy and may lag; the installers remain the channel for Office templates and the Outlook signature.
 >
 > **Project layout.**
 > Put project output directly in the folder I name. Do not nest a project-named subfolder inside it.

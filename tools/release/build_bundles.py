@@ -15,14 +15,22 @@ Both zips are byte-stable: entries are sorted and stamped with a fixed
 date_time, so rebuilding an unchanged tree produces an identical file and
 `--check` can compare a published bundle against the repository sources.
 
+This tool also owns the Claude Code plugin mirror at plugin/skills/deccan-design/
+(the repo doubles as a plugin marketplace; plugins discover skills only under
+their own skills/ directory, so the skill tree is mirrored there byte-for-byte).
+`--sync-plugin` refreshes the mirror and plugin.json's version from the skill
+frontmatter; `--check` fails when the mirror or the version has drifted.
+
 Usage:
     python tools/release/build_bundles.py --out dist/
     python tools/release/build_bundles.py --check --out dist/   # verify only
+    python tools/release/build_bundles.py --sync-plugin         # refresh mirror
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import zipfile
 from pathlib import Path
@@ -32,6 +40,8 @@ REPO = HERE.parent.parent
 
 SKILL_BUNDLE = "deccan-design-skill-bundle.zip"
 TEMPLATES_BUNDLE = "templates-bundle.zip"
+PLUGIN_SKILL_ROOT = REPO / "plugin" / "skills" / "deccan-design"
+PLUGIN_MANIFEST = REPO / "plugin" / ".claude-plugin" / "plugin.json"
 
 # The skill bundle's exact contents. Held as a literal rather than globbed
 # so a stray file under skill/ (an editor backup, a scratch note) can never
@@ -118,8 +128,80 @@ def verify_revision() -> str:
     return version
 
 
+def verify_attribution() -> None:
+    """The skill must ship its attribution and default-application policy.
+
+    Documents were being attributed to the design-system maintainer because
+    nothing told a session how to resolve the author; the policy in SKILL.md
+    is the fix, and a release that drops it silently reintroduces the bug.
+    Same for the broadened trigger: the skill is the org default for any
+    stylized artifact, not only Deccan-named ones.
+    """
+    skill = (REPO / "skill" / "SKILL.md").read_text("utf-8")
+    slots = (REPO / "skill" / "assets" / "templates" / "document-slots.md").read_text("utf-8")
+    problems = []
+    if "## Attribution" not in skill:
+        problems.append("SKILL.md: '## Attribution' section missing")
+    else:
+        attribution = skill.split("## Attribution", 1)[1].split("\n## ", 1)[0]
+        if "kvkalidindi" not in attribution:
+            problems.append("SKILL.md: Attribution section lost the repo-slug ban")
+    if "never the repo maintainer, never invented" not in skill:
+        problems.append("SKILL.md: attribution checklist line missing")
+    if "whether or not Deccan is mentioned" not in skill.split("---", 2)[1]:
+        problems.append("SKILL.md: description no longer covers non-Deccan-named requests")
+    if "## PREPARED_BY resolution" not in slots:
+        problems.append("document-slots.md: '## PREPARED_BY resolution' section missing")
+    if problems:
+        raise SystemExit(
+            "Attribution/default-application policy incomplete:\n  " + "\n  ".join(problems)
+        )
+
+
+def _plugin_expected() -> dict[Path, bytes]:
+    """Plugin-mirror path -> the bytes its skill/ source currently holds."""
+    return {
+        PLUGIN_SKILL_ROOT / rel: (REPO / "skill" / rel).read_bytes()
+        for rel in SKILL_FILES
+    }
+
+
+def sync_plugin() -> None:
+    """Refresh the plugin mirror and pin plugin.json to the skill version."""
+    version = skill_version()
+    for dst, data in _plugin_expected().items():
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        dst.write_bytes(data)
+    manifest = json.loads(PLUGIN_MANIFEST.read_text("utf-8"))
+    manifest["version"] = version
+    PLUGIN_MANIFEST.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", "utf-8")
+    print(f"  plugin mirror synced ({len(SKILL_FILES)} files, plugin.json -> {version})")
+
+
+def check_plugin() -> list[str]:
+    problems = []
+    for dst, data in _plugin_expected().items():
+        rel = dst.relative_to(REPO)
+        if not dst.is_file():
+            problems.append(f"plugin mirror missing: {rel}")
+        elif dst.read_bytes() != data:
+            problems.append(f"plugin mirror stale: {rel} differs from skill/ source")
+    try:
+        manifest = json.loads(PLUGIN_MANIFEST.read_text("utf-8"))
+    except (OSError, ValueError):
+        problems.append(f"unreadable: {PLUGIN_MANIFEST.relative_to(REPO)}")
+    else:
+        if manifest.get("version") != skill_version():
+            problems.append(
+                f"plugin.json version {manifest.get('version')!r} != "
+                f"skill frontmatter {skill_version()!r}"
+            )
+    return problems
+
+
 def bundles() -> dict[str, dict[str, bytes]]:
     verify_revision()
+    verify_attribution()
     return {
         SKILL_BUNDLE: _entries("skill", SKILL_FILES, "deccan-design"),
         TEMPLATES_BUNDLE: _entries("templates", TEMPLATE_FILES, "templates"),
@@ -145,7 +227,7 @@ def build(out_dir: Path) -> None:
 
 
 def check(out_dir: Path) -> None:
-    problems = []
+    problems = check_plugin()
     for name, entries in bundles().items():
         path = out_dir / name
         if not path.is_file():
@@ -171,7 +253,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", default="dist", help="output directory (default: dist)")
     parser.add_argument("--check", action="store_true", help="verify, do not write")
+    parser.add_argument(
+        "--sync-plugin", action="store_true",
+        help="refresh plugin/skills/deccan-design/ from skill/ and exit",
+    )
     args = parser.parse_args()
+    if args.sync_plugin:
+        sync_plugin()
+        return
     out_dir = Path(args.out)
     if args.check:
         check(out_dir)

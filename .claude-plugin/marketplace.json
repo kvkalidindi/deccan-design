@@ -1,0 +1,25 @@
+{
+  "name": "deccan",
+  "owner": {
+    "name": "Deccan Fine Chemicals — Office of the SVP, IT & Digital Transformation",
+    "email": "kishore.kalidindi@deccanchemicals.com"
+  },
+  "metadata": {
+    "description": "Corporate design system for Deccan Fine Chemicals. One plugin: deccan-design.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "deccan-design",
+      "source": "./plugin",
+      "description": "The Deccan Fine Chemicals corporate design system (v2.1+). Default for any stylized deliverable — documents, reports, memos, specs, policies, letters, proposals, decks, workbooks, dashboards, signatures — in HTML / PDF / Word / Excel / PowerPoint / Google Workspace, whether or not Deccan is mentioned. Attributes every document to the requesting user.",
+      "category": "design",
+      "author": {
+        "name": "Office of the SVP, IT & Digital Transformation"
+      },
+      "homepage": "https://github.com/kvkalidindi/deccan-design",
+      "license": "Proprietary",
+      "keywords": ["design-system", "deccan", "documents", "branding"]
+    }
+  ]
+}
