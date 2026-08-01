@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Deccan Fine Chemicals wordmark — deccan-design v2.0 placeholder.
+     Generated as a vector approximation of the official wordmark for use
+     where a vector mark is required. Replace with the authoritative
+     vendor-supplied SVG when available. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 80" role="img" aria-label="Deccan Fine Chemicals">
+  <title>Deccan Fine Chemicals</title>
+  <desc>Wordmark — Deccan Blue rule paired with the company name in Segoe UI Variable semibold.</desc>
+  <!-- Rule -->
+  <rect x="8" y="36" width="56" height="3" fill="#164999"/>
+  <!-- Sustainability mark (single small Deccan Green dot, retained per brand) -->
+  <circle cx="70" cy="37.5" r="3" fill="#71BF4D"/>
+  <!-- Wordmark text -->
+  <text x="84" y="48"
+        font-family="'Segoe UI Variable Text','Segoe UI',system-ui,-apple-system,sans-serif"
+        font-size="22"
+        font-weight="600"
+        letter-spacing="-0.005em"
+        fill="#1C1917">Deccan Fine Chemicals</text>
+</svg>

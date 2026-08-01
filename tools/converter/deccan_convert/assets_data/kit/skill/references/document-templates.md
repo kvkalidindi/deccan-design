@@ -11,7 +11,7 @@ This skill ships an HTML slot-fill template in `assets/templates/document.html`.
 | `{{TITLE}}` | string | Cover and document title. Max 22 ch on the cover. |
 | `{{SUBTITLE}}` | string | Cover subtitle. Max 50 ch. Optional. |
 | `{{DOCUMENT_TYPE}}` | string | Cover eyebrow chip — "Standard", "Specification", "Policy", "Memo", "Brief", "Report", "Letter", "Proposal", "Guide". |
-| `{{PREPARED_BY}}` | string | Cover author line. Office, team, or named individual. |
+| `{{PREPARED_BY}}` | string | Cover author line. Office, team, or named individual — resolved per `SKILL.md` → Attribution: defaults to the requesting user, never the system maintainer. |
 | `{{DATE}}` | string | Cover date. Format: "May 2026" or "14 May 2026". |
 | `{{VERSION}}` | string | Cover version. Format: "1.0", "2.1.3". |
 | `{{CLASSIFICATION}}` | one of: Public, Internal, Confidential, Restricted | Cover classification chip. |

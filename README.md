@@ -20,19 +20,21 @@ Version 2.0 — May 2026.
 
 ## Install
 
-The current design-system release is **v2.0.2** — [release page](https://github.com/kvkalidindi/deccan-design/releases/tag/v2.0.2):
+The current design-system release is **v2.1.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
 
-- **The Claude skill:** `deccan-design-skill-bundle.zip` (upload to a Claude.ai workspace, or unzip to `%APPDATA%\Anthropic\Claude\skills\`).
+- **Claude Code (recommended):** the repo is a plugin marketplace — one-time setup, automatic updates from `main` afterwards:
+
+  ```
+  claude plugin marketplace add kvkalidindi/deccan-design
+  claude plugin install deccan-design@deccan
+  ```
+
+- **Claude.ai workspace (admins):** upload `deccan-design-skill-bundle.zip` via Settings → Workspace → Skills; paste `claude/workspace-instructions.md` into Workspace → Custom instructions. Claude Desktop and the mobile apps inherit both automatically. Rollout runbook: `docs/admin-guide/org-rollout.md`.
 - **All templates as a zip:** `templates-bundle.zip`
 
 Both bundles are built from the tagged tree by CI, so they carry exactly what is committed.
 
-The installers are still at **v2.0.1** — [release page](https://github.com/kvkalidindi/deccan-design/releases/tag/v2.0.1):
-
-- **Windows:** `deccan-design-2.0.1.msi`
-- **macOS:** `deccan-design-2.0.0.pkg`
-
-They are built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to a release afterwards; the v2.0.2 packages land on the v2.0.2 release once IT rebuilds them. Until then, install v2.0.1 and take the v2.0.2 skill bundle from the zip above.
+The MSI / PKG installers (releases page) remain the channel for the **Office templates and Outlook signature**. Their bundled Claude-skill copy is legacy — Claude Code takes the skill from the plugin marketplace, Claude Desktop from the workspace. Built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to a release afterwards.
 
 Per-user install. No admin elevation required.
 
@@ -67,7 +69,7 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 | Create a new deck | PowerPoint → File → New → Personal → pick a `deccan-…` template. |
 | Use the system in Google Docs | Upload the `templates/gworkspace/*.docx` → Open with Google Docs → File → Save as Google Docs. |
 | Generate an HTML document | Fill the slots in `skill/assets/templates/document.html`. |
-| Ask Claude for a Deccan document | In any Claude surface, ask: *"Generate a one-page Deccan status memo about &lt;topic&gt;."* The `deccan-design` skill activates automatically once installed. |
+| Ask Claude for any document | In any Claude surface, ask: *"Generate a one-page status memo about &lt;topic&gt;."* deccan-design applies by default to any stylized document — the request does not need to mention Deccan — and attributes the document to you. |
 
 ## Deccan Convert — apply the system to existing documents
 

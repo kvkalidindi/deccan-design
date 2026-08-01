@@ -17,6 +17,12 @@ name: release-design-system
 # They are produced on a managed endpoint per installers/*/README.md and
 # attached to the same release afterwards; softprops/action-gh-release
 # updates a release in place rather than replacing its assets.
+#
+# The workspace skill on Claude.ai cannot be pushed by API, so every tag
+# also opens a checklist issue for the workspace admin — the manual
+# re-upload is made non-forgettable instead of automated. The Claude Code
+# plugin mirror (plugin/skills/deccan-design/) is byte-equality-gated by
+# the --check step; that channel updates itself from main.
 
 on:
   push:
@@ -27,6 +33,9 @@ on:
       - 'tools/release/**'
       - 'skill/**'
       - 'templates/**'
+      - 'plugin/**'
+      - '.claude-plugin/**'
+      - 'claude/**'
       - '.github/workflows/release-design-system.yml'
   workflow_dispatch:
     inputs:
@@ -43,6 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -76,7 +86,22 @@ jobs:
           missing = [r for r in required if r not in tpl]
           if missing:
               sys.exit("slot template missing: " + "; ".join(missing))
-          print(f"{len(names)} files; slot template contract intact")
+          # Attribution / default-application policy must ship in the bundle:
+          # without it, sessions fall back to attributing documents to the
+          # maintainer and triggering only on Deccan-named requests.
+          skill = z.read("deccan-design/SKILL.md").decode()
+          slots = z.read("deccan-design/assets/templates/document-slots.md").decode()
+          policy = [
+              (skill, "## Attribution"),
+              (skill, "never the repo maintainer, never invented"),
+              (skill, "whether or not Deccan is mentioned"),
+              (skill, "## Staying current"),
+              (slots, "## PREPARED_BY resolution"),
+          ]
+          lost = [marker for text, marker in policy if marker not in text]
+          if lost:
+              sys.exit("bundle lost policy sections: " + "; ".join(lost))
+          print(f"{len(names)} files; slot template + attribution policy intact")
           PY
 
       - name: Checksums
@@ -112,11 +137,41 @@ jobs:
             | `templates-bundle.zip` | Office, Outlook, and Google Workspace templates. |
             | `SHA256SUMS.txt` | Checksums for the two bundles. |
 
+            Claude Code users on the plugin channel
+            (`claude plugin install deccan-design@deccan`) update
+            automatically from `main` — no action needed.
+
             Both bundles are built from the tagged tree by
             `tools/release/build_bundles.py` in CI.
 
             The MSI and PKG are built on managed endpoints
             (`installers/*/README.md`) and attached to this release
-            separately. Until they are, endpoints keep the previously
-            installed local skill copy; the workspace skill above updates
-            independently.
+            separately; they remain the channel for Office templates and
+            the Outlook signature. Their bundled skill copy is legacy —
+            Claude Code and Claude Desktop take the skill from the plugin
+            marketplace and the workspace skill respectively.
+
+      - name: Open workspace re-upload issue
+        if: >-
+          startsWith(github.ref, 'refs/tags/v') ||
+          (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" \
+            --title "Action required: deploy $TAG to the Claude.ai workspace" \
+            --assignee "${GITHUB_REPOSITORY%%/*}" \
+            --body "$(printf '%s\n' \
+              "CI published \`deccan-design-skill-bundle.zip\` for **$TAG**." \
+              "" \
+              "The workspace skill cannot be pushed by API — these steps are manual:" \
+              "" \
+              "- [ ] Download the bundle from the [release page](https://github.com/$GITHUB_REPOSITORY/releases/tag/$TAG) and verify against \`SHA256SUMS.txt\`" \
+              "- [ ] claude.ai → Settings → Workspace → Skills → deccan-design → **Replace bundle**" \
+              "- [ ] Confirm the workspace skill list shows version \`${TAG#v}\`" \
+              "- [ ] If \`claude/workspace-instructions.md\` changed in this release, re-paste it into Workspace → Custom instructions" \
+              "- [ ] Run \`docs/admin-guide/verification-prompt.md\` (Prompt B + Checks 1, 5, 6) with a non-admin member" \
+              "" \
+              "Claude Code plugin users and raw-URL fetchers are already on $TAG — no action for them.")"
+

@@ -1,5 +1,14 @@
 # Windows installer
 
+> **Claude-skill component is legacy.** The `deccan-design` skill copy this
+> installer lays down is superseded: Claude Code takes the skill from the
+> repository's plugin marketplace (`claude plugin marketplace add
+> kvkalidindi/deccan-design` + `claude plugin install deccan-design@deccan`,
+> auto-updating), and Claude Desktop from the Claude.ai workspace skill.
+> The installer remains the channel for the Office templates and the
+> Outlook signature.
+
+
 `deccan-design.wxs` defines an **unsigned per-user MSI** for the deccan-design v2.0 system.
 
 ## What it installs

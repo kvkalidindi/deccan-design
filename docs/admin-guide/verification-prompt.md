@@ -14,7 +14,21 @@ inline in <head>. Cover, body sections 01-04, end page.
 
 The prompt deliberately omits all design instructions. A working setup applies the system from the workspace skill and custom instructions automatically.
 
-## The four binary checks
+## Prompt B — default application (no "Deccan" mentioned)
+
+In a second fresh chat, run:
+
+```
+Generate a one-page status memo about the Python 3.13 pilot rollout.
+Output a complete, self-contained HTML file with all CSS inline in <head>.
+Cover, body sections 01-04, end page.
+```
+
+Prompt B never says "Deccan". Since v2.1 the system is the org default for any stylized document, so the output must be identical in kind to Prompt A's — same type stack, same accent, same furniture. If Prompt A passes and Prompt B produces generic styling, the workspace custom instructions (org-rollout Step 3) are missing or stale.
+
+## The six binary checks
+
+Checks 1–4 run against either prompt's output; checks 5–6 have their own procedure.
 
 Open the HTML response in **View source** or save and open in a browser, then check each item.
 
@@ -71,14 +85,50 @@ Read the body content. None of the following may appear:
 | **Pass** | None of the patterns present. | Tone module from `tone-and-voice.md` is active. |
 | **Fail** | One or more patterns present. | Skill is partially loaded — `tone-and-voice.md` likely not in the bundle, or the model is overriding it. Re-upload the skill bundle (workspace admin); confirm `references/tone-and-voice.md` is inside the zip. |
 
+### Check 5 — Attribution
+
+Must be run by a **non-admin member who is not the design-system maintainer**, in a fresh chat, with **no author mentioned** in the prompt.
+
+Open the generated HTML and read the cover's "Prepared by" value.
+
+| Result | Meaning |
+|---|---|
+| **Pass** | The tester's own name (derived from their account), or Claude asked who to attribute before generating. | Attribution policy (SKILL.md → Attribution) is active. |
+| **Fail** | Any "Kalidindi" variant, `kvkalidindi`, or an unrequested "Office of the SVP, IT & Digital Transformation". | The session is resolving authorship from repository provenance or a maintainer persona. Most common cause: the *personal* preferences block was pasted into **workspace** custom instructions — redo org-rollout Step 3 with `claude/workspace-instructions.md`. |
+
+Grep guidance: search the HTML source for `Kalidindi` — zero hits required.
+
+Also verify rule 1 wins: re-run with "…prepare it under the QHSE team's name" → "Prepared by QHSE Team".
+
+### Check 6 — Freshness
+
+View source and read `<meta name="generator" content="deccan-design v2.0 · slot template X.Y.Z">`.
+
+| Result | Meaning |
+|---|---|
+| **Pass** | `X.Y.Z` equals the latest release's template revision — even if the workspace bundle is a release behind. | The "Staying current" fetch rule is working; bundle drift is harmless. |
+| **Fail** | An older revision while a newer release exists and the session had network access. | The session used only the bundled copy. Confirm the workspace bundle is the latest (release checklist issue), and that SKILL.md in the bundle contains the "Staying current" section. |
+
+## Per-surface matrix
+
+Run **Prompt B + Checks 1 and 5** on each surface; Check 6 wherever network fetch is available.
+
+| Surface | Setup | Expected |
+|---|---|---|
+| claude.ai web | Workspace member, fresh chat | All checks pass |
+| Claude Desktop | Same account signed in | Same as web (inherits workspace skill + instructions) |
+| iOS or Android app | Same account | Same as web; also confirm the document previews light-on-white in the in-app viewer |
+| Claude Code | Plugin installed (`claude plugin install deccan-design@deccan`); `git config user.name` set to the tester | All checks pass; Check 5 shows the git identity |
+
 ## Interpreting the results
 
 | Checks passing | Action |
 |---|---|
-| 4 of 4 | Deployment is correct. Tell the team to start using it. |
-| 3 of 4 | Investigate the failing check with the table guidance above. Re-test on the same teammate. |
-| 2 of 4 or fewer | Likely the skill or the custom instructions are not actually applied. Re-do `org-rollout.md` Steps 2 and 3 from a clean admin session; confirm the bundle was uploaded under Workspace scope, not Personal. |
-| 0 of 4 | Probable cause: the teammate is not in the workspace, or workspace skills are not yet rolled out to your tenant. Verify membership and feature availability. |
+| 6 of 6 | Deployment is correct. Tell the team to start using it. |
+| Check 5 alone failing | Attribution leak — see Check 5's fail row; almost always the workspace-instructions paste. |
+| Prompt A passes, Prompt B fails | Default-application gap — workspace custom instructions missing or stale (Step 3). |
+| 2 of 6 or fewer | Likely the skill or the custom instructions are not actually applied. Re-do `org-rollout.md` Steps 2 and 3 from a clean admin session; confirm the bundle was uploaded under Workspace scope, not Personal. |
+| 0 of 6 | Probable cause: the teammate is not in the workspace, or workspace skills are not yet rolled out to your tenant. Verify membership and feature availability. |
 
 ## Automated verification (Windows)
 
@@ -94,7 +144,7 @@ The helper exits non-zero on failure. Useful for periodic spot-checks of generat
 
 If checks fail after re-doing the rollout steps:
 
-1. Confirm the bundle zip on the GitHub release is intact (size 47 KB, 13 files; SHA-256 visible on the release page).
-2. Confirm the workspace's custom instructions field contains the full preferences block, not a truncated paste.
+1. Confirm the bundle zip on the GitHub release is intact (13 files; SHA-256 visible on the release page and in SHA256SUMS.txt).
+2. Confirm the workspace's custom instructions field contains the full `claude/workspace-instructions.md` block (not the personal block, not a truncated paste).
 3. Open a fresh chat and prompt Claude directly: *"List the skills available in this workspace and which ones are auto-activated."* The response should include `deccan-design`.
 4. Escalate to Tier 3 (design system owner — Office of the SVP, IT & Digital Transformation) per `admin-guide.html` §12.
