@@ -159,18 +159,31 @@ def verify_frontmatter() -> None:
         raise SystemExit("SKILL.md frontmatter invalid:\n  " + "\n  ".join(problems))
 
 
-def verify_attribution() -> None:
-    """The skill must ship its attribution and default-application policy.
+# Markers the template itself must carry. A document built from a template
+# missing any of these renders dark-on-dark in the Claude iOS and Android
+# previews, which is the defect this list exists to make unshippable.
+TEMPLATE_CONTRACT = (
+    '<meta name="color-scheme" content="light">',
+    "color-scheme: light only;",
+    ":root { background-color: var(--stone-50) !important; }",
+    "@media (prefers-color-scheme: dark) {",
+    "main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }",
+)
 
-    Documents were being attributed to the design-system maintainer because
-    nothing told a session how to resolve the author; the policy in SKILL.md
-    is the fix, and a release that drops it silently reintroduces the bug.
-    Same for the broadened trigger: the skill is the org default for any
-    stylized artifact, not only Deccan-named ones.
+
+def policy_problems(skill: str, slots: str, template: str) -> list[str]:
+    """Every policy the skill must ship, checked against file *contents*.
+
+    Taking text rather than paths lets the same list run against the working
+    tree and against the built zip. The two used to be separate marker lists —
+    one here, one inlined in the release workflow — and renaming a section
+    updated one of them, which is how a release comes to fail on a rule that
+    was strengthened rather than dropped.
     """
-    skill = (REPO / "skill" / "SKILL.md").read_text("utf-8")
-    slots = (REPO / "skill" / "assets" / "templates" / "document-slots.md").read_text("utf-8")
     problems = []
+
+    # Attribution: without a resolution order, sessions attribute documents to
+    # whoever the repository is about rather than whoever asked.
     if "## Attribution" not in skill:
         problems.append("SKILL.md: '## Attribution' section missing")
     else:
@@ -179,24 +192,28 @@ def verify_attribution() -> None:
             problems.append("SKILL.md: Attribution section lost the repo-slug ban")
     if "never the repo maintainer, never invented" not in skill:
         problems.append("SKILL.md: attribution checklist line missing")
-    if "whether or not Deccan is mentioned" not in skill.split("---", 2)[1]:
-        problems.append("SKILL.md: description no longer covers non-Deccan-named requests")
     if "## PREPARED_BY resolution" not in slots:
         problems.append("document-slots.md: '## PREPARED_BY resolution' section missing")
-    # A revision of an existing document must be re-based on the template.
-    # Without this rule a session reuses the prior version's stylesheet and
-    # silently reintroduces every rendering defect fixed since that version
-    # was issued — the template-side fixes never apply, because the template
-    # is never opened.
-    if "## Revising an existing document" not in skill:
-        problems.append("SKILL.md: '## Revising an existing document' section missing")
-    # The fetch-first rule and the rendering invariant are what keep a lagging
-    # installed bundle from producing a dark-on-dark document on iOS/Android.
-    # A release that drops either one ships the defect back to every surface.
+
+    # The skill is the org default for any stylized artifact, not only
+    # Deccan-named requests.
+    if "whether or not Deccan is mentioned" not in skill.split("---", 2)[1]:
+        problems.append("SKILL.md: description no longer covers non-Deccan-named requests")
+
+    # Fetch-first, and the ban on inheriting a prior document's stylesheet.
+    # Together these are what stop an installed bundle — which always lags
+    # eventually — from producing documents built on a frozen template.
     if "## Fetching the template — hard rule" not in skill:
         problems.append("SKILL.md: '## Fetching the template — hard rule' section missing")
     if "Fetch it at build time, every time" not in skill:
         problems.append("SKILL.md: the fetch-first directive is missing")
+    if "Never fall back silently." not in skill:
+        problems.append("SKILL.md: the fallback must be declared, not silent")
+    if "## Revising an existing document" not in skill:
+        problems.append("SKILL.md: '## Revising an existing document' section missing")
+
+    # The invariant is the backstop: a property of the artifact, checkable
+    # without knowing what the session believed about its inputs.
     if "## The rendering invariant" not in skill:
         problems.append("SKILL.md: '## The rendering invariant' section missing")
     else:
@@ -208,10 +225,56 @@ def verify_attribution() -> None:
                 problems.append(f"SKILL.md: the invariant does not list {marker!r}")
     if 'name="generator"' not in skill:
         problems.append("SKILL.md: the generator-meta self-check is missing")
+
+    # And the template must actually satisfy the contract the skill advertises.
+    for marker in TEMPLATE_CONTRACT:
+        if marker not in template:
+            problems.append(f"document.html: contract marker missing: {marker!r}")
+
+    return problems
+
+
+def _tree_text() -> tuple[str, str, str]:
+    root = REPO / "skill"
+    return (
+        (root / "SKILL.md").read_text("utf-8"),
+        (root / "assets" / "templates" / "document-slots.md").read_text("utf-8"),
+        (root / "assets" / "templates" / "document.html").read_text("utf-8"),
+    )
+
+
+def verify_attribution() -> None:
+    """Run the policy checks against the working tree."""
+    problems = policy_problems(*_tree_text())
     if problems:
         raise SystemExit(
-            "Attribution/default-application policy incomplete:\n  " + "\n  ".join(problems)
+            "Skill policy incomplete:\n  " + "\n  ".join(problems)
         )
+
+
+def verify_bundle(zip_path: Path) -> None:
+    """Run the same policy checks against a built bundle.
+
+    Defense in depth for the release job: the tree can be correct while the
+    zip is built from a stale checkout, and Claude.ai rejects a bundle whose
+    SKILL.md is not at the root of the single top-level folder.
+    """
+    with zipfile.ZipFile(zip_path) as z:
+        names = sorted(i.filename for i in z.infolist())
+        if "deccan-design/SKILL.md" not in names:
+            raise SystemExit("bundle: SKILL.md must sit at the root of deccan-design/")
+        texts = tuple(
+            z.read(f"deccan-design/{rel}").decode("utf-8")
+            for rel in ("SKILL.md",
+                        "assets/templates/document-slots.md",
+                        "assets/templates/document.html")
+        )
+    problems = policy_problems(*texts)
+    if problems:
+        raise SystemExit(
+            f"{zip_path.name} does not carry the shipped policy:\n  " + "\n  ".join(problems)
+        )
+    print(f"{zip_path.name}: {len(names)} files; policy and template contract intact")
 
 
 def _plugin_expected() -> dict[Path, bytes]:
@@ -314,9 +377,16 @@ def main() -> None:
         "--sync-plugin", action="store_true",
         help="refresh plugin/skills/deccan-design/ from skill/ and exit",
     )
+    parser.add_argument(
+        "--verify-bundle", metavar="ZIP",
+        help="run the policy checks against a built bundle and exit",
+    )
     args = parser.parse_args()
     if args.sync_plugin:
         sync_plugin()
+        return
+    if args.verify_bundle:
+        verify_bundle(Path(args.verify_bundle))
         return
     out_dir = Path(args.out)
     if args.check:
