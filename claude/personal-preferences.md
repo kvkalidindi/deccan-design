@@ -22,7 +22,7 @@ This block is also the canonical reference loaded by the `deccan-design` skill a
 > **Override clause.** Older instructions referencing `swiss_design_at_deccan` (any version), `deccan-design v1.0` (the Aptos plan), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks are superseded. Treat the `swiss-design-deccan` skill name as an alias for `deccan-design`. The type stack is OS-native; no font binaries ship with the system.
 >
 > **Document generation (HTML / PDF).**
-> When asked to produce a Deccan Fine Chemicals document as HTML or PDF, fill the bundled template at:
+> Fetch the slot template at build time, every time — never reuse a copy held in the conversation, bundled in a skill, or taken from an earlier version of the document. Before returning any HTML, confirm it carries the generator meta, `color-scheme: light only` and the pinned canvas rules; without them it renders dark-on-dark in the mobile previews. The canonical template:
 >
 > &nbsp;&nbsp;`https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html`
 >

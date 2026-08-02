@@ -9,6 +9,16 @@ Two release lines share this repository:
 
 ---
 
+## v2.2.0 — 1 August 2026
+
+**Fetching the canonical template is now a hard rule.** The previous rule was conditional — fetch *if the session can*, otherwise use the bundled copy silently — which left the cheapest path (use what is already loaded) available and undetectable. An installed bundle lags the repository as a matter of course, so that path produced documents built from whatever template happened to be frozen into the bundle at install time.
+
+The rule is now unconditional: fetch the canonical template at build time, every time, before filling a slot, and fill the copy that comes back. The bundled copy is a fallback for a session with no network and nothing else, and a session that falls back must say so in its response — naming the revision used and that it may lag. A template held in conversation context or lifted from a previous document is never acceptable.
+
+**The rendering invariant makes the outcome checkable.** Before returning any HTML the session confirms the output carries the generator meta, the `color-scheme` meta, `color-scheme: light only`, the pinned `:root` canvas rule, and the dark-mode block. Any one missing means the document renders dark-on-dark on iOS and Android, so it is rebuilt rather than returned. This is a property of the artifact, independent of which template the session thought it used.
+
+Both rules are stated at every layer that reaches a surface — the skill, the workspace instructions, and the personal preferences block — and the release build fails if the skill drops either section, the fetch-first directive, or any marker from the invariant. The converter suite additionally asserts that the offline kit ships both rules and a render-safe template.
+
 ## v2.1.3 — 1 August 2026
 
 **A revised document no longer inherits the old stylesheet.** A v2.0 of a brief first issued in July came out rendering dark-on-dark despite every surface being current. The artifact carried no `color-scheme`, no revision marker, no generator meta and the zero-gutter `main.body` rule — it was the 14 May template verbatim. The skill was not at fault and was demonstrably loaded: the document carries all nine audit-grade elements that shipped hours earlier in v2.1.2. What happened is that the session built the new version from the *previous version of the document* and reused its `<style>` block, so the template was never opened and no template-side fix could apply.

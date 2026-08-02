@@ -190,6 +190,22 @@ def verify_attribution() -> None:
     # is never opened.
     if "## Revising an existing document" not in skill:
         problems.append("SKILL.md: '## Revising an existing document' section missing")
+    # The fetch-first rule and the rendering invariant are what keep a lagging
+    # installed bundle from producing a dark-on-dark document on iOS/Android.
+    # A release that drops either one ships the defect back to every surface.
+    if "## Fetching the template — hard rule" not in skill:
+        problems.append("SKILL.md: '## Fetching the template — hard rule' section missing")
+    if "Fetch it at build time, every time" not in skill:
+        problems.append("SKILL.md: the fetch-first directive is missing")
+    if "## The rendering invariant" not in skill:
+        problems.append("SKILL.md: '## The rendering invariant' section missing")
+    else:
+        invariant = skill.split("## The rendering invariant", 1)[1].split("\n## ", 1)[0]
+        for marker in ("color-scheme: light only;",
+                       ":root { background-color: var(--stone-50) !important; }",
+                       "@media (prefers-color-scheme: dark) {"):
+            if marker not in invariant:
+                problems.append(f"SKILL.md: the invariant does not list {marker!r}")
     if 'name="generator"' not in skill:
         problems.append("SKILL.md: the generator-meta self-check is missing")
     if problems:

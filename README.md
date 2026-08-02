@@ -2,7 +2,7 @@
 
 The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice, and audit-grade document furniture.
 
-Design system **v2.0** · current package release **v2.1.2** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
+Design system **v2.0** · current package release **v2.2.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## What is in this repository
 
@@ -22,7 +22,7 @@ Design system **v2.0** · current package release **v2.1.2** (August 2026). The 
 
 ## Install
 
-The current design-system release is **v2.1.2** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
+The current design-system release is **v2.2.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
 
 - **Claude Code (recommended):** the repo is a plugin marketplace — one-time setup, automatic updates from `main` afterwards:
 
@@ -79,7 +79,7 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 |---|---|---|
 | Claude.ai web, Claude Desktop, iOS / Android | Workspace skill + workspace custom instructions (admin-deployed) | Admin re-uploads the bundle per release; a release automatically opens a checklist issue as the reminder |
 | Claude Code | Plugin marketplace (`deccan-design@deccan`) | Automatic from `main` after a one-time install |
-| Any session that can fetch | Canonical slot template on `main` | Instant — the skill compares the bundled and canonical revisions and fills whichever is newer, so a lagging bundle still produces current documents |
+| Every session, every document | Canonical slot template on `main` | Instant, and mandatory — since v2.2.0 the skill fetches the template at build time on every document and fills the copy that comes back. An installed bundle is a no-network fallback that must be declared when used, so a lagging bundle cannot quietly produce a stale document |
 | Deccan Convert endpoints | Kit embedded in the binary | Automatic — the binary self-updates from `converter-v*` releases |
 | Word / Excel / PowerPoint / Outlook | MSI / PKG | IT rebuild + MDM push. The installers' Claude-skill copy is legacy |
 
@@ -87,6 +87,22 @@ Two behaviours are worth stating plainly because they affect every member:
 
 - **The system is the default**, not an opt-in. Any request for a stylized artifact gets deccan-design whether or not it mentions Deccan — unless the member asks for a different design direction.
 - **Documents are attributed to the person who asked for them.** "Prepared by" resolves to a stated author, else the requesting member's identity, else Claude asks. Repository provenance is never authorship.
+
+- **Templates are fetched, never remembered.** Every HTML document is built from the canonical template pulled at build time. The copy inside an installed skill is a fallback for a session with no network, and a session that uses it says so. A template lifted from a previous version of the document is never acceptable.
+
+### The rendering invariant
+
+Documents are previewed against a dark canvas in the Claude iOS and Android apps. A document without the light-only rendering contract shows whole sections as dark text on a dark background — the reader sees blank space. Since v2.2.0 no document leaves the skill without all five of these, checked against the output before it is returned:
+
+```
+<meta name="generator" content="deccan-design v2.0 · slot template …">
+<meta name="color-scheme" content="light">
+color-scheme: light only;
+:root { background-color: var(--stone-50) !important; }
+@media (prefers-color-scheme: dark) {
+```
+
+Any document can be checked in one step: search its source for `generator`. Present means the template was filled and the contract is in place; absent means it was not, whatever else the document contains.
 
 Verification for all four surfaces: [`docs/admin-guide/verification-prompt.md`](docs/admin-guide/verification-prompt.md).
 
@@ -149,4 +165,4 @@ For commercial inquiries about Deccan Fine Chemicals: <https://www.deccanchemica
 
 ---
 
-*deccan-design v2.0 (package v2.1.2) · Office of the SVP, IT &amp; Digital Transformation · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*
+*deccan-design v2.0 (package v2.2.0) · Office of the SVP, IT &amp; Digital Transformation · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*
