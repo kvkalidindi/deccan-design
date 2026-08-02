@@ -86,6 +86,35 @@ class TestExportKit:
         assert ".claude/skills" in readme
         assert "text wordmark" in readme
 
+    def test_kit_skill_carries_the_fetch_first_rule(self, tmp_path):
+        """The kit equips offline endpoints — it must still teach fetch-first.
+
+        An endpoint equipped from `--export-kit` gets a skill copy that is
+        frozen at the binary's build date. If that copy tells a session the
+        bundled template is good enough, the endpoint produces dark-on-dark
+        documents forever. The rule that sends the session to the canonical
+        URL is what bounds the staleness, so it ships in the kit or the kit
+        is not fit to equip anything.
+        """
+        skill = (export_kit(tmp_path) / "skill" / "SKILL.md").read_text(encoding="utf-8")
+        assert "## Fetching the template — hard rule" in skill
+        assert "Fetch it at build time, every time" in skill
+        assert "## The rendering invariant" in skill
+        for marker in ("color-scheme: light only;",
+                       ":root { background-color: var(--stone-50) !important; }"):
+            assert marker in skill, f"invariant does not list {marker}"
+
+    def test_kit_template_is_render_safe(self, tmp_path):
+        """The template inside the kit carries the contract it advertises."""
+        tpl = (export_kit(tmp_path) / "skill" / "assets" / "templates"
+               / "document.html").read_text(encoding="utf-8")
+        for marker in ('<meta name="color-scheme" content="light">',
+                       '<meta name="generator" content="deccan-design v2.0 · slot template ',
+                       "color-scheme: light only;",
+                       ":root { background-color: var(--stone-50) !important; }",
+                       "@media (prefers-color-scheme: dark) {"):
+            assert marker in tpl, f"kit template missing: {marker}"
+
     def test_kit_refuses_to_overwrite(self, tmp_path):
         export_kit(tmp_path)
         with pytest.raises(FileExistsError):

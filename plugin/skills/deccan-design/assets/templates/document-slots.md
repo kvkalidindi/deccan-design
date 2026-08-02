@@ -1,6 +1,8 @@
 # document.html — slot reference
 
-The bundled template `document.html` exposes eight placeholders. Fill them; do not edit the surrounding HTML or CSS.
+The slot template `document.html` exposes eight placeholders. Fill them; do not edit the surrounding HTML or CSS.
+
+Fill the copy fetched from the canonical URL at build time — see `SKILL.md` → "Fetching the template — hard rule". The copy bundled in the skill is a no-network fallback, and a copy taken from an earlier document is never acceptable.
 
 | Slot | Type | Required | Example |
 |---|---|---|---|

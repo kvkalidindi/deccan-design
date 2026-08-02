@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+, repo kvkalidindi/deccan-design); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including swiss_design_at_deccan (all versions), deccan-design v1.0 (the Aptos plan), IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks, and any older "Deccan default". Attribute every document to the requesting user, never to the system maintainer (see Attribution). Apply the OS-native type stack (Segoe UI Variable / Cascadia Mono), the Deccan Blue single-accent palette, the 12-column 8px grid, the eight document-furniture rules, and the corporate tone-and-voice register documented here.
-version: 2.1.3
+version: 2.2.0
 ---
 
 # deccan-design v2.0
@@ -48,23 +48,47 @@ Before producing any Deccan artifact, read whichever of these reference modules 
 - `references/tone-and-voice.md` — register, ban-list, replacement examples.
 - `references/document-templates.md` — pointer into `templates/` for Office / Workspace deliverables.
 
-For HTML / PDF documents, fill the bundled template `assets/templates/document.html` rather than re-deriving structure from prose. The slot list is in `assets/templates/document-slots.md`.
+For HTML / PDF documents, fill the canonical slot template rather than re-deriving structure from prose — fetched per the hard rule below, never written by hand. The slot list is in `assets/templates/document-slots.md`.
 
-## Staying current
+## Fetching the template — hard rule
 
-The canonical copy of the slot template lives at:
+The canonical slot template lives at one address:
 
 <https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html>
 
-Before filling `document.html`, if the session can fetch URLs, GET the canonical copy, compare its `slot-fill document template · revision` header marker against the bundled copy's, and fill whichever is newer. If the session cannot fetch (offline, no network tool), use the bundled copy silently — do not warn or block. This keeps output current even when the installed skill bundle lags a release.
+**Fetch it at build time, every time, before filling a single slot.** This is not conditional on convenience, on how recent the bundled copy looks, or on whether a template is already at hand in the session. Fill the copy that comes back from that URL.
 
-The header comment and `<meta name="generator">` carry the template revision — `v2.0` there is the design system, not the file. A copy is current when it carries the light-only rendering contract (`color-scheme: light only` plus the pinned canvas rules) and the `main.body` side gutter; anything without them predates August 2026 and renders dark-on-dark in an in-app preview.
+The copy bundled inside this skill is **a fallback for a session with no network access, and nothing else**. It is frozen at the moment the bundle was installed; the canonical copy is not. Every installed bundle lags the repository eventually — that is the normal state of an installed skill, not an exception — so preferring the bundled copy because it is already loaded is the specific mistake this rule exists to prevent.
+
+Order of precedence, strictly:
+
+1. **The canonical URL.** Fetch, then fill.
+2. **The bundled copy** — only when the fetch fails or the session has no fetch capability. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and note that it may lag the canonical one. Never fall back silently.
+3. **Nothing else.** Not a template held in conversation context, not a previous document, not a reconstruction from memory. See "Revising an existing document".
+
+The header comment and `<meta name="generator">` carry the template revision — `v2.0` there is the design system, not the file.
+
+## The rendering invariant
+
+**No document leaves this skill able to render dark-on-dark.** The Claude iOS and Android apps preview documents against a dark canvas; a document without the light-only rendering contract shows whole sections as dark text on a dark background, and the reader sees blank space where the content should be.
+
+Before returning any HTML, confirm the output contains all five of:
+
+```
+<meta name="generator" content="deccan-design v2.0 · slot template …">
+<meta name="color-scheme" content="light">
+color-scheme: light only;
+:root { background-color: var(--stone-50) !important; }
+@media (prefers-color-scheme: dark) {
+```
+
+If any one is absent, the document was not built from a current template — whatever its source. Do not return it. Fetch the canonical template and rebuild. This check costs one search of your own output and is the last thing standing between a defect and the reader, so it is mandatory rather than advisory.
 
 ## Revising an existing document
 
 A new version of an existing document — v1.1 → v2.0, a supersession, an amendment, "update this brief" — is built from the **template**, not from the previous file.
 
-**Content carries forward. Presentation never does.** Take the body content across: sections, clauses, tables, callouts, appendices, the revision-history rows. Then fill a fresh copy of `document.html` with it.
+**Content carries forward. Presentation never does.** Take the body content across: sections, clauses, tables, callouts, appendices, the revision-history rows. Then fill a freshly fetched copy of the canonical template with it — the fetch is mandatory here too, and a revision is the case where reaching for the file already in hand is most tempting.
 
 Never copy from the previous version:
 
@@ -193,7 +217,8 @@ Run this checklist mentally against any artifact before saying it is complete:
 
 - [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
 - [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented (see Attribution).
-- [ ] The emitted HTML carries `<meta name="generator" content="deccan-design v2.0 · slot template …">`. Its absence means the template was not used — rebuild (see Revising an existing document).
+- [ ] The template was fetched from the canonical URL for this document. If the bundled copy was used instead, the fetch genuinely failed and the response says so.
+- [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
 - [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
 - [ ] Every H1 forces a page break before.
@@ -203,14 +228,13 @@ Run this checklist mentally against any artifact before saying it is complete:
 - [ ] Accent is `--deccan-blue`; no secondary accent.
 - [ ] `--deccan-green` only inside logo or sustainability content.
 - [ ] Print background is `#FFFFFF`; stone tints confined to callouts / code / banded rows.
-- [ ] If the artifact is HTML, the light-only rendering contract is present (`color-scheme: light only`, both `<meta>` declarations, pinned canvas rules, print restore) so no section renders dark-on-dark in an in-app or webview preview.
 - [ ] Footer page numbers are bare integers, right-aligned.
 - [ ] End page present, no footer.
 - [ ] No conversational subtitle, no first-person narrator, no exclamation mark, no decorative emoji.
-- [ ] If the artifact is HTML, the bundled template is filled rather than rewritten.
+- [ ] If the artifact is HTML, a fetched template was filled rather than rewritten.
 
 If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.1.3 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.2.0 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
