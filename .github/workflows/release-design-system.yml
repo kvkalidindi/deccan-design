@@ -68,41 +68,11 @@ jobs:
       - name: Bundles match the repository sources
         run: python tools/release/build_bundles.py --check --out dist
 
-      - name: Skill bundle carries the light-only rendering contract
-        run: |
-          python - <<'PY'
-          import sys, zipfile
-          z = zipfile.ZipFile("dist/deccan-design-skill-bundle.zip")
-          names = sorted(i.filename for i in z.infolist())
-          assert "deccan-design/SKILL.md" in names, "SKILL.md must sit at the bundle root"
-          tpl = z.read("deccan-design/assets/templates/document.html").decode()
-          required = [
-              '<meta name="color-scheme" content="light">',
-              "color-scheme: light only;",
-              ":root { background-color: var(--stone-50) !important; }",
-              "@media (prefers-color-scheme: dark) {",
-              "main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }",
-          ]
-          missing = [r for r in required if r not in tpl]
-          if missing:
-              sys.exit("slot template missing: " + "; ".join(missing))
-          # Attribution / default-application policy must ship in the bundle:
-          # without it, sessions fall back to attributing documents to the
-          # maintainer and triggering only on Deccan-named requests.
-          skill = z.read("deccan-design/SKILL.md").decode()
-          slots = z.read("deccan-design/assets/templates/document-slots.md").decode()
-          policy = [
-              (skill, "## Attribution"),
-              (skill, "never the repo maintainer, never invented"),
-              (skill, "whether or not Deccan is mentioned"),
-              (skill, "## Staying current"),
-              (slots, "## PREPARED_BY resolution"),
-          ]
-          lost = [marker for text, marker in policy if marker not in text]
-          if lost:
-              sys.exit("bundle lost policy sections: " + "; ".join(lost))
-          print(f"{len(names)} files; slot template + attribution policy intact")
-          PY
+      - name: Bundle carries the shipped policy and template contract
+        # One marker list, in build_bundles.py, checked against the built zip.
+        # It used to be duplicated here, and a section rename in the skill then
+        # failed a release for a rule that had been strengthened, not dropped.
+        run: python tools/release/build_bundles.py --verify-bundle dist/deccan-design-skill-bundle.zip
 
       - name: Checksums
         run: |
