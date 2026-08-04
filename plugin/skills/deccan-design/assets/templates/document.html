@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — slot-fill document template · revision 2.3.0
+  deccan-design v2.0 — slot-fill document template · revision 2.3.1
 
   Canonical copy:
   https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html
@@ -14,17 +14,24 @@
       document previewed in a dark host does not render dark-on-dark;
     - the body gutter on main.body, so body copy is not flush to the screen
       edge on a phone.
+
+  Fetch this file with a unique query string every time (e.g. ?fetch=<UTC
+  timestamp>). The server ignores unknown query parameters, but the CDN and
+  fetch-tool caches between a session and this repository key on the full
+  URL — a plain fetch of the bare address is routinely answered from a
+  cache with a copy that predates the current release. The revision above
+  is how a session verifies what it actually received.
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · slot template 2.3.0">
+  <meta name="generator" content="deccan-design v2.0 · slot template 2.3.1">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — slot-fill document template · revision 2.3.0
+       deccan-design v2.0 — slot-fill document template · revision 2.3.1
        ================================================================ */
     :root {
       color-scheme: light only;

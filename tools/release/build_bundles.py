@@ -228,6 +228,21 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
     if "## Revising an existing document" not in skill:
         problems.append("SKILL.md: '## Revising an existing document' section missing")
 
+    # Cache defeat: a plain fetch of the unchanged canonical URL is routinely
+    # answered by a cache (CDN, fetch tool, the conversation's own earlier
+    # fetch) with a body that predates the current release — the rule above is
+    # satisfied while the bytes are stale. Three markers close the gaps:
+    # unique-query fetches, one fetch per document build, and the bundled
+    # revision as a freshness floor on what a fetch may return.
+    if "unique query string" not in skill:
+        problems.append("SKILL.md: the cache-busting unique-query directive is missing")
+    if "One fetch per document build" not in skill:
+        problems.append("SKILL.md: the per-build fetch rule is missing")
+    if "Freshness floor" not in skill:
+        problems.append("SKILL.md: the freshness-floor rule is missing")
+    if "unique query string" not in template:
+        problems.append("document.html: the cache-busting fetch note is missing from the header")
+
     # The invariant is the backstop: a property of the artifact, checkable
     # without knowing what the session believed about its inputs.
     if "## The rendering invariant" not in skill:
