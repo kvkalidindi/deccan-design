@@ -2,7 +2,7 @@
 
 The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice, and audit-grade document furniture.
 
-Design system **v2.0** · current package release **v2.3.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
+Design system **v2.0** · current package release **v2.3.1** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## What is in this repository
 
@@ -22,7 +22,7 @@ Design system **v2.0** · current package release **v2.3.0** (August 2026). The 
 
 ## Install
 
-The current design-system release is **v2.3.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
+The current design-system release is **v2.3.1** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
 
 - **Claude Code (recommended):** the repo is a plugin marketplace — one-time setup, automatic updates from `main` afterwards:
 
@@ -80,7 +80,7 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 |---|---|---|
 | Claude.ai web, Claude Desktop, iOS / Android | Workspace skill + workspace custom instructions (admin-deployed) | Admin re-uploads the bundle per release; a release automatically opens a checklist issue as the reminder |
 | Claude Code | Plugin marketplace (`deccan-design@deccan`) | Automatic from `main` after a one-time install |
-| Every session, every document | Canonical slot template on `main` | Instant, and mandatory — since v2.2.0 the skill fetches the template at build time on every document and fills the copy that comes back. An installed bundle is a no-network fallback that must be declared when used, so a lagging bundle cannot quietly produce a stale document |
+| Every session, every document | Canonical slot template on `main` | Instant, and mandatory — since v2.2.0 the skill fetches the template at build time on every document and fills the copy that comes back. Since v2.3.1 the fetch is cache-proof: one fetch per document build (regenerations included) with a unique query string, and the fetched revision must not be older than the bundled copy's. An installed bundle is a no-network fallback that must be declared when used, so a lagging bundle or a stale cache cannot quietly produce a stale document |
 | Deccan Convert endpoints | Kit embedded in the binary | Automatic — the binary self-updates from `converter-v*` releases |
 | Word / Excel / PowerPoint / Outlook | MSI / PKG | IT rebuild + MDM push. The installers' Claude-skill copy is legacy |
 
@@ -89,7 +89,7 @@ Two behaviours are worth stating plainly because they affect every member:
 - **The system is the default**, not an opt-in. Any request for a stylized artifact gets deccan-design whether or not it mentions Deccan — unless the member asks for a different design direction.
 - **Documents are attributed to the person who asked for them.** "Prepared by" resolves to a stated author, else the requesting member's identity, else Claude asks. Repository provenance is never authorship.
 
-- **Templates are fetched, never remembered.** Every HTML document is built from the canonical template pulled at build time. The copy inside an installed skill is a fallback for a session with no network, and a session that uses it says so. A template lifted from a previous version of the document is never acceptable.
+- **Templates are fetched, never remembered.** Every HTML document is built from the canonical template pulled at build time — one fetch per document build, carrying a unique cache-busting query string, with the fetched revision checked against the bundled copy's as a freshness floor. The copy inside an installed skill is a fallback for a session with no network, and a session that uses it says so. A template lifted from a previous version of the document — or fetched earlier in the same conversation — is never acceptable.
 
 ### The rendering invariant
 

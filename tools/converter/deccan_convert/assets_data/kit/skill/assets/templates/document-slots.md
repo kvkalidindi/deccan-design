@@ -2,7 +2,7 @@
 
 The slot template `document.html` exposes eight placeholders. Fill them; do not edit the surrounding HTML or CSS.
 
-Fill the copy fetched from the canonical URL at build time — see `SKILL.md` → "Fetching the template — hard rule". The copy bundled in the skill is a no-network fallback, and a copy taken from an earlier document is never acceptable.
+Fill the copy fetched from the canonical URL at build time — see `SKILL.md` → "Fetching the template — hard rule". Every build performs its own fetch with a unique cache-busting query string (`?fetch=<unique value>`); a copy this session fetched earlier, a copy taken from an earlier document, and a fetched copy whose revision is older than the bundled one are all unacceptable. The copy bundled in the skill is a no-network fallback only.
 
 | Slot | Type | Required | Example |
 |---|---|---|---|

@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, research report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Attribute every document to the requesting user; when no author resolves, default to the Deccan IT and Digital Transformation Team (see Attribution). Research reports are HTML by default (Word .docx on request) with a hyperlinked table of contents. Apply the OS-native type stack, the Deccan Blue single-accent palette, the 12-column 8px grid, the eight furniture rules, and the corporate tone.
-version: 2.3.0
+version: 2.3.1
 ---
 
 # deccan-design v2.0
@@ -58,13 +58,25 @@ The canonical slot template lives at one address:
 
 **Fetch it at build time, every time, before filling a single slot.** This is not conditional on convenience, on how recent the bundled copy looks, or on whether a template is already at hand in the session. Fill the copy that comes back from that URL.
 
+**Defeat the caches: append a unique query string to every fetch.** The address above is served through CDN and fetch-tool caches, and a plain fetch of an unchanged URL is routinely answered from a cache — the fetch "succeeds" while returning a body that predates the current release. The server ignores unknown query parameters, but every cache keys on the full URL, so a unique query forces the request end to end:
+
+```
+https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html?fetch=<unique value, e.g. the current UTC timestamp>
+```
+
+Generate a fresh value for every fetch. A fetch without a unique query string does not satisfy this rule.
+
+**One fetch per document build — a conversation is not a cache.** A template this session fetched earlier — for a previous document, a previous version of this document, or earlier in a long exchange — is conversation context, and filling it is prohibited by rule 3 below. Every build (including a regeneration, a retry, and a revision) performs its own fetch with its own unique query string. This is the specific failure this paragraph exists to prevent: a session that fetched correctly at the start of a conversation, then reuses that aging copy for every document after it.
+
+**Freshness floor: the fetched copy must not be older than the bundled copy.** After fetching, read the revision from the header comment / `<meta name="generator">` and compare it to the bundled copy's revision. The bundled revision is the floor — the canonical copy is only ever newer. A fetched revision *below* the bundled one proves a cache answered the request: refetch once with a new unique query string; if it is still older, fill the bundled copy and say so in the response. Never fill a copy older than the bundle.
+
 The copy bundled inside this skill is **a fallback for a session with no network access, and nothing else**. It is frozen at the moment the bundle was installed; the canonical copy is not. Every installed bundle lags the repository eventually — that is the normal state of an installed skill, not an exception — so preferring the bundled copy because it is already loaded is the specific mistake this rule exists to prevent.
 
 Order of precedence, strictly:
 
-1. **The canonical URL.** Fetch, then fill.
-2. **The bundled copy** — only when the fetch fails or the session has no fetch capability. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and note that it may lag the canonical one. Never fall back silently.
-3. **Nothing else.** Not a template held in conversation context, not a previous document, not a reconstruction from memory. See "Revising an existing document".
+1. **The canonical URL**, fetched with a unique query string for this build. Fetch, verify the freshness floor, then fill.
+2. **The bundled copy** — only when the fetch fails, the session has no fetch capability, or the refetched copy is still older than the bundle. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and note that it may lag the canonical one. Never fall back silently.
+3. **Nothing else.** Not a template held in conversation context — including one this session fetched earlier — not a previous document, not a reconstruction from memory. See "Revising an existing document".
 
 The header comment and `<meta name="generator">` carry the template revision — `v2.0` there is the design system, not the file.
 
@@ -88,7 +100,7 @@ If any one is absent, the document was not built from a current template — wha
 
 A new version of an existing document — v1.1 → v2.0, a supersession, an amendment, "update this brief" — is built from the **template**, not from the previous file.
 
-**Content carries forward. Presentation never does.** Take the body content across: sections, clauses, tables, callouts, appendices, the revision-history rows. Then fill a freshly fetched copy of the canonical template with it — the fetch is mandatory here too, and a revision is the case where reaching for the file already in hand is most tempting.
+**Content carries forward. Presentation never does.** Take the body content across: sections, clauses, tables, callouts, appendices, the revision-history rows. Then fill a freshly fetched copy of the canonical template with it — the fetch is mandatory here too, with its own unique query string, and a revision is the case where reaching for the file already in hand is most tempting. "Already in hand" includes a template this session fetched earlier: it aged the moment it arrived, and a regeneration built from it reproduces whatever has been fixed since.
 
 Never copy from the previous version:
 
@@ -233,7 +245,7 @@ Run this checklist mentally against any artifact before saying it is complete:
 
 - [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
 - [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented (see Attribution).
-- [ ] The template was fetched from the canonical URL for this document. If the bundled copy was used instead, the fetch genuinely failed and the response says so.
+- [ ] The template was fetched from the canonical URL **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (or returned a pre-bundle revision twice) and the response says so.
 - [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
 - [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
@@ -254,4 +266,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.3.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.3.1 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
