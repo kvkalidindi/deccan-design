@@ -2,7 +2,7 @@
 
 The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice, and audit-grade document furniture.
 
-Design system **v2.0** · current package release **v2.2.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
+Design system **v2.0** · current package release **v2.3.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## What is in this repository
 
@@ -22,7 +22,7 @@ Design system **v2.0** · current package release **v2.2.0** (August 2026). The 
 
 ## Install
 
-The current design-system release is **v2.2.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
+The current design-system release is **v2.3.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
 
 - **Claude Code (recommended):** the repo is a plugin marketplace — one-time setup, automatic updates from `main` afterwards:
 
@@ -72,6 +72,7 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 | Use the system in Google Docs | Upload the `templates/gworkspace/*.docx` → Open with Google Docs → File → Save as Google Docs. |
 | Generate an HTML document | Fill the slots in `skill/assets/templates/document.html`. |
 | Ask Claude for any document | In any Claude surface, ask: *"Generate a one-page status memo about &lt;topic&gt;."* deccan-design applies by default to any stylized document — the request does not need to mention Deccan — and attributes the document to you. |
+| Ask Claude for a research report | *"Generate a research report on &lt;topic&gt;."* The report renders as HTML by default — or Word `.docx` if you ask for it, printable to PDF from Word — with a table of contents whose every entry hyperlinks to its section. Light theme is the hard default; a dark variant is produced only on explicit request. |
 
 ## How the system reaches Claude
 
@@ -130,7 +131,7 @@ PDFs are not committed to this repository. The OS-native font stack means sandbo
 
 `deccan-design v2.0` replaces and supersedes all of the following:
 
-- `swiss_design_at_deccan` v1 (IBM Plex stack) and v2 (OS-native, renamed under this project).
+- Every earlier Deccan design system, under any earlier name or version.
 - `deccan-design v1.0` (the deferred Aptos plan).
 - Any inherited preference for IBM Plex Sans/Mono, Hanken Grotesk, Fira Code, Aptos, Inter, or any "Deccan default" referenced in older personal-preference blocks or memory.
 
@@ -165,4 +166,4 @@ For commercial inquiries about Deccan Fine Chemicals: <https://www.deccanchemica
 
 ---
 
-*deccan-design v2.0 (package v2.2.0) · Office of the SVP, IT &amp; Digital Transformation · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*
+*deccan-design v2.0 (package v2.3.0) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*

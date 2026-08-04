@@ -1,7 +1,7 @@
 ---
 name: deccan-design
-description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+, repo kvkalidindi/deccan-design); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including swiss_design_at_deccan (all versions), deccan-design v1.0 (the Aptos plan), IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks, and any older "Deccan default". Attribute every document to the requesting user, never to the system maintainer (see Attribution). Apply the OS-native type stack (Segoe UI Variable / Cascadia Mono), the Deccan Blue single-accent palette, the 12-column 8px grid, the eight document-furniture rules, and the corporate tone-and-voice register documented here.
-version: 2.2.0
+description: Use for ANY stylized or formatted deliverable — document, report, research report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Attribute every document to the requesting user; when no author resolves, default to the Deccan IT and Digital Transformation Team (see Attribution). Research reports are HTML by default (Word .docx on request) with a hyperlinked table of contents. Apply the OS-native type stack, the Deccan Blue single-accent palette, the 12-column 8px grid, the eight furniture rules, and the corporate tone.
+version: 2.3.0
 ---
 
 # deccan-design v2.0
@@ -14,7 +14,7 @@ This is the **default design system for any Deccan Fine Chemicals artifact**. It
 
 This skill supersedes:
 
-- `swiss_design_at_deccan` (v1 IBM Plex, v2 OS-native — folded into this skill under the new name).
+- Every earlier Deccan design system, under any earlier name or version — all are folded into this skill.
 - `deccan-design` v1.0 (the deferred Aptos plan).
 - Any inherited preference for IBM Plex Sans/Mono, Hanken Grotesk, Fira Code, Aptos, or Inter.
 - Any older "Deccan default" referenced in personal preferences or persistent memory.
@@ -27,14 +27,14 @@ Every document is attributed to the person who asked for it. Resolve `{{PREPARED
 
 1. **An explicit statement** in the user's request or attached content ("prepared by the QHSE team", "under my director's name", front matter `author:`). This always wins.
 2. **The invoking user's session identity.** On Claude.ai, Claude Desktop, and the mobile apps, derive a display name from the account email in session context: `priya.sharma@deccanchemicals.com` → "Priya Sharma". If the local-part is not clearly `firstname.lastname` (initials, a shared mailbox, a service account), show the derivation and confirm it before generating. In Claude Code, use `git config user.name`, then the git email's local-part.
-3. **Neither available → ask the user.** Never fill the slot silently, and never ship an example value.
+3. **Neither available → default to "Deccan IT and Digital Transformation Team".** This is the standing default author for any document whose requester cannot be resolved. Say in the response that the default was applied. Never invent a personal name, and never ship an example value.
 
 **Prohibited evidence.** The following are never evidence of authorship, no matter how often they appear in context:
 
-- The repository owner slug `kvkalidindi`.
-- The design-system maintainer's name in any variant (Kishore Varma Kalidindi, Kishore V. Kalidindi, K. V. Kalidindi, K. Kalidindi).
+- The repository owner's account slug or profile identity.
+- The design-system maintainer's personal name, in any form or variant it may appear.
 - Names found in this repository's documentation, commit history, or release notes.
-- "Office of the SVP, IT & Digital Transformation" — an **illustrative example only**. Use it solely when the user states the document is issued by that office.
+- Any office or executive title found in repository provenance. "Deccan IT and Digital Transformation Team" appears as the author only through the rule-3 default above, or when the user states the document is issued by that team.
 
 Repository provenance is not authorship. A workspace- or preference-level persona ("I am a senior engineering leader…") describes whoever wrote that block, not necessarily the person in this session — it is rule-2 evidence only when it matches the session's own account identity.
 
@@ -168,6 +168,7 @@ The read-aloud test: if a sentence would feel out of place in a board paper, an 
 | Output | What to use |
 |---|---|
 | HTML document / PDF source | Fill `assets/templates/document.html` slots |
+| Research report | HTML by default (fill the slot template, `DOCUMENT_TYPE` "Research Report", hyperlinked TOC); Word `.docx` only when the user chooses it — see "Research reports" |
 | Word `.docx` | Inherit `templates/word/deccan-document.dotx` (or one of the three specialised variants) |
 | Excel `.xlsx` | Inherit `templates/excel/deccan-workbook.xltx` |
 | PowerPoint `.pptx` | Inherit `templates/powerpoint/deccan-deck.potx` |
@@ -175,6 +176,21 @@ The read-aloud test: if a sentence would feel out of place in a board paper, an 
 | Google Workspace | Use the `templates/gworkspace/*` artifacts; upload + open with Google Docs/Sheets/Slides |
 
 PDF is **on-demand by the user**. Do not invoke COM automation (`Word.Application`, `PowerPoint.Application`) to produce PDFs on this machine — those calls hang on the Trust Center dialog. Document the export path instead: File → Export → Create PDF/XPS, or `wkhtmltopdf` against HTML.
+
+## Research reports
+
+A research deliverable — research report, study, literature review, market or technical investigation — is a first-class document type in this system.
+
+**Output format.** HTML is the default; produce a Word `.docx` instead only when the user chooses it. Both carry the same structure. PDF stays on-demand: print the HTML from a browser with backgrounds enabled, or export the `.docx` from Word (File → Export → Create PDF/XPS).
+
+**Structure.** Cover (`DOCUMENT_TYPE` "Research Report") → table of contents → first section opening with an executive-summary lead → numbered sections (background, method, findings, analysis, conclusions as applicable) → references / appendices → end page.
+
+**Hyperlinked table of contents — mandatory.** Every TOC entry links to its section:
+
+- **HTML:** give each `<section class="section">` a stable id (`id="sec-01"`, `id="sec-02"`, …) and build the TOC from the `.toc` component with every entry an anchor — `<a href="#sec-01">Background</a>`. Markup in `references/components.md` → TOC. A TOC whose entries are plain text is a defect.
+- **Word:** insert a real TOC field — `{ TOC \o "1-3" \h }` — so every entry is a live hyperlink to its heading (the `\h` switch) and page numbers refresh on open or Ctrl+A → F9. Build headings with the template's Heading 1–3 styles so the field can see them. Never type a static, unlinked TOC.
+
+**Theme.** Light-only is the hard default, exactly as everywhere else in this system. Produce a dark variant only when the user explicitly asks for one; keep any such variant screen-only and keep print pure white. An unrequested dark theme is a defect, not a stylistic choice.
 
 ## Formal deliverables are audit-grade
 
@@ -221,6 +237,7 @@ Run this checklist mentally against any artifact before saying it is complete:
 - [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
 - [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
+- [ ] If the artifact is a research report, the TOC is present and every entry hyperlinks to its section — anchors in HTML, a `TOC \h` field in Word — and the output is HTML unless the user chose Word.
 - [ ] Every H1 forces a page break before.
 - [ ] Sans face declared with the v2.0 chain.
 - [ ] Mono face declared with the v2.0 chain.
@@ -237,4 +254,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.2.0 — the system supersedes swiss_design_at_deccan (all versions) and deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.3.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*

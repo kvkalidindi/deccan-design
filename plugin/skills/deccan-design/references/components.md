@@ -131,6 +131,26 @@ a:focus-visible {
 
 Container: stone-200 1-pixel border, stone-50 padding `--s-5 --s-6`, max 720 px. Label in mono caps stone-700 with a stone-200 underline. Items in a numbered list with `decimal-leading-zero` counter in mono stone-500, 36-pixel counter column + content column.
 
+Every entry is an anchor to its section — never plain text. Each `<section class="section">` carries a stable id, and the entry links to it. The template styles `.toc a` as ink-coloured with the accent underline arriving on hover, so the list reads as a table, not a link farm.
+
+```html
+<div class="toc">
+  <div class="toc-label">Contents</div>
+  <ol>
+    <li><a href="#sec-01">Background</a></li>
+    <li><a href="#sec-02">Method</a></li>
+    <li><a href="#sec-03">Findings</a></li>
+  </ol>
+</div>
+…
+<section class="section" id="sec-01">
+  <h1><span class="num">01</span>Background</h1>
+  …
+</section>
+```
+
+A table of contents is optional in most document types and **mandatory in a Research Report**, where every entry must hyperlink to its section (see `SKILL.md` → "Research reports").
+
 ## Sidenote (optional)
 
 Aside placed in the margin on wide screens, inline on narrow. Body type at `--fs-small` stone-600. Optional component — not in every document.

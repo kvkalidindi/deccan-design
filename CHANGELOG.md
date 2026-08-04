@@ -9,6 +9,14 @@ Two release lines share this repository:
 
 ---
 
+## v2.3.0 — 4 August 2026
+
+**Research reports are a first-class document type.** `SKILL.md` § "Research reports" defines the deliverable: HTML output by default, Word `.docx` only when the user chooses it (printable to PDF from Word), and a mandatory table of contents in which **every entry hyperlinks to its section** — anchor links to stable section ids in HTML, a real `TOC \o "1-3" \h` field in Word. The slot template now styles linked TOC entries (`.toc li a`, ink at rest, accent on hover) and the components reference carries the linked-TOC markup. Light-only remains the hard default; a dark variant is produced only on the user's explicit request, screen-only, with print kept pure white. The release build fails if the section, the HTML-by-default rule, the hyperlinked-TOC field, the light-only default, or the linked-TOC styling is dropped.
+
+**The attribution default is the Deccan IT and Digital Transformation Team.** Rules 1–2 of the resolution order are unchanged (stated author, then the requesting user's session identity). Rule 3 no longer stalls on a question: when no author resolves, the document is attributed to "Deccan IT and Digital Transformation Team" and the response says the default was applied. Personal names, office titles, and account slugs that identified the design-system maintainer were removed from every layer — the skill, the slot reference, the plugin and marketplace manifests, the README, the copyright notice, the admin guide and verification prompt, the spec and specimen covers, and the policy template's sample content and document metadata. Repository provenance remains prohibited evidence of authorship; the release gates now check for the provenance ban and the team default instead of a literal slug.
+
+**Legacy design-system names retired from the record.** Every reference to the pre-2.0 design systems by name is gone from the skill, the README, the spec, the specimen, the admin guide, the instruction blocks, and the asset headers. Supersession language is generic — "every earlier Deccan design system" — so the override no longer depends on remembering what the old systems were called.
+
 ## v2.2.0 — 1 August 2026
 
 **Fetching the canonical template is now a hard rule.** The previous rule was conditional — fetch *if the session can*, otherwise use the bundled copy silently — which left the cheapest path (use what is already loaded) available and undetectable. An installed bundle lags the repository as a matter of course, so that path produced documents built from whatever template happened to be frozen into the bundle at install time.

@@ -32,4 +32,4 @@ Direct any usage inquiry to Deccan Fine Chemicals Pvt. Ltd.
 
 Repository version: **v2.0.0**
 Publication date: **May 2026**
-Owning office: **Office of the SVP, IT &amp; Digital Transformation**
+Owning team: **Deccan IT and Digital Transformation Team**

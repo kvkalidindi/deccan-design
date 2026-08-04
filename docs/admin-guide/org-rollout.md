@@ -46,7 +46,7 @@ This is the policy layer: it makes deccan-design the default for **any** stylize
 
 **Use `workspace-instructions.md`, never `personal-preferences.md`.** The personal file opens with a first-person Role paragraph describing one individual; pasted at workspace scope it impersonates that person in every member's session, and Claude then attributes members' documents to the design-system maintainer. If a previous rollout pasted the personal block here, replacing it with the workspace block is the fix.
 
-The block establishes `deccan-design` v2.1+ as the default for any stylized artifact, carries the attribution rule ("Prepared by" = the requesting member, never the maintainer), and retires `swiss_design_at_deccan`, IBM Plex, Hanken Grotesk, Aptos, Inter, Barlow, Host Grotesk, DM Sans, and Fira Code references. Claude composes preferences in priority order (User > Workspace > Default); the workspace block becomes the floor.
+The block establishes `deccan-design` v2.1+ as the default for any stylized artifact, carries the attribution rule ("Prepared by" = the requesting member, never the maintainer; team default when no author resolves), and retires every earlier Deccan design-system name plus the IBM Plex, Hanken Grotesk, Aptos, Inter, Barlow, Host Grotesk, DM Sans, and Fira Code references. Claude composes preferences in priority order (User > Workspace > Default); the workspace block becomes the floor.
 
 ## Step 3b — Claude Code (plugin marketplace)
 
@@ -94,7 +94,7 @@ in Claude.ai. From your next new chat:
   or not it mentions Deccan — will produce a compliant artifact
   automatically, attributed to you (not to the design-system owner).
 - No personal-preferences paste required from your side, but if you
-  had IBM Plex / Aptos / swiss_design_at_deccan defaults set
+  had IBM Plex / Aptos or older Deccan design-system defaults set
   previously, ask Claude to "forget those defaults" in any chat to
   evict them from your memory.
 - Claude Code users: run
