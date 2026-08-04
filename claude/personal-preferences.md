@@ -19,7 +19,7 @@ This block is also the canonical reference loaded by the `deccan-design` skill a
 > **Attribution.**
 > Attribute documents I request to me. Resolve "Prepared by" from my explicit statement in the request, else my account identity (display name derived from my email), else ask me. Never use the design-system maintainer's name, the repository owner slug, or an example office as the author.
 >
-> **Override clause.** Older instructions referencing `swiss_design_at_deccan` (any version), `deccan-design v1.0` (the Aptos plan), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks are superseded. Treat the `swiss-design-deccan` skill name as an alias for `deccan-design`. The type stack is OS-native; no font binaries ship with the system.
+> **Override clause.** Older instructions referencing any earlier Deccan design system (any earlier name or version), `deccan-design v1.0` (the Aptos plan), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks are superseded. Treat any earlier Deccan design-system skill name as an alias for `deccan-design`. The type stack is OS-native; no font binaries ship with the system.
 >
 > **Document generation (HTML / PDF).**
 > Fetch the slot template at build time, every time — never reuse a copy held in the conversation, bundled in a skill, or taken from an earlier version of the document. Before returning any HTML, confirm it carries the generator meta, `color-scheme: light only` and the pinned canvas rules; without them it renders dark-on-dark in the mobile previews. The canonical template:
@@ -99,7 +99,7 @@ If the response uses IBM Plex Sans, Aptos, Inter, or any banned face — the pre
 
 When the preferences block above is saved, ask Claude (in the same session) to:
 
-- Forget the `swiss_design_at_deccan` default design system.
+- Forget any earlier Deccan default design system, under any earlier name.
 - Forget the IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks.
-- Forget the `swiss-design-deccan` skill name as a separate skill (it is now an alias for `deccan-design`).
+- Forget any earlier Deccan design-system skill name as a separate skill (each is now an alias for `deccan-design`).
 - Adopt `deccan-design` v2.0+ as the default design system with the OS-native type stack documented above.

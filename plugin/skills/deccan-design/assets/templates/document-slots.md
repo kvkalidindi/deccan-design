@@ -8,7 +8,7 @@ Fill the copy fetched from the canonical URL at build time — see `SKILL.md` �
 |---|---|---|---|
 | `{{TITLE}}` | string, ≤ 22 ch on cover | yes | "deccan-design v2.0" |
 | `{{SUBTITLE}}` | string, ≤ 50 ch | optional (use empty string if absent) | "A document standard for Deccan Fine Chemicals" |
-| `{{DOCUMENT_TYPE}}` | string, one of: Standard, Specification, Policy, Memo, Brief, Report, Letter, Proposal, Guide | yes | "Standard" |
+| `{{DOCUMENT_TYPE}}` | string, one of: Standard, Specification, Policy, Memo, Brief, Report, Research Report, Letter, Proposal, Guide | yes | "Standard" |
 | `{{PREPARED_BY}}` | string | yes | "Priya Sharma" (the requesting user — see PREPARED_BY resolution below) |
 | `{{DATE}}` | string | yes | "May 2026" |
 | `{{VERSION}}` | string | yes | "2.0" |
@@ -24,6 +24,8 @@ The body is composed of one or more `<section class="section">` blocks. Each blo
 - Body paragraphs, lists, tables, callouts, code blocks, pull quotes — any of the components documented in `components.md`.
 
 The CSS forces a page break before every `<h1>` except the first in the body.
+
+For a document that carries a table of contents — mandatory for `DOCUMENT_TYPE` "Research Report" — give every `<section class="section">` a stable id (`id="sec-01"`, `id="sec-02"`, …) and make every TOC entry an anchor to it: `<a href="#sec-01">Background</a>`. The TOC markup is the `.toc` component in `components.md`; a TOC whose entries are plain text is a defect.
 
 ## Filler logic
 
@@ -42,9 +44,7 @@ Resolve `{{PREPARED_BY}}` in this order (full policy: `SKILL.md` → Attribution
 
 1. An explicit author stated in the request or the source content.
 2. The invoking user's session identity — account email on Claude.ai surfaces (`priya.sharma@…` → "Priya Sharma"; confirm derivations that are not clearly `firstname.lastname`), `git config user.name` in Claude Code.
-3. Neither → ask the user. Never fill silently.
-
-"Office of the SVP, IT & Digital Transformation" is an illustrative example of an *office-issued* document, not a default — use it only when the user says the document is issued by that office.
+3. Neither → "Deccan IT and Digital Transformation Team", the standing default author. Say in the response that the default was applied. Never invent a personal name, and never resolve one from repository provenance.
 
 ## Example fill
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — slot-fill document template · revision 2.2.0
+  deccan-design v2.0 — slot-fill document template · revision 2.3.0
 
   Canonical copy:
   https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html
@@ -20,11 +20,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · slot template 2.2.0">
+  <meta name="generator" content="deccan-design v2.0 · slot template 2.3.0">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — slot-fill document template · revision 2.2.0
+       deccan-design v2.0 — slot-fill document template · revision 2.3.0
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -151,7 +151,8 @@
       html body code, html body pre.code-block { color: var(--stone-900) !important; }
       html body p, html body li, html body em,
       html body ul, html body ol,
-      html body tbody td, html body .toc li { color: var(--stone-800) !important; }
+      html body tbody td, html body .toc li,
+      html body .toc li a { color: var(--stone-800) !important; }
       html body .lead, html body dl.def dd, html body .pullquote p,
       html body thead th, html body .toc-label { color: var(--stone-700) !important; }
       html body .cover-eyebrow, html body .end-contact { color: var(--stone-600) !important; }
@@ -372,6 +373,15 @@
       font-family: var(--font-mono); font-size: 11px;
       color: var(--stone-500); font-weight: 500; letter-spacing: 0.04em;
     }
+    /* TOC entries are anchors to their sections (mandatory in a Research
+       Report). Ink-coloured at rest so the list reads as a table; the
+       accent underline arrives on hover. */
+    .toc li a {
+      color: var(--stone-800); text-decoration-line: underline;
+      text-decoration-color: transparent; text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+    .toc li a:hover { color: var(--deccan-blue); text-decoration-color: var(--deccan-blue); }
 
     .end-page {
       background: var(--paper); min-height: 60vh;

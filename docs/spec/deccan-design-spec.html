@@ -7,7 +7,7 @@
   <title>deccan-design v2.0 — design specification</title>
   <style>
     /* ================================================================
-       swiss_design_at_deccan v2.0 — design tokens
+       deccan-design v2.0 — design tokens
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -648,12 +648,12 @@
   <div class="cover-body">
     <span class="cover-eyebrow">Standard · IT &amp; Digital Transformation</span>
     <h1 class="cover-title">deccan-design v2.0</h1>
-    <p class="cover-subtitle">A document standard for Deccan Fine Chemicals: editorial-quality typography on the OS-native font stack, swiss discipline, single accent.</p>
+    <p class="cover-subtitle">A document standard for Deccan Fine Chemicals: editorial-quality typography on the OS-native font stack, grid discipline, single accent.</p>
   </div>
 
   <dl class="cover-meta">
     <div><dt>Document type</dt><dd>Standard</dd></div>
-    <div><dt>Prepared by</dt><dd>Office of the SVP, IT &amp; Digital Transformation</dd></div>
+    <div><dt>Prepared by</dt><dd>Deccan IT and Digital Transformation Team</dd></div>
     <div><dt>Date</dt><dd>May 2026</dd></div>
     <div><dt>Version</dt><dd>2.0</dd></div>
     <div><dt>Classification</dt><dd>Confidential</dd></div>
@@ -669,13 +669,13 @@
 <section class="section">
   <h1><span class="num">01</span>Premise</h1>
 
-  <p class="lead">A document standard exists to settle questions in advance, so that the next forty Deccan documents do not relitigate the same decisions about font, colour, page furniture, and tone. Version 2.0 settles those questions on the OS-native font stack, the swiss_design_at_deccan colour tokens, and an editorial register.</p>
+  <p class="lead">A document standard exists to settle questions in advance, so that the next forty Deccan documents do not relitigate the same decisions about font, colour, page furniture, and tone. Version 2.0 settles those questions on the OS-native font stack, the established Deccan colour tokens, and an editorial register.</p>
 
   <p>Version 1.0, the Aptos-first plan, was correct in principle: standardise on a single, well-engineered face that resolves on every endpoint. In practice, the Aptos plan introduced two costs that did not pay back. It made every Deccan document depend on a Microsoft 365 license, by way of the Office Font Service. It required an MSI deployment to install Aptos system-wide on machines whose Office version did not auto-bundle the face, and an Intune compliance lane to confirm the install. Neither cost is large. Both compound across every contractor laptop, partner workstation, and external reviewer that touches a Deccan document.</p>
 
   <p>Version 2.0 takes a different position. The primary face is whatever the operating system provides. On Windows 11 — the bulk of the Deccan fleet — that resolves to Segoe UI Variable, a well-engineered variable font with optical sizing that ships with the OS and renders cleanly from 8 points to 64. On macOS — the M-series Studios in plant labs and the MacBooks in field roles — <code>system-ui</code> resolves to San Francisco. On any browser or email client on either platform, the chain falls back through documented stops without requiring an install. No MSI, no font binary in the artifact, no M365 dependency.</p>
 
-  <p>The aesthetic this produces is not a compromise. Segoe UI Variable was designed for screen reading at corporate-monitor density, and it carries the same swiss discipline the original swiss_design_at_deccan system was built around — clean, neutral, geometric, optically corrected. The non-deccan-design endpoint variation in the v0.1 brief specimen, which fell through to Segoe UI by accident of font absence, demonstrated this. Version 2.0 makes that fallback the deliberate primary.</p>
+  <p>The aesthetic this produces is not a compromise. Segoe UI Variable was designed for screen reading at corporate-monitor density, and it carries the same clean, neutral, geometric, optically corrected discipline the original Deccan system was built around. The non-deccan-design endpoint variation in the v0.1 brief specimen, which fell through to Segoe UI by accident of font absence, demonstrated this. Version 2.0 makes that fallback the deliberate primary.</p>
 
   <div class="toc">
     <div class="toc-label">Sections</div>
@@ -896,7 +896,7 @@
 
   <h2>Stone — neutral grayscale</h2>
 
-  <p>Ten stops, identical to the swiss_design_at_deccan v1 set, providing the full hierarchy from page background through ink.</p>
+  <p>Ten stops, carried forward unchanged from the v1 token set, providing the full hierarchy from page background through ink.</p>
 
   <table>
     <thead>
@@ -1170,7 +1170,7 @@
 
   <p>Replace the font-family declaration with the v2.0 chain. The colour tokens, spatial system, components, and tone rules are unchanged; no body content needs revision. Any explicit Aptos override in inline styles or per-document CSS is removed. The cover and end-page composition is preserved as-is.</p>
 
-  <h3>For documents written under swiss_design_at_deccan v1.0 (IBM Plex)</h3>
+  <h3>For documents written under the previous Deccan design system v1.0 (IBM Plex)</h3>
 
   <p>Replace the font-family declaration with the v2.0 chain. Remove any inline references to the IBM Plex font binaries, the Hanken Grotesk fallback chain, and the Fira Code mono fallback chain. The colour tokens are identical. Components and spatial rules carry forward. The cover and end-page composition is preserved.</p>
 
@@ -1180,7 +1180,7 @@
 
   <h2>Template availability</h2>
 
-  <p>The v2.0 HTML template lives at the same URL as the v1.0 swiss template (<code>github.com/kvkalidindi/swiss_design_at_deccan</code>) and supersedes it. Slot variables are unchanged: <code>{{TITLE}}</code>, <code>{{SUBTITLE}}</code>, <code>{{DOCUMENT_TYPE}}</code>, <code>{{PREPARED_BY}}</code>, <code>{{DATE}}</code>, <code>{{VERSION}}</code>, <code>{{CLASSIFICATION}}</code>, <code>{{BODY_HTML}}</code>. A Word and PowerPoint template emitted from the same tokens will follow.</p>
+  <p>The v2.0 HTML template lives in this repository (<code>github.com/kvkalidindi/deccan-design</code>) and supersedes the v1.0 template at its previous address. Slot variables are unchanged: <code>{{TITLE}}</code>, <code>{{SUBTITLE}}</code>, <code>{{DOCUMENT_TYPE}}</code>, <code>{{PREPARED_BY}}</code>, <code>{{DATE}}</code>, <code>{{VERSION}}</code>, <code>{{CLASSIFICATION}}</code>, <code>{{BODY_HTML}}</code>. A Word and PowerPoint template emitted from the same tokens will follow.</p>
 
   <div class="callout">
     <div class="label">Adoption test</div>
@@ -1335,7 +1335,7 @@
 
   <h2>This document</h2>
 
-  <p>This specification is reviewed annually. The owning office (the Office of the SVP, IT &amp; Digital Transformation) re-issues the document with version number incremented on any material change.</p>
+  <p>This specification is reviewed annually. The owning team (the Deccan IT and Digital Transformation Team) re-issues the document with version number incremented on any material change.</p>
 
   <ul>
     <li><strong>Annual full review</strong> — every May. The owner re-validates each section against the current state of the corporate fleet, the type-stack OS distribution, and the public marketing surface. Material changes increment the major version.</li>

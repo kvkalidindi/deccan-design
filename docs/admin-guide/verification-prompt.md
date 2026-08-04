@@ -39,7 +39,7 @@ Search the inline CSS for `font-family`. The first family on the sans chain must
 | Result | Meaning |
 |---|---|
 | **Pass** | `'Segoe UI Variable Display', 'Segoe UI Variable Text', 'Segoe UI Variable', 'Segoe UI', system-ui, …` | The skill is active. |
-| **Fail** | `IBM Plex Sans`, `Hanken Grotesk`, `Aptos`, `Inter`, `Barlow`, `Host Grotesk`, `DM Sans` | Member is hitting a stale personal-preference override. Ask them to type *"forget the swiss_design_at_deccan default and the IBM Plex / Aptos type stacks"* in the same chat, then re-run the prompt. |
+| **Fail** | `IBM Plex Sans`, `Hanken Grotesk`, `Aptos`, `Inter`, `Barlow`, `Host Grotesk`, `DM Sans` | Member is hitting a stale personal-preference override. Ask them to type *"forget the older Deccan design-system defaults and the IBM Plex / Aptos type stacks"* in the same chat, then re-run the prompt. |
 
 ### Check 2 — Single Deccan Blue accent
 
@@ -93,10 +93,10 @@ Open the generated HTML and read the cover's "Prepared by" value.
 
 | Result | Meaning |
 |---|---|
-| **Pass** | The tester's own name (derived from their account), or Claude asked who to attribute before generating. | Attribution policy (SKILL.md → Attribution) is active. |
-| **Fail** | Any "Kalidindi" variant, `kvkalidindi`, or an unrequested "Office of the SVP, IT & Digital Transformation". | The session is resolving authorship from repository provenance or a maintainer persona. Most common cause: the *personal* preferences block was pasted into **workspace** custom instructions — redo org-rollout Step 3 with `claude/workspace-instructions.md`. |
+| **Pass** | The tester's own name (derived from their account), or — only when no author could resolve — the stated default "Deccan IT and Digital Transformation Team" with the response saying the default was applied. | Attribution policy (SKILL.md → Attribution) is active. |
+| **Fail** | The design-system maintainer's personal name (any variant), the repository owner's slug, or any office or executive title lifted from repository provenance. | The session is resolving authorship from repository provenance or a maintainer persona. Most common cause: the *personal* preferences block was pasted into **workspace** custom instructions — redo org-rollout Step 3 with `claude/workspace-instructions.md`. |
 
-Grep guidance: search the HTML source for `Kalidindi` — zero hits required.
+Grep guidance: search the HTML source for the repository owner's GitHub slug and surname — zero hits required in the document body or metadata.
 
 Also verify rule 1 wins: re-run with "…prepare it under the QHSE team's name" → "Prepared by QHSE Team".
 
@@ -147,4 +147,4 @@ If checks fail after re-doing the rollout steps:
 1. Confirm the bundle zip on the GitHub release is intact (13 files; SHA-256 visible on the release page and in SHA256SUMS.txt).
 2. Confirm the workspace's custom instructions field contains the full `claude/workspace-instructions.md` block (not the personal block, not a truncated paste).
 3. Open a fresh chat and prompt Claude directly: *"List the skills available in this workspace and which ones are auto-activated."* The response should include `deccan-design`.
-4. Escalate to Tier 3 (design system owner — Office of the SVP, IT & Digital Transformation) per `admin-guide.html` §12.
+4. Escalate to Tier 3 (design system owner — Deccan IT and Digital Transformation Team) per `admin-guide.html` §12.

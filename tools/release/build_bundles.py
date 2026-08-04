@@ -188,12 +188,28 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
         problems.append("SKILL.md: '## Attribution' section missing")
     else:
         attribution = skill.split("## Attribution", 1)[1].split("\n## ", 1)[0]
-        if "kvkalidindi" not in attribution:
-            problems.append("SKILL.md: Attribution section lost the repo-slug ban")
+        if "Repository provenance is not authorship" not in attribution:
+            problems.append("SKILL.md: Attribution section lost the provenance ban")
+        if "Deccan IT and Digital Transformation Team" not in attribution:
+            problems.append("SKILL.md: Attribution section lost the team default")
     if "never the repo maintainer, never invented" not in skill:
         problems.append("SKILL.md: attribution checklist line missing")
     if "## PREPARED_BY resolution" not in slots:
         problems.append("document-slots.md: '## PREPARED_BY resolution' section missing")
+
+    # Research reports: HTML default, Word on request, hyperlinked TOC,
+    # light-only unless the user asks otherwise.
+    if "## Research reports" not in skill:
+        problems.append("SKILL.md: '## Research reports' section missing")
+    else:
+        research = skill.split("## Research reports", 1)[1].split("\n## ", 1)[0]
+        for marker, label in ((            "HTML is the default", "the HTML-by-default rule"),
+                              ("TOC \\o \"1-3\" \\h", "the hyperlinked Word TOC field"),
+                              ("Light-only is the hard default", "the light-only default")):
+            if marker not in research:
+                problems.append(f"SKILL.md: Research reports section lost {label}")
+    if ".toc li a" not in template:
+        problems.append("document.html: the linked-TOC styling (.toc li a) is missing")
 
     # The skill is the org default for any stylized artifact, not only
     # Deccan-named requests.
