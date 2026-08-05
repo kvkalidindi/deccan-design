@@ -1,5 +1,7 @@
 # Logo usage
 
+> **Normative source:** `skill/SKILL.md` § "Logo". This page is a convenience copy for repository browsing; it sits outside the release bundles and CI gates, so when the two differ, the skill wins.
+
 ## Clear space
 
 The Deccan Fine Chemicals wordmark carries a minimum of **0.5× its own height** as clear space on all sides. No element — type, rule, image, paper edge — enters the clear space.

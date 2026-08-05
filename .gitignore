@@ -43,3 +43,6 @@ tools/converter/packaging/icon.icns
 ~$*.docx
 ~$*.xlsx
 ~$*.pptx
+
+# Release bundle staging
+dist/

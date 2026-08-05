@@ -1,5 +1,7 @@
 # Document furniture
 
+> **Normative source:** `skill/SKILL.md` § "The eight document-furniture rules" and `skill/references/tone-and-voice.md` / `print-rules.md`. This page is a convenience copy for repository browsing; it sits outside the release bundles and CI gates, so when the two differ, the skill wins.
+
 The eight rules every Deccan document follows, and the tone-and-voice ban-list with replacement examples.
 
 ## The eight document-furniture rules
@@ -11,7 +13,7 @@ The eight rules every Deccan document follows, and the tone-and-voice ban-list w
 5. **End page after a hard page break.**
 6. **Footer page numbers are bare integers**, right-aligned, mono 8.5pt stone-500. Never "Page X of Y".
 7. **Pure white print background.** Stone tints only inside callouts, code blocks, banded table rows, chips.
-8. **Mono and stone travel together.** Inline `<code>` and code blocks always carry the mono face and stone-100 fill. (Per v2.0, the mono face is **Cascadia Mono / Consolas / SF Mono**, not IBM Plex Mono. The rule is identical otherwise.)
+8. **Mono and stone travel together.** Inline `<code>` and code blocks always carry the mono face (Cascadia Mono / Consolas / SF Mono chain) and stone-100 fill.
 
 ## Cover sizing in print
 

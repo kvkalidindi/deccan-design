@@ -1,5 +1,7 @@
 # Colour tokens
 
+> **Normative source:** `skill/references/tokens.md`. This page is a convenience copy for repository browsing; it sits outside the release bundles and CI gates, so when the two differ, the skill wins.
+
 Complete reference for the deccan-design v2.0 palette.
 
 ## Deccan Blue — primary accent

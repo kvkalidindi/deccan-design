@@ -2,7 +2,7 @@
 
 The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice, and audit-grade document furniture.
 
-Design system **v2.0** · current package release **v2.3.1** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md).
+Design system **v2.0** · current package release **v2.4.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md). A CI release gate keeps `main` identical to the latest release, so the canonical raw URLs on `main` always serve the released content.
 
 ## What is in this repository
 
@@ -22,7 +22,7 @@ Design system **v2.0** · current package release **v2.3.1** (August 2026). The 
 
 ## Install
 
-The current design-system release is **v2.3.1** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
+The current design-system release is **v2.4.0** — [latest release](https://github.com/kvkalidindi/deccan-design/releases/latest):
 
 - **Claude Code (recommended):** the repo is a plugin marketplace — one-time setup, automatic updates from `main` afterwards:
 
@@ -36,7 +36,7 @@ The current design-system release is **v2.3.1** — [latest release](https://git
 
 Both bundles are built from the tagged tree by CI, so they carry exactly what is committed.
 
-The MSI / PKG installers remain the channel for the **Office templates and Outlook signature**. Their bundled Claude-skill copy is legacy — Claude Code takes the skill from the plugin marketplace, Claude Desktop from the workspace. The installer definitions track the package version (currently 2.1.2); they are built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to the matching release afterwards, so the packages on a given release may lag the bundles on it.
+The MSI / PKG installers remain the channel for the **Office templates and Outlook signature**. Their bundled Claude-skill copy is legacy — Claude Code takes the skill from the plugin marketplace, Claude Desktop from the workspace. The installer definitions track the package version — kept equal to the skill version by `build_bundles.py --sync-versions` and gated by `--check`; they are built on managed endpoints (WiX on Windows, `pkgbuild` on macOS) and attached to the matching release afterwards, so the packages on a given release may lag the bundles on it.
 
 Per-user install. No admin elevation required.
 
@@ -80,14 +80,14 @@ The installer cannot push Claude.ai preferences server-side. Paste the text from
 |---|---|---|
 | Claude.ai web, Claude Desktop, iOS / Android | Workspace skill + workspace custom instructions (admin-deployed) | Admin re-uploads the bundle per release; a release automatically opens a checklist issue as the reminder |
 | Claude Code | Plugin marketplace (`deccan-design@deccan`) | Automatic from `main` after a one-time install |
-| Every session, every document | Canonical slot template on `main` | Instant, and mandatory — since v2.2.0 the skill fetches the template at build time on every document and fills the copy that comes back. Since v2.3.1 the fetch is cache-proof: one fetch per document build (regenerations included) with a unique query string, and the fetched revision must not be older than the bundled copy's. An installed bundle is a no-network fallback that must be declared when used, so a lagging bundle or a stale cache cannot quietly produce a stale document |
+| Every session, every document | Canonical slot template on `main` | Instant, and mandatory — since v2.2.0 the skill fetches the template at build time on every document and fills the copy that comes back. Since v2.3.1 the fetch is cache-proof: one fetch per document build (regenerations included) with a unique query string, and the fetched revision must not be older than the bundled copy's. Since v2.4.0 a release gate keeps `main` identical to the latest release, so the URL on `main` *is* the latest release. An installed bundle is a no-network fallback that must be declared when used, so a lagging bundle or a stale cache cannot quietly produce a stale document |
 | Deccan Convert endpoints | Kit embedded in the binary | Automatic — the binary self-updates from `converter-v*` releases |
 | Word / Excel / PowerPoint / Outlook | MSI / PKG | IT rebuild + MDM push. The installers' Claude-skill copy is legacy |
 
 Two behaviours are worth stating plainly because they affect every member:
 
 - **The system is the default**, not an opt-in. Any request for a stylized artifact gets deccan-design whether or not it mentions Deccan — unless the member asks for a different design direction.
-- **Documents are attributed to the person who asked for them.** "Prepared by" resolves to a stated author, else the requesting member's identity, else Claude asks. Repository provenance is never authorship.
+- **Documents are attributed to the person who asked for them.** "Prepared by" resolves to a stated author, else the requesting member's identity, else Claude asks — never a silent default, never a name from repository provenance.
 
 - **Templates are fetched, never remembered.** Every HTML document is built from the canonical template pulled at build time — one fetch per document build, carrying a unique cache-busting query string, with the fetched revision checked against the bundled copy's as a freshness floor. The copy inside an installed skill is a fallback for a session with no network, and a session that uses it says so. A template lifted from a previous version of the document — or fetched earlier in the same conversation — is never acceptable.
 
@@ -166,4 +166,4 @@ For commercial inquiries about Deccan Fine Chemicals: <https://www.deccanchemica
 
 ---
 
-*deccan-design v2.0 (package v2.3.0) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*
+*deccan-design v2.0 (package v2.4.0) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*

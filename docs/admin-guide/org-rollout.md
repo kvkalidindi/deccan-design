@@ -2,7 +2,7 @@
 
 Procedure for deploying the `deccan-design` system to a Claude.ai workspace so it applies to every member without per-user configuration.
 
-This document covers Claude.ai only. The Windows MSI (Office templates, Outlook signature, Claude Code / Claude Desktop skill, offline reference docs) is documented in `admin-guide.html` §03–§05.
+This document covers Claude.ai only. The Windows MSI (Office templates, Outlook signature, Claude Code / Claude Desktop skill, offline reference docs) is documented in `admin-guide.html` §03–§05. For the per-surface configuration matrix (Claude.ai web / Desktop / mobile, Claude Code CLI, Claude Code on the web), see `surface-setup.md` next to this file.
 
 ## Prerequisites
 
@@ -46,7 +46,7 @@ This is the policy layer: it makes deccan-design the default for **any** stylize
 
 **Use `workspace-instructions.md`, never `personal-preferences.md`.** The personal file opens with a first-person Role paragraph describing one individual; pasted at workspace scope it impersonates that person in every member's session, and Claude then attributes members' documents to the design-system maintainer. If a previous rollout pasted the personal block here, replacing it with the workspace block is the fix.
 
-The block establishes `deccan-design` v2.1+ as the default for any stylized artifact, carries the attribution rule ("Prepared by" = the requesting member, never the maintainer; team default when no author resolves), and retires every earlier Deccan design-system name plus the IBM Plex, Hanken Grotesk, Aptos, Inter, Barlow, Host Grotesk, DM Sans, and Fira Code references. Claude composes preferences in priority order (User > Workspace > Default); the workspace block becomes the floor.
+The block establishes `deccan-design` v2.1+ as the default for any stylized artifact, carries the attribution rule ("Prepared by" = the requesting member, never the maintainer; Claude asks when no author resolves), and retires every earlier Deccan design-system name plus the IBM Plex, Hanken Grotesk, Aptos, Inter, Barlow, Host Grotesk, DM Sans, and Fira Code references. Claude composes preferences in priority order (User > Workspace > Default); the workspace block becomes the floor.
 
 ## Step 3b — Claude Code (plugin marketplace)
 
@@ -116,7 +116,7 @@ Use the procedure in `verification-prompt.md` (next to this file). Hand Prompt B
 
 - **Skill updates.** When a new version of `deccan-design` ships, push the `v*` tag: the `release-design-system` workflow builds `deccan-design-skill-bundle.zip` from the tagged tree, attaches it to the release, and **opens a checklist issue assigned to the workspace admin** with the re-upload steps — the manual step cannot be silently forgotten. Re-upload via **Settings → Workspace → Skills → deccan-design → Replace bundle**; members pick up the new version on next session, and the frontmatter `version` in the skill list confirms which bundle is live. Additionally set **Watch → Custom → Releases** on the repository.
 
-  Drift is bounded either way: the skill's "Staying current" rule has sessions fetch the canonical slot template from the repository at generation time when the network allows, so even a lagging workspace bundle produces current documents.
+  Drift is bounded either way: the skill's "Fetching the template — hard rule" section has sessions fetch the canonical slot template from the repository on every document build (with a unique cache-busting query string and the bundled revision as a freshness floor), so even a lagging workspace bundle produces current documents. The bundled copy is used only when the session cannot fetch, and the session says so.
 
   Claude Code needs nothing per release — the plugin channel follows `main` automatically. The MSI / PKG skill copy is legacy (see Step 3b) and no longer part of the release loop.
 - **Preferences updates.** Edit the workspace custom instructions in place. Changes take effect immediately for new sessions.

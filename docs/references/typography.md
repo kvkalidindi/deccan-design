@@ -1,5 +1,7 @@
 # Typography
 
+> **Normative source:** `skill/references/tokens.md` (type tokens) and `skill/SKILL.md` § "Banned faces". This page is a convenience copy for repository browsing; it sits outside the release bundles and CI gates, so when the two differ, the skill wins.
+
 ## Type stack
 
 ### Sans (primary)

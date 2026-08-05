@@ -93,8 +93,8 @@ Open the generated HTML and read the cover's "Prepared by" value.
 
 | Result | Meaning |
 |---|---|
-| **Pass** | The tester's own name (derived from their account), or — only when no author could resolve — the stated default "Deccan IT and Digital Transformation Team" with the response saying the default was applied. | Attribution policy (SKILL.md → Attribution) is active. |
-| **Fail** | The design-system maintainer's personal name (any variant), the repository owner's slug, or any office or executive title lifted from repository provenance. | The session is resolving authorship from repository provenance or a maintainer persona. Most common cause: the *personal* preferences block was pasted into **workspace** custom instructions — redo org-rollout Step 3 with `claude/workspace-instructions.md`. |
+| **Pass** | The tester's own name (derived from their account), or — only when no author could resolve — Claude **asks** who the document should be attributed to before (or while) delivering it. | Attribution policy (SKILL.md → Attribution) is active. |
+| **Fail** | The design-system maintainer's personal name (any variant), the repository owner's slug, any office or executive title lifted from repository provenance, or a silently filled team/office default the tester never stated. | The session is resolving authorship from repository provenance, a maintainer persona, or a stale pre-2.4.0 default. Most common cause: the *personal* preferences block was pasted into **workspace** custom instructions — redo org-rollout Step 3 with `claude/workspace-instructions.md`. |
 
 Grep guidance: search the HTML source for the repository owner's GitHub slug and surname — zero hits required in the document body or metadata.
 
@@ -106,8 +106,8 @@ View source and read `<meta name="generator" content="deccan-design v2.0 · slot
 
 | Result | Meaning |
 |---|---|
-| **Pass** | `X.Y.Z` equals the latest release's template revision — even if the workspace bundle is a release behind. | The "Staying current" fetch rule is working; bundle drift is harmless. |
-| **Fail** | An older revision while a newer release exists and the session had network access. | The session used only the bundled copy. Confirm the workspace bundle is the latest (release checklist issue), and that SKILL.md in the bundle contains the "Staying current" section. |
+| **Pass** | `X.Y.Z` equals the latest release's template revision — even if the workspace bundle is a release behind. | The fetch rule (SKILL.md § "Fetching the template — hard rule") is working; bundle drift is harmless. |
+| **Fail** | An older revision while a newer release exists and the session had network access. | The session used only the bundled copy, or a cache answered the fetch. Confirm the workspace bundle is the latest (release checklist issue), and that SKILL.md in the bundle contains the "Fetching the template — hard rule" section with the unique-query and freshness-floor directives. |
 
 ## Per-surface matrix
 

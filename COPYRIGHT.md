@@ -30,6 +30,6 @@ Direct any usage inquiry to Deccan Fine Chemicals Pvt. Ltd.
 
 ---
 
-Repository version: **v2.0.0**
-Publication date: **May 2026**
+Current release: see [`CHANGELOG.md`](CHANGELOG.md) and the [GitHub releases page](https://github.com/kvkalidindi/deccan-design/releases/latest).
+First published: **May 2026**
 Owning team: **Deccan IT and Digital Transformation Team**
