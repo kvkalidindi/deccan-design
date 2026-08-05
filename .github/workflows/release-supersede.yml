@@ -1,0 +1,71 @@
+name: release-supersede
+
+# Manually add supersede pointers to older releases without rebuilding assets.
+# Triggered via workflow_dispatch; updates release notes to direct users to
+# the latest version. Does not modify release assets or tags.
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tags:
+        description: >-
+          Comma-separated release tags to update (e.g. converter-v1.0.0,converter-v1.0.1).
+          Leave empty to update v1.0.0 and v1.0.1 by default.
+        required: false
+        default: ''
+
+jobs:
+  supersede:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add supersede pointers
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Default tags if not specified
+          TAGS="${{ inputs.release_tags }}"
+          if [ -z "$TAGS" ]; then
+            TAGS="converter-v1.0.0,converter-v1.0.1"
+          fi
+
+          # Supersede banner text
+          BANNER="> [!IMPORTANT]
+> **Superseded — download the latest release ([converter-v1.1.0](https://github.com/${{ github.repository }}/releases/tag/converter-v1.1.0)) instead.**
+> This build predates the converter's built-in self-updater and will not pull itself forward. Version 1.1.0 and later keep themselves current automatically. This release is retained for history only."
+
+          # Process each tag
+          IFS=',' read -ra TAG_ARRAY <<< "$TAGS"
+          for TAG in "${TAG_ARRAY[@]}"; do
+            TAG="${TAG## }"  # Trim leading whitespace
+            TAG="${TAG%% }"  # Trim trailing whitespace
+
+            echo "Processing tag: $TAG"
+
+            # Get current release notes
+            CURRENT_NOTES=$(gh release view "$TAG" --json body -q .body 2>/dev/null || echo "")
+
+            # Check if banner already present
+            if echo "$CURRENT_NOTES" | grep -q "Superseded — download"; then
+              echo "  → Banner already present, skipping"
+              continue
+            fi
+
+            # Prepend banner
+            if [ -z "$CURRENT_NOTES" ]; then
+              NEW_NOTES="$BANNER"
+            else
+              NEW_NOTES="$BANNER
+
+$CURRENT_NOTES"
+            fi
+
+            # Update release notes
+            echo "$NEW_NOTES" > /tmp/release_notes_$TAG.txt
+            gh release edit "$TAG" --notes-file /tmp/release_notes_$TAG.txt
+            echo "  → Updated successfully"
+          done
