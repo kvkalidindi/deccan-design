@@ -13,7 +13,7 @@ slots = {
     "TITLE": "Q2 R&D update",
     "SUBTITLE": "Process intensification programme — pilot results",
     "DOCUMENT_TYPE": "Report",
-    "PREPARED_BY": "Engineering & R&D",
+    "PREPARED_BY": prepared_by,  # resolved per SKILL.md -> Attribution: stated author, else the requesting user, else ask
     "DATE": "May 2026",
     "VERSION": "1.0",
     "CLASSIFICATION": "Confidential",

@@ -9,7 +9,7 @@ Fill the copy fetched from the canonical URL at build time — see `SKILL.md` �
 | `{{TITLE}}` | string, ≤ 22 ch on cover | yes | "deccan-design v2.0" |
 | `{{SUBTITLE}}` | string, ≤ 50 ch | optional (use empty string if absent) | "A document standard for Deccan Fine Chemicals" |
 | `{{DOCUMENT_TYPE}}` | string, one of: Standard, Specification, Policy, Memo, Brief, Report, Research Report, Letter, Proposal, Guide | yes | "Standard" |
-| `{{PREPARED_BY}}` | string | yes | "Priya Sharma" (the requesting user — see PREPARED_BY resolution below) |
+| `{{PREPARED_BY}}` | string | yes | the requesting user's resolved display name — see PREPARED_BY resolution below; never an example or invented value |
 | `{{DATE}}` | string | yes | "May 2026" |
 | `{{VERSION}}` | string | yes | "2.0" |
 | `{{CLASSIFICATION}}` | one of: Public, Internal, Confidential, Restricted | yes | "Confidential" |
@@ -44,7 +44,7 @@ Resolve `{{PREPARED_BY}}` in this order (full policy: `SKILL.md` → Attribution
 
 1. An explicit author stated in the request or the source content.
 2. The invoking user's session identity — account email on Claude.ai surfaces (`priya.sharma@…` → "Priya Sharma"; confirm derivations that are not clearly `firstname.lastname`), `git config user.name` in Claude Code.
-3. Neither → "Deccan IT and Digital Transformation Team", the standing default author. Say in the response that the default was applied. Never invent a personal name, and never resolve one from repository provenance.
+3. Neither → ask the user. Never invent a personal name, never fill a default silently, and never resolve one from repository provenance. In a non-interactive run that cannot ask, fill "Author to be confirmed", say so in the output, and flag the document for review.
 
 ## Example fill
 

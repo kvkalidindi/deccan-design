@@ -1,7 +1,7 @@
 ---
 name: deccan-design
-description: Use for ANY stylized or formatted deliverable — document, report, research report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Attribute every document to the requesting user; when no author resolves, default to the Deccan IT and Digital Transformation Team (see Attribution). Research reports are HTML by default (Word .docx on request) with a hyperlinked table of contents. Apply the OS-native type stack, the Deccan Blue single-accent palette, the 12-column 8px grid, the eight furniture rules, and the corporate tone.
-version: 2.3.1
+description: Use for ANY stylized or formatted deliverable — document, report, research report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Attribute every document to the requesting user; when no author resolves, ask — never invent an author, never default silently (see Attribution). Research reports are HTML by default (Word .docx on request) with a hyperlinked table of contents. Apply the OS-native type stack, the Deccan Blue single-accent palette, the 12-column 8px grid, the eight furniture rules, and the corporate tone.
+version: 2.4.0
 ---
 
 # deccan-design v2.0
@@ -27,14 +27,14 @@ Every document is attributed to the person who asked for it. Resolve `{{PREPARED
 
 1. **An explicit statement** in the user's request or attached content ("prepared by the QHSE team", "under my director's name", front matter `author:`). This always wins.
 2. **The invoking user's session identity.** On Claude.ai, Claude Desktop, and the mobile apps, derive a display name from the account email in session context: `priya.sharma@deccanchemicals.com` → "Priya Sharma". If the local-part is not clearly `firstname.lastname` (initials, a shared mailbox, a service account), show the derivation and confirm it before generating. In Claude Code, use `git config user.name`, then the git email's local-part.
-3. **Neither available → default to "Deccan IT and Digital Transformation Team".** This is the standing default author for any document whose requester cannot be resolved. Say in the response that the default was applied. Never invent a personal name, and never ship an example value.
+3. **Neither available → ask the user.** Never invent a personal name, never ship an example value, and never fill a default silently. If the session is non-interactive and cannot ask (a scheduled or automated run), fill the slot with "Author to be confirmed", say in the output that the author is unresolved, and flag the document for review before issuance.
 
 **Prohibited evidence.** The following are never evidence of authorship, no matter how often they appear in context:
 
 - The repository owner's account slug or profile identity.
 - The design-system maintainer's personal name, in any form or variant it may appear.
 - Names found in this repository's documentation, commit history, or release notes.
-- Any office or executive title found in repository provenance. "Deccan IT and Digital Transformation Team" appears as the author only through the rule-3 default above, or when the user states the document is issued by that team.
+- Any office or executive title found in repository provenance. A team name — including "Deccan IT and Digital Transformation Team" — appears as the author only when the user states the document is issued by that team; it is never a fallback.
 
 Repository provenance is not authorship. A workspace- or preference-level persona ("I am a senior engineering leader…") describes whoever wrote that block, not necessarily the person in this session — it is rule-2 evidence only when it matches the session's own account identity.
 
@@ -75,7 +75,7 @@ The copy bundled inside this skill is **a fallback for a session with no network
 Order of precedence, strictly:
 
 1. **The canonical URL**, fetched with a unique query string for this build. Fetch, verify the freshness floor, then fill.
-2. **The bundled copy** — only when the fetch fails, the session has no fetch capability, or the refetched copy is still older than the bundle. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and note that it may lag the canonical one. Never fall back silently.
+2. **The bundled copy — the locally installed skill** (the Claude.ai workspace or profile upload, the Claude Code plugin, or the MSI / PKG copy) — only when the fetch fails, the session has no fetch capability or no network egress, or the refetched copy is still older than the bundle. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and note that it may lag the canonical one. Never fall back silently.
 3. **Nothing else.** Not a template held in conversation context — including one this session fetched earlier — not a previous document, not a reconstruction from memory. See "Revising an existing document".
 
 The header comment and `<meta name="generator">` carry the template revision — `v2.0` there is the design system, not the file.
@@ -244,7 +244,7 @@ When this skill runs on a managed Deccan Windows endpoint with Microsoft Office 
 Run this checklist mentally against any artifact before saying it is complete:
 
 - [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
-- [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented (see Attribution).
+- [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented; when no author resolved, the user was asked (see Attribution).
 - [ ] The template was fetched from the canonical URL **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (or returned a pre-bundle revision twice) and the response says so.
 - [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
 - [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
@@ -266,4 +266,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.3.1 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.4.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
