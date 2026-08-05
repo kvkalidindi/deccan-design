@@ -23,6 +23,12 @@ name: release-design-system
 # re-upload is made non-forgettable instead of automated. The Claude Code
 # plugin mirror (plugin/skills/deccan-design/) is byte-equality-gated by
 # the --check step; that channel updates itself from main.
+#
+# Release gate: a v* release may only be cut from main's HEAD, and the tag
+# must equal the skill frontmatter version. The canonical template URL that
+# every session fetches points at main, so this gate is what makes "main"
+# and "the latest release" the same thing by construction — a tag on any
+# other commit, or at any other version, fails before anything is published.
 
 on:
   push:
@@ -56,6 +62,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Release gate — tag points at main HEAD, at the skill version
+        if: >-
+          startsWith(github.ref, 'refs/tags/v') ||
+          (github.event_name == 'workflow_dispatch' && inputs.release_tag != '')
+        env:
+          TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.release_tag || github.ref_name }}
+        run: |
+          git fetch --no-tags origin main
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "::error::$TAG does not point at origin/main HEAD. The canonical template URL serves main, so a release cut from any other commit lets main and the latest release diverge. Merge to main first, then tag main's HEAD."
+            exit 1
+          fi
+          SKILL_VERSION=$(sed -n 's/^version:[[:space:]]*//p' skill/SKILL.md | head -1)
+          if [ "${TAG#v}" != "$SKILL_VERSION" ]; then
+            echo "::error::$TAG disagrees with skill/SKILL.md frontmatter version $SKILL_VERSION. Bump the frontmatter (and template revision markers) before tagging."
+            exit 1
+          fi
+          echo "Gate passed: $TAG == main HEAD, skill version $SKILL_VERSION"
 
       - name: Set up Python
         uses: actions/setup-python@v5

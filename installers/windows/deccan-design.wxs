@@ -5,13 +5,13 @@
   Per-user install (no admin elevation). Unsigned.
   Build with WiX Toolset v4.0.6: see installers/windows/build.ps1.
 
-  Package version v2.1.2 — carries the light-only rendering contract
-  and restored body gutter in the slot template, the remediated Office /
-  Workspace template suite, and the skill's attribution and default-
-  application policy. The bundled Claude-skill copy is legacy: Claude
-  Code takes the skill from the plugin marketplace and Claude Desktop
-  from the Claude.ai workspace, so this installer's lasting job is the
-  Office templates and the Outlook signature. Design system remains v2.0.
+  The Package Version below tracks the design-system package release and
+  is kept equal to the skill frontmatter version by
+  tools/release/build_bundles.py (--sync-versions writes it, --check gates
+  it). The bundled Claude-skill copy is legacy: Claude Code takes the
+  skill from the plugin marketplace and Claude Desktop from the Claude.ai
+  workspace, so this installer's lasting job is the Office templates and
+  the Outlook signature. Design system remains v2.0.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
@@ -19,7 +19,7 @@
   <Package
       Name="deccan-design"
       Manufacturer="Deccan Fine Chemicals Pvt. Ltd."
-      Version="2.1.2"
+      Version="2.4.0"
       UpgradeCode="72423D74-5D81-4CC6-8F5A-6AB4FFE65448"
       InstallerVersion="500"
       Scope="perUser"
@@ -195,7 +195,7 @@
     <Feature Id="VersionMarker" Title="Version marker" Level="1">
       <Component Id="cmpVersionReg" Directory="DeccanRootDir" Guid="*">
         <RegistryValue Root="HKCU" Key="Software\deccan-design"
-                       Name="Version" Value="2.1.2" Type="string" KeyPath="yes" />
+                       Name="Version" Value="2.4.0" Type="string" KeyPath="yes" />
         <RegistryValue Root="HKCU" Key="Software\deccan-design"
                        Name="InstallPath" Type="string"
                        Value="[%APPDATA]\deccan-design" />

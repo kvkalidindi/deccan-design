@@ -21,16 +21,23 @@ their own skills/ directory, so the skill tree is mirrored there byte-for-byte).
 `--sync-plugin` refreshes the mirror and plugin.json's version from the skill
 frontmatter; `--check` fails when the mirror or the version has drifted.
 
+`--sync-versions` / `--check` also keep the version literals outside skill/
+(the MSI / PKG definitions and the README's stated package release) equal to
+the skill frontmatter version, so installers can no longer ship stating a
+package version two releases old.
+
 Usage:
     python tools/release/build_bundles.py --out dist/
     python tools/release/build_bundles.py --check --out dist/   # verify only
     python tools/release/build_bundles.py --sync-plugin         # refresh mirror
+    python tools/release/build_bundles.py --sync-versions       # sync version literals
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -84,6 +91,62 @@ TEMPLATE_FILES = [
 
 # Fixed stamp keeps rebuilds byte-identical.
 _STAMP = (2020, 1, 1, 0, 0, 0)
+
+# Files outside skill/ that state the package version. These drifted for
+# two releases (installers shipped saying 2.1.2 while the package was at
+# 2.3.x) because nothing gated them. Each entry: repo-relative path, a
+# lookaround regex whose whole match is the version literal, and the exact
+# number of matches the file must contain — a changed count means the file
+# was restructured and this table needs updating, which should fail loudly.
+VERSIONED_FILES = [
+    ("installers/windows/deccan-design.wxs",
+     r'(?<=Version=")\d+\.\d+\.\d+(?=")', 1),
+    ("installers/windows/deccan-design.wxs",
+     r'(?<=Name="Version" Value=")\d+\.\d+\.\d+(?=")', 1),
+    ("installers/macos/deccan-design.pkgproj",
+     r'(?<=<VERSION>)\d+\.\d+\.\d+(?=</VERSION>)', 2),
+    ("installers/macos/build.sh",
+     r'(?<=^VERSION=")\d+\.\d+\.\d+(?=")', 1),
+    ("README.md",
+     r'(?<=current package release \*\*v)\d+\.\d+\.\d+(?=\*\*)', 1),
+    ("README.md",
+     r'(?<=\(package v)\d+\.\d+\.\d+(?=\))', 1),
+]
+
+
+def check_versions() -> list[str]:
+    """Every version literal outside skill/ must equal the skill version."""
+    version = skill_version()
+    problems = []
+    for rel, pattern, expected in VERSIONED_FILES:
+        text = (REPO / rel).read_text("utf-8")
+        found = re.findall(pattern, text, flags=re.MULTILINE)
+        if len(found) != expected:
+            problems.append(
+                f"{rel}: expected {expected} version literal(s) matching "
+                f"{pattern!r}, found {len(found)}"
+            )
+        problems.extend(
+            f"{rel}: states version {value}, package is {version}"
+            for value in found if value != version
+        )
+    return problems
+
+
+def sync_versions() -> None:
+    """Rewrite every tracked version literal to the skill version."""
+    version = skill_version()
+    for rel, pattern, expected in VERSIONED_FILES:
+        path = REPO / rel
+        new, count = re.subn(pattern, version, path.read_text("utf-8"), flags=re.MULTILINE)
+        if count != expected:
+            raise SystemExit(
+                f"{rel}: expected {expected} version literal(s) matching "
+                f"{pattern!r}, matched {count} — update VERSIONED_FILES"
+            )
+        path.write_text(new, "utf-8")
+    print(f"  version literals synced to {version} in "
+          f"{len({rel for rel, _, _ in VERSIONED_FILES})} files")
 
 
 def _entries(src_root: str, files: list[str], dst_root: str) -> dict[str, bytes]:
@@ -190,8 +253,10 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
         attribution = skill.split("## Attribution", 1)[1].split("\n## ", 1)[0]
         if "Repository provenance is not authorship" not in attribution:
             problems.append("SKILL.md: Attribution section lost the provenance ban")
-        if "Deccan IT and Digital Transformation Team" not in attribution:
-            problems.append("SKILL.md: Attribution section lost the team default")
+        if "ask the user" not in attribution:
+            problems.append("SKILL.md: Attribution section lost the ask-the-user fallback")
+        if "never a fallback" not in attribution:
+            problems.append("SKILL.md: Attribution section lost the no-team-default rule")
     if "never the repo maintainer, never invented" not in skill:
         problems.append("SKILL.md: attribution checklist line missing")
     if "## PREPARED_BY resolution" not in slots:
@@ -378,7 +443,7 @@ def build(out_dir: Path) -> None:
 
 
 def check(out_dir: Path) -> None:
-    problems = check_plugin()
+    problems = check_plugin() + check_versions()
     for name, entries in bundles().items():
         path = out_dir / name
         if not path.is_file():
@@ -409,12 +474,19 @@ def main() -> None:
         help="refresh plugin/skills/deccan-design/ from skill/ and exit",
     )
     parser.add_argument(
+        "--sync-versions", action="store_true",
+        help="rewrite installer/README version literals to the skill version and exit",
+    )
+    parser.add_argument(
         "--verify-bundle", metavar="ZIP",
         help="run the policy checks against a built bundle and exit",
     )
     args = parser.parse_args()
     if args.sync_plugin:
         sync_plugin()
+        return
+    if args.sync_versions:
+        sync_versions()
         return
     if args.verify_bundle:
         verify_bundle(Path(args.verify_bundle))

@@ -5,8 +5,10 @@
 
 .DESCRIPTION
     Runs `wix build` against deccan-design.wxs. Produces an unsigned
-    per-user MSI named for the current package version (see the -Output
-    default; the version itself lives in deccan-design.wxs).
+    per-user MSI named for the current package version, read from
+    deccan-design.wxs at build time (kept equal to the skill version by
+    tools/release/build_bundles.py --sync-versions). Pass -Output to
+    override the name.
 
     Requires WiX Toolset v4 installed (https://wixtoolset.org/docs/).
     The MSI is intentionally unsigned per Decision 5 in PRD §1.4.
@@ -18,10 +20,22 @@
 [CmdletBinding()]
 param(
     [string]$Configuration = 'Release',
-    [string]$Output        = 'deccan-design-2.1.2.msi'
+    [string]$Output
 )
 
 $ErrorActionPreference = 'Stop'
+
+# Default the output name to the package version in deccan-design.wxs, so
+# the file name can never drift from the version the MSI actually carries.
+if (-not $Output) {
+    $wxs = Get-Content (Join-Path $PSScriptRoot 'deccan-design.wxs') -Raw
+    if ($wxs -match '(?s)<Package\b.*?\bVersion="(\d+\.\d+\.\d+)"') {
+        $Output = "deccan-design-$($Matches[1]).msi"
+    }
+    else {
+        Write-Error 'Could not read the package Version from deccan-design.wxs.'
+    }
+}
 
 # 1. Verify wix is available
 $wix = Get-Command wix -ErrorAction SilentlyContinue

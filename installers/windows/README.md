@@ -26,7 +26,7 @@
 ## Registry edits
 
 - `HKCU\Software\Microsoft\Office\16.0\Common\General\PersonalTemplates` → `%APPDATA%\Microsoft\Templates`
-- `HKCU\Software\deccan-design\Version` → `2.1.2`
+- `HKCU\Software\deccan-design\Version` → the package version (synced from the skill by `build_bundles.py --sync-versions`)
 - `HKCU\Software\deccan-design\InstallPath` → installation root
 
 ## Build
@@ -36,7 +36,7 @@
 .\build.ps1
 ```
 
-Output: `deccan-design-2.1.2.msi` (unsigned).
+Output: `deccan-design-<version>.msi` (unsigned).
 
 ## Unsigned-installer warning
 
@@ -47,7 +47,7 @@ Instruct the user to:
 1. Click **More info** in the dialog.
 2. Click **Run anyway**.
 
-For silent enterprise deployment via Microsoft Intune or ManageEngine Endpoint Central, push the MSI with `msiexec /i deccan-design-2.1.2.msi /qn`. The silent install bypasses SmartScreen entirely.
+For silent enterprise deployment via Microsoft Intune or ManageEngine Endpoint Central, push the MSI with `msiexec /i deccan-design-<version>.msi /qn`. The silent install bypasses SmartScreen entirely.
 
 ## Uninstall
 

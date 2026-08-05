@@ -1,16 +1,29 @@
 name: release-supersede
 
-# Manually add supersede pointers to older releases without rebuilding assets.
-# Triggered via workflow_dispatch; updates release notes to direct users to
-# the latest version. Does not modify release assets or tags.
+# Manually stamp supersede pointers onto older releases without rebuilding
+# assets. Triggered via workflow_dispatch; prepends a banner to the release
+# notes of every older release in the chosen series, directing readers to
+# the newest one. Does not modify release assets or tags.
+#
+# Works for both release lines (v* design system, converter-v* Deccan
+# Convert). Nothing is hardcoded to a specific tag: the newest release in
+# the series is discovered at run time, and by default every older release
+# in that series gets the banner.
 
 on:
   workflow_dispatch:
     inputs:
+      series:
+        description: Release series to stamp
+        required: true
+        type: choice
+        options:
+          - v
+          - converter-v
       release_tags:
         description: >-
-          Comma-separated release tags to update (e.g. converter-v1.0.0,converter-v1.0.1).
-          Leave empty to update v1.0.0 and v1.0.1 by default.
+          Comma-separated tags to stamp (e.g. converter-v1.0.0,converter-v1.0.1).
+          Leave empty to stamp every release in the series older than the latest.
         required: false
         default: ''
 
@@ -20,52 +33,71 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Add supersede pointers
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SERIES: ${{ inputs.series }}
+          INPUT_TAGS: ${{ inputs.release_tags }}
         run: |
-          # Default tags if not specified
-          TAGS="${{ inputs.release_tags }}"
+          # Newest (non-draft, non-prerelease) release in the series.
+          ALL_TAGS=$(gh release list --repo "$GITHUB_REPOSITORY" --limit 200 \
+            --exclude-drafts --exclude-pre-releases \
+            --json tagName -q '.[].tagName' | grep -E "^${SERIES}[0-9]" || true)
+          LATEST=$(echo "$ALL_TAGS" | head -1)
+          if [ -z "$LATEST" ]; then
+            echo "::error::No releases found in series '${SERIES}*'"
+            exit 1
+          fi
+          echo "Latest in series: $LATEST"
+
+          TAGS="$INPUT_TAGS"
           if [ -z "$TAGS" ]; then
-            TAGS="converter-v1.0.0,converter-v1.0.1"
+            TAGS=$(echo "$ALL_TAGS" | grep -vx "$LATEST" | paste -sd, -)
+          fi
+          if [ -z "$TAGS" ]; then
+            echo "Nothing to stamp: $LATEST is the only release in the series."
+            exit 0
           fi
 
-          # Supersede banner text
-          BANNER="> [!IMPORTANT]
-> **Superseded — download the latest release ([converter-v1.1.0](https://github.com/${{ github.repository }}/releases/tag/converter-v1.1.0)) instead.**
-> This build predates the converter's built-in self-updater and will not pull itself forward. Version 1.1.0 and later keep themselves current automatically. This release is retained for history only."
+          if [ "$SERIES" = "converter-v" ]; then
+            EXTRA="Builds at 1.0.x predate the converter's built-in self-updater and will not pull themselves forward; 1.1.0 and later keep themselves current automatically. This release is retained for history only."
+          else
+            EXTRA="Sessions that fetch the canonical template from \`main\` are already current — the release gate keeps \`main\` and the latest release identical. This release's bundles are retained for history only."
+          fi
+          BANNER=$(printf '%s\n' \
+            "> [!IMPORTANT]" \
+            "> **Superseded — download the latest release ([$LATEST](https://github.com/${GITHUB_REPOSITORY}/releases/tag/$LATEST)) instead.**" \
+            "> $EXTRA")
 
-          # Process each tag
           IFS=',' read -ra TAG_ARRAY <<< "$TAGS"
           for TAG in "${TAG_ARRAY[@]}"; do
-            TAG="${TAG## }"  # Trim leading whitespace
-            TAG="${TAG%% }"  # Trim trailing whitespace
+            TAG=$(echo "$TAG" | xargs)  # trim whitespace
+            [ -z "$TAG" ] && continue
+
+            if [ "$TAG" = "$LATEST" ]; then
+              echo "$TAG: is the latest in the series, skipping"
+              continue
+            fi
+            case "$TAG" in
+              "$SERIES"[0-9]*) ;;
+              *) echo "$TAG: not in series '${SERIES}*', skipping"; continue ;;
+            esac
 
             echo "Processing tag: $TAG"
+            CURRENT_NOTES=$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json body -q .body 2>/dev/null || echo "")
 
-            # Get current release notes
-            CURRENT_NOTES=$(gh release view "$TAG" --json body -q .body 2>/dev/null || echo "")
-
-            # Check if banner already present
             if echo "$CURRENT_NOTES" | grep -q "Superseded — download"; then
-              echo "  → Banner already present, skipping"
+              echo "  -> Banner already present, skipping"
               continue
             fi
 
-            # Prepend banner
             if [ -z "$CURRENT_NOTES" ]; then
               NEW_NOTES="$BANNER"
             else
-              NEW_NOTES="$BANNER
-
-$CURRENT_NOTES"
+              NEW_NOTES="$BANNER"$'\n\n'"$CURRENT_NOTES"
             fi
 
-            # Update release notes
-            echo "$NEW_NOTES" > /tmp/release_notes_$TAG.txt
-            gh release edit "$TAG" --notes-file /tmp/release_notes_$TAG.txt
-            echo "  → Updated successfully"
+            printf '%s\n' "$NEW_NOTES" > /tmp/release_notes.txt
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --notes-file /tmp/release_notes.txt
+            echo "  -> Updated"
           done
