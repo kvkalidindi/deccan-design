@@ -16,7 +16,7 @@ set -e
 
 cd "$(dirname "$0")"
 
-VERSION="2.4.1"
+VERSION="2.5.0"
 PKG_OUT="deccan-design-${VERSION}.pkg"
 ROOT="../.."
 STAGE="build/stage"

@@ -65,6 +65,7 @@ SKILL_FILES = [
     "assets/logo.b64.txt",
     "assets/fonts/README.md",
     "assets/templates/document.html",
+    "assets/templates/document-compact.html",
     "assets/templates/document-slots.md",
     "assets/templates/README.md",
 ]
@@ -168,26 +169,33 @@ def skill_version() -> str:
 
 
 def verify_revision() -> str:
-    """The slot template must name the revision it ships as.
+    """Both templates must name the revision they ship as.
 
-    Sessions fetch document.html straight from the raw URL, where the only
+    Sessions fetch the templates straight from the raw URLs, where the only
     thing that says which copy they got is the marker in the file. A marker
     left behind at the previous release is worse than none: it reads as
     current. Both the header comment and the generator meta must agree with
-    the skill version, or the release does not build.
+    the skill version in each template, or the release does not build.
     """
     version = skill_version()
-    template = (REPO / "skill" / "assets" / "templates" / "document.html").read_text("utf-8")
-    required = [
-        f"slot-fill document template · revision {version}",
-        f'<meta name="generator" content="deccan-design v2.0 · slot template {version}">',
-    ]
-    missing = [marker for marker in required if marker not in template]
-    if missing:
-        raise SystemExit(
-            "document.html does not identify itself as revision "
-            f"{version}; missing:\n  " + "\n  ".join(missing)
-        )
+    templates = {
+        "document.html": [
+            f"slot-fill document template · revision {version}",
+            f'<meta name="generator" content="deccan-design v2.0 · slot template {version}">',
+        ],
+        "document-compact.html": [
+            f"compact document template · revision {version}",
+            f'<meta name="generator" content="deccan-design v2.0 · compact template {version}">',
+        ],
+    }
+    for name, required in templates.items():
+        text = (REPO / "skill" / "assets" / "templates" / name).read_text("utf-8")
+        missing = [marker for marker in required if marker not in text]
+        if missing:
+            raise SystemExit(
+                f"{name} does not identify itself as revision "
+                f"{version}; missing:\n  " + "\n  ".join(missing)
+            )
     return version
 
 
@@ -234,7 +242,7 @@ TEMPLATE_CONTRACT = (
 )
 
 
-def policy_problems(skill: str, slots: str, template: str) -> list[str]:
+def policy_problems(skill: str, slots: str, template: str, compact: str) -> list[str]:
     """Every policy the skill must ship, checked against file *contents*.
 
     Taking text rather than paths lets the same list run against the working
@@ -275,6 +283,25 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
                 problems.append(f"SKILL.md: Research reports section lost {label}")
     if ".toc li a" not in template:
         problems.append("document.html: the linked-TOC styling (.toc li a) is missing")
+    if ".toc li a" not in compact:
+        problems.append("document-compact.html: the linked-TOC styling (.toc li a) is missing")
+
+    # Document tiers: compact is the default; the full furniture ships only
+    # on explicit request or an inherently audit-grade type. Without these
+    # markers a session reverts to shipping cover/end-page/revision-history
+    # furniture on every memo.
+    if "## Document tiers" not in skill:
+        problems.append("SKILL.md: '## Document tiers' section missing")
+    else:
+        tiers = skill.split("## Document tiers", 1)[1].split("\n## ", 1)[0]
+        if "no cover page, no end page" not in tiers:
+            problems.append("SKILL.md: Document tiers lost the compact-default definition")
+        if "The document type implies it" not in tiers:
+            problems.append("SKILL.md: Document tiers lost the type-implies-formal rule")
+        if "never ship unrequested furniture" not in tiers:
+            problems.append("SKILL.md: Document tiers lost the no-unrequested-furniture rule")
+    if "document-compact.html" not in slots:
+        problems.append("document-slots.md: the compact template is not documented")
 
     # The skill is the org default for any stylized artifact, not only
     # Deccan-named requests.
@@ -307,6 +334,8 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
         problems.append("SKILL.md: the freshness-floor rule is missing")
     if "unique query string" not in template:
         problems.append("document.html: the cache-busting fetch note is missing from the header")
+    if "unique query string" not in compact:
+        problems.append("document-compact.html: the cache-busting fetch note is missing from the header")
 
     # Source integrity: chat-surface fetch tools can hand the session a
     # markdown rendering of the template — header comment, metas, and
@@ -321,6 +350,8 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
         problems.append("SKILL.md: the invariant lost its output-only scoping")
     if 'class="template-provenance"' not in template:
         problems.append("document.html: the fetch-rendering provenance line is missing")
+    if 'class="template-provenance"' not in compact:
+        problems.append("document-compact.html: the fetch-rendering provenance line is missing")
 
     # The invariant is the backstop: a property of the artifact, checkable
     # without knowing what the session believed about its inputs.
@@ -336,20 +367,23 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
     if 'name="generator"' not in skill:
         problems.append("SKILL.md: the generator-meta self-check is missing")
 
-    # And the template must actually satisfy the contract the skill advertises.
-    for marker in TEMPLATE_CONTRACT:
-        if marker not in template:
-            problems.append(f"document.html: contract marker missing: {marker!r}")
+    # And both templates must actually satisfy the contract the skill
+    # advertises — the rendering invariant binds compact and formal alike.
+    for name, text in (("document.html", template), ("document-compact.html", compact)):
+        for marker in TEMPLATE_CONTRACT:
+            if marker not in text:
+                problems.append(f"{name}: contract marker missing: {marker!r}")
 
     return problems
 
 
-def _tree_text() -> tuple[str, str, str]:
+def _tree_text() -> tuple[str, str, str, str]:
     root = REPO / "skill"
     return (
         (root / "SKILL.md").read_text("utf-8"),
         (root / "assets" / "templates" / "document-slots.md").read_text("utf-8"),
         (root / "assets" / "templates" / "document.html").read_text("utf-8"),
+        (root / "assets" / "templates" / "document-compact.html").read_text("utf-8"),
     )
 
 
@@ -377,7 +411,8 @@ def verify_bundle(zip_path: Path) -> None:
             z.read(f"deccan-design/{rel}").decode("utf-8")
             for rel in ("SKILL.md",
                         "assets/templates/document-slots.md",
-                        "assets/templates/document.html")
+                        "assets/templates/document.html",
+                        "assets/templates/document-compact.html")
         )
     problems = policy_problems(*texts)
     if problems:

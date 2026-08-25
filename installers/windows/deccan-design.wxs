@@ -19,7 +19,7 @@
   <Package
       Name="deccan-design"
       Manufacturer="Deccan Fine Chemicals Pvt. Ltd."
-      Version="2.4.1"
+      Version="2.5.0"
       UpgradeCode="72423D74-5D81-4CC6-8F5A-6AB4FFE65448"
       InstallerVersion="500"
       Scope="perUser"
@@ -195,7 +195,7 @@
     <Feature Id="VersionMarker" Title="Version marker" Level="1">
       <Component Id="cmpVersionReg" Directory="DeccanRootDir" Guid="*">
         <RegistryValue Root="HKCU" Key="Software\deccan-design"
-                       Name="Version" Value="2.4.1" Type="string" KeyPath="yes" />
+                       Name="Version" Value="2.5.0" Type="string" KeyPath="yes" />
         <RegistryValue Root="HKCU" Key="Software\deccan-design"
                        Name="InstallPath" Type="string"
                        Value="[%APPDATA]\deccan-design" />

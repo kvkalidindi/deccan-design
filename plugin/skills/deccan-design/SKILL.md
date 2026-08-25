@@ -1,7 +1,7 @@
 ---
 name: deccan-design
-description: Use for ANY stylized or formatted deliverable — document, report, research report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Attribute every document to the requesting user; when no author resolves, ask — never invent an author, never default silently (see Attribution). Research reports are HTML by default (Word .docx on request) with a hyperlinked table of contents. Apply the OS-native type stack, the Deccan Blue single-accent palette, the 12-column 8px grid, the eight furniture rules, and the corporate tone.
-version: 2.4.1
+description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, deck, workbook, dashboard, email signature — in any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default system for all Deccan Fine Chemicals artifacts (v2.1+) unless the user asks for a different design direction. OVERRIDES every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Documents are COMPACT by default — no cover page, end page, revision history, or document-control furniture — unless the user requests a formal document or an audit-grade type (policy, SOP, ISO/ISMS), which implies formal (see Document tiers). Attribute every document to the requesting user; when no author resolves, ask — never invent one (see Attribution). Research reports: HTML by default, hyperlinked TOC. OS-native type stack, Deccan Blue single accent, 12-column 8px grid, corporate tone.
+version: 2.5.0
 ---
 
 # deccan-design v2.0
@@ -20,6 +20,23 @@ This skill supersedes:
 - Any older "Deccan default" referenced in personal preferences or persistent memory.
 
 If a user instruction directly conflicts with this skill, follow the user. If a memory or earlier instruction conflicts, follow this skill.
+
+## Document tiers — compact by default, formal on request
+
+Every document produced under this system is one of two tiers. This rule binds every output format — HTML, PDF, Word, Google Docs — and every Claude surface.
+
+**Compact — the default.** A compact document carries no cover page, no end page, no document-control block, no revision-history table, no changelog, and no other audit furniture. Its whole front matter is a slim title block at the top of page one: wordmark, title, optional subtitle, and an author · date line. Everything else about the system applies unchanged — type stack, palette, grid, tone, the rendering invariant, attribution. Build it from the compact template (`assets/templates/document-compact.html`); in Word, use `deccan-document.dotx` without the cover, end, document-control, or revision-history pages.
+
+**Formal — only when requested.** A formal document carries the full furniture: self-contained cover page with the metadata strip, end page, per-H1 page breaks, and — for audit-grade types — the complete document-control apparatus (see "Formal deliverables are audit-grade"). Build it from the formal slot template (`assets/templates/document.html`) or the full Word template family.
+
+**What counts as a request for formal.** Any of:
+
+1. The user says so — "formal", "issue-ready", or asks for any formal element by name (a cover page, an end page, a revision history, a document-control block, a classification page). Asking for a formal element makes the document formal.
+2. **The document type implies it.** An inherently audit-grade type is formal by definition, with no keyword needed: policy, procedure / SOP, control standard, ISMS / ISO / governance deliverable, or any document the user says will be issued, audited, signed, or submitted to a regulator or customer.
+
+Nothing else does. A "report", "memo", "brief", "summary", "research report", or unspecified document is compact. When in doubt, produce compact and say the formal tier is available on request — never ship unrequested furniture, and never ask before producing the compact default.
+
+**Revisions keep their tier.** A new version of an existing document inherits the tier of the request that created it: revising a formal document stays formal; revising a compact one stays compact unless the user asks otherwise.
 
 ## Attribution — resolving "Prepared by"
 
@@ -48,19 +65,21 @@ Before producing any Deccan artifact, read whichever of these reference modules 
 - `references/tone-and-voice.md` — register, ban-list, replacement examples.
 - `references/document-templates.md` — pointer into `templates/` for Office / Workspace deliverables.
 
-For HTML / PDF documents, fill the canonical slot template rather than re-deriving structure from prose — fetched per the hard rule below, never written by hand. The slot list is in `assets/templates/document-slots.md`.
+For HTML / PDF documents, fill the canonical template for the document's tier rather than re-deriving structure from prose — fetched per the hard rule below, never written by hand. The slot lists for both templates are in `assets/templates/document-slots.md`.
 
 ## Fetching the template — hard rule
 
-The canonical slot template lives at one address:
+Each tier's canonical template lives at one address:
 
-<https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html>
+- **Compact (the default):** <https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html>
+- **Formal (on request — see Document tiers):** <https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html>
 
-**Fetch it at build time, every time, before filling a single slot.** This is not conditional on convenience, on how recent the bundled copy looks, or on whether a template is already at hand in the session. Fill the copy that comes back from that URL.
+**Fetch the tier's template at build time, every time, before filling a single slot.** ("Fetch it at build time, every time" applies identically to both addresses.) This is not conditional on convenience, on how recent the bundled copy looks, or on whether a template is already at hand in the session. Fill the copy that comes back from that URL.
 
 **Defeat the caches: append a unique query string to every fetch.** The address above is served through CDN and fetch-tool caches, and a plain fetch of an unchanged URL is routinely answered from a cache — the fetch "succeeds" while returning a body that predates the current release. The server ignores unknown query parameters, but every cache keys on the full URL, so a unique query forces the request end to end:
 
 ```
+https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html?fetch=<unique value, e.g. the current UTC timestamp>
 https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html?fetch=<unique value, e.g. the current UTC timestamp>
 ```
 
@@ -96,7 +115,7 @@ The header comment and `<meta name="generator">` carry the template revision —
 Before returning any HTML, confirm the output contains all five of:
 
 ```
-<meta name="generator" content="deccan-design v2.0 · slot template …">
+<meta name="generator" content="deccan-design v2.0 · … template …">   (slot or compact, with its revision)
 <meta name="color-scheme" content="light">
 color-scheme: light only;
 :root { background-color: var(--stone-50) !important; }
@@ -109,7 +128,7 @@ The invariant applies to **the finished document you are about to return** — o
 
 ## Revising an existing document
 
-A new version of an existing document — v1.1 → v2.0, a supersession, an amendment, "update this brief" — is built from the **template**, not from the previous file.
+A new version of an existing document — v1.1 → v2.0, a supersession, an amendment, "update this brief" — is built from the **template for its tier**, not from the previous file. The tier carries forward with the content: a formal document is revised on the formal template, a compact one on the compact template, unless the user asks to change tier (see Document tiers).
 
 **Content carries forward. Presentation never does.** Take the body content across: sections, clauses, tables, callouts, appendices, the revision-history rows. Then fill a freshly fetched copy of the canonical template with it — the fetch is mandatory here too, with its own unique query string, and a revision is the case where reaching for the file already in hand is most tempting. "Already in hand" includes a template this session fetched earlier: it aged the moment it arrived, and a regeneration built from it reproduces whatever has been fixed since.
 
@@ -124,10 +143,10 @@ Those come from the template, which is versioned independently of the document a
 **Self-check before returning the file.** The output must contain:
 
 ```html
-<meta name="generator" content="deccan-design v2.0 · slot template …">
+<meta name="generator" content="deccan-design v2.0 · … template …">
 ```
 
-If that line is absent, the template was not used — the document was assembled from a prior version or from memory. Discard it and rebuild from the template. This is the one check that catches the failure from the artifact alone, which is why it is mandatory rather than advisory.
+(with `slot` or `compact` and the revision filled in). If that line is absent, the template was not used — the document was assembled from a prior version or from memory. Discard it and rebuild from the template. This is the one check that catches the failure from the artifact alone, which is why it is mandatory rather than advisory.
 
 ## The non-negotiables (cheat-sheet)
 
@@ -148,18 +167,18 @@ Pull these into the artifact every time:
 | Line height | 1.65 body, 1.30 headings, 1.15 display |
 | Weight discipline | Display/H1: 350 · H2: 500 · H3/H4/strong: 600 · body/lead: 400 · mono labels: 600 |
 | Print margins | Letter, 0.8" outside, 1" bottom for footer clearance |
-| Footer | mono 8.5pt stone-500; left: `Deccan Fine Chemicals · Confidential`; right: bare integer page number |
+| Footer | mono 8.5pt stone-500; left: `Deccan Fine Chemicals · Confidential` (formal) / `Deccan Fine Chemicals` (compact); right: bare integer page number |
 | Corners | No rounded structural corners anywhere |
 
 ## The eight document-furniture rules (rigid)
 
-Every Deccan document follows all eight:
+Rules 4 and 6–8 bind **every** document. Rules 1–3 and 5 are **formal-tier furniture**: they bind formal documents and are deliberately absent from compact ones — a compact document has no cover, no end page, and no forced page break per H1 (see Document tiers).
 
-1. **Cover page mandatory and self-contained.** Wordmark + title + subtitle + author + version + date + classification. No header, no footer, no page number. **Must fit on exactly one physical page in print** — never use `min-height: 100vh` alone; pair it with the `@media print` overrides in `skill/references/print-rules.md`.
-2. **End page mandatory and self-contained.** No header, no footer, no page number. Must fit on exactly one physical page in print.
-3. **Every H1 starts on a new page** (`page-break-before: always`).
+1. **Formal: cover page mandatory and self-contained.** Wordmark + title + subtitle + author + version + date + classification. No header, no footer, no page number. **Must fit on exactly one physical page in print** — never use `min-height: 100vh` alone; pair it with the `@media print` overrides in `skill/references/print-rules.md`.
+2. **Formal: end page mandatory and self-contained.** No header, no footer, no page number. Must fit on exactly one physical page in print.
+3. **Formal: every H1 starts on a new page** (`page-break-before: always`). Compact documents flow continuously.
 4. **Body fills the live content area** — no 60ch artificial cap in print; ≥ 80% of paper width.
-5. **End page after a hard page break.**
+5. **Formal: end page after a hard page break.**
 6. **Footer page numbers are bare integers**, right-aligned, mono 8.5pt stone-500. Never "Page X of Y".
 7. **Pure white print background.** Stone tints only inside callouts, code blocks, banded table rows, chips.
 8. **Mono and stone travel together.** Inline `<code>` and code blocks always carry `--font-mono` + stone-100 fill. Sustainability green never appears as UI accent.
@@ -190,9 +209,9 @@ The read-aloud test: if a sentence would feel out of place in a board paper, an 
 
 | Output | What to use |
 |---|---|
-| HTML document / PDF source | Fill `assets/templates/document.html` slots |
-| Research report | HTML by default (fill the slot template, `DOCUMENT_TYPE` "Research Report", hyperlinked TOC); Word `.docx` only when the user chooses it — see "Research reports" |
-| Word `.docx` | Inherit `templates/word/deccan-document.dotx` (or one of the three specialised variants) |
+| HTML document / PDF source | Fill `assets/templates/document-compact.html` (default) or `assets/templates/document.html` (formal — see Document tiers) |
+| Research report | HTML by default (compact template with hyperlinked TOC; formal slot template with `DOCUMENT_TYPE` "Research Report" only when the user requests formal); Word `.docx` only when the user chooses it — see "Research reports" |
+| Word `.docx` | Inherit `templates/word/deccan-document.dotx` (or one of the three specialised variants); compact tier omits the cover, end, document-control, and revision-history pages |
 | Excel `.xlsx` | Inherit `templates/excel/deccan-workbook.xltx` |
 | PowerPoint `.pptx` | Inherit `templates/powerpoint/deccan-deck.potx` |
 | Outlook signature | Use `templates/outlook/deccan-signature.htm` with the four placeholders filled in |
@@ -206,7 +225,7 @@ A research deliverable — research report, study, literature review, market or 
 
 **Output format.** HTML is the default; produce a Word `.docx` instead only when the user chooses it. Both carry the same structure. PDF stays on-demand: print the HTML from a browser with backgrounds enabled, or export the `.docx` from Word (File → Export → Create PDF/XPS).
 
-**Structure.** Cover (`DOCUMENT_TYPE` "Research Report") → table of contents → first section opening with an executive-summary lead → numbered sections (background, method, findings, analysis, conclusions as applicable) → references / appendices → end page.
+**Structure.** Compact by default (see Document tiers): slim title block → table of contents → first section opening with an executive-summary lead → numbered sections (background, method, findings, analysis, conclusions as applicable) → references / appendices. Only when the user requests a formal research report: cover (`DOCUMENT_TYPE` "Research Report") and end page around the same structure.
 
 **Hyperlinked table of contents — mandatory.** Every TOC entry links to its section:
 
@@ -217,7 +236,7 @@ A research deliverable — research report, study, literature review, market or 
 
 ## Formal deliverables are audit-grade
 
-A management-system, standards, or governance document — ISMS, ISO, policy, procedure, control standard, SOP — is written to be audited, not skimmed. Summary-level output fails these on contact with an assessor. When the user asks for one, produce all of:
+A management-system, standards, or governance document — ISMS, ISO, policy, procedure, control standard, SOP — is written to be audited, not skimmed. Summary-level output fails these on contact with an assessor. **These types are formal-tier by definition** — asking for one is the explicit request (see Document tiers); no "formal" keyword is needed. When the user asks for one, produce all of:
 
 - **Document-control block** on or immediately after the cover: owner, approver, effective date, review cycle, document ID.
 - **Revision history** table: version, date, author, summary of change, approver.
@@ -254,14 +273,15 @@ When this skill runs on a managed Deccan Windows endpoint with Microsoft Office 
 
 Run this checklist mentally against any artifact before saying it is complete:
 
-- [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
+- [ ] The tier is right: compact unless the user requested a formal document or an audit-grade type (see Document tiers). No cover page, end page, revision history, changelog, or document-control block appears unrequested; a compact document opens with the slim title block only.
+- [ ] Formal documents only: cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
 - [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented; when no author resolved, the user was asked (see Attribution).
-- [ ] The template was fetched from the canonical URL **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, the fetched body was template **source** (doctype, header comment, generator meta, stylesheet), and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (returned no source, or a pre-bundle revision twice) and the response names that reason — a fetch that returned a rendering was reported as a failed fetch, never as evidence the canonical copy is old.
+- [ ] The template was fetched from the canonical URL for the document's tier **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, the fetched body was template **source** (doctype, header comment, generator meta, stylesheet), and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (returned no source, or a pre-bundle revision twice) and the response names that reason — a fetch that returned a rendering was reported as a failed fetch, never as evidence the canonical copy is old.
 - [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
-- [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
+- [ ] A revision of an existing document inherited that document's content and tier only; the stylesheet, head, and any cover / end page came from the current template for that tier.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
 - [ ] If the artifact is a research report, the TOC is present and every entry hyperlinks to its section — anchors in HTML, a `TOC \h` field in Word — and the output is HTML unless the user chose Word.
-- [ ] Every H1 forces a page break before.
+- [ ] Formal documents only: every H1 forces a page break before. Compact documents flow without forced breaks.
 - [ ] Sans face declared with the v2.0 chain.
 - [ ] Mono face declared with the v2.0 chain.
 - [ ] No banned face anywhere in the declaration or override.
@@ -269,7 +289,7 @@ Run this checklist mentally against any artifact before saying it is complete:
 - [ ] `--deccan-green` only inside logo or sustainability content.
 - [ ] Print background is `#FFFFFF`; stone tints confined to callouts / code / banded rows.
 - [ ] Footer page numbers are bare integers, right-aligned.
-- [ ] End page present, no footer.
+- [ ] Formal documents only: end page present, no footer.
 - [ ] No conversational subtitle, no first-person narrator, no exclamation mark, no decorative emoji.
 - [ ] If the artifact is HTML, a fetched template was filled rather than rewritten.
 
@@ -277,4 +297,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.4.1 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.5.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*

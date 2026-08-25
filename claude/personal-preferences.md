@@ -14,10 +14,14 @@ Like the workspace block, this layer carries only what the skill cannot: persona
 > **Default design system.**
 > For any stylized artifact (documents, web pages, slide decks, workbooks, dashboards, mockups, email signatures, brand collateral), whether or not the request mentions Deccan, invoke the **`deccan-design`** skill (v2.1+) and follow it. The skill carries the full specification; do not re-derive its rules from memory, and do not let an older memorised Deccan default override it.
 >
-> **Always the latest release.**
-> The design rules and assets live in the GitHub repo `kvkalidindi/deccan-design`; its `main` branch is kept identical to the latest release by CI. Every document build — including a regeneration, refresh, or revision of an existing document — fetches the canonical slot template at build time with a unique cache-busting query string, per `SKILL.md` § "Fetching the template — hard rule":
+> **Compact by default, formal on request.**
+> Produce every document in the compact tier — no cover page, end page, revision history, changelog, or document-control furniture; a slim title block, then content — unless I ask for a formal document, ask for a formal element by name, or ask for an audit-grade type (policy, SOP, ISO/ISMS, control standard), which implies formal. `SKILL.md` § "Document tiers" is the specification.
 >
-> &nbsp;&nbsp;`https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html?fetch=<unique value per fetch, e.g. the current UTC timestamp>`
+> **Always the latest release.**
+> The design rules and assets live in the GitHub repo `kvkalidindi/deccan-design`; its `main` branch is kept identical to the latest release by CI. Every document build — including a regeneration, refresh, or revision of an existing document — fetches the canonical template for the document's tier at build time with a unique cache-busting query string, per `SKILL.md` § "Fetching the template — hard rule":
+>
+> &nbsp;&nbsp;`https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html?fetch=<unique value per fetch, e.g. the current UTC timestamp>` (default)
+> &nbsp;&nbsp;`https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html?fetch=<unique value per fetch>` (formal documents only)
 >
 > Confirm the fetched revision (header comment / generator meta) is not older than the installed skill's version; refetch once with a new query string if it is. If the fetched body is a *rendering* rather than the source — no doctype, header comment, metas, or stylesheet, which is what fetch tools that convert pages to markdown return — treat the fetch as failed per the skill's source-integrity rule; a rendering is never evidence that the canonical copy is old. A cached template or skill bundle from an earlier turn never overrides the fetched copy. If the session cannot fetch the source at all (no network egress, rendering-only fetch tools), fall back to the skill installed in my Claude.ai or Claude Code profile and say so in the response, naming the reason — never silently.
 >
@@ -50,7 +54,7 @@ After saving the preferences, verify with this prompt in any Claude surface:
 
 > "Generate a one-page Deccan status memo for the Python 3.13 pilot rollout."
 
-A correct response invokes the `deccan-design` skill automatically, fetches the canonical template (with a cache-busting query string) for the build, and produces a document in the deccan-design v2.0 stack: Segoe UI Variable in the body, Cascadia Mono for any code, Deccan Blue (`#164999`) as the only accent, attributed to you, conforming to the eight document-furniture rules.
+A correct response invokes the `deccan-design` skill automatically, fetches the canonical **compact** template (with a cache-busting query string) for the build, and produces a **compact** document in the deccan-design v2.0 stack: slim title block (no cover page, no end page, no revision history), Segoe UI Variable in the body, Cascadia Mono for any code, Deccan Blue (`#164999`) as the only accent, attributed to you. A full cover page on this prompt means the installed bundle predates v2.5.0 — re-upload it.
 
 If the response uses IBM Plex Sans, Aptos, Inter, or any banned face — the preferences did not save, or a memory override is still in effect. Re-paste the preferences block and prompt Claude to forget the older defaults.
 

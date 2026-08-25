@@ -26,9 +26,22 @@ Cover, body sections 01-04, end page.
 
 Prompt B never says "Deccan". Since v2.1 the system is the org default for any stylized document, so the output must be identical in kind to Prompt A's — same type stack, same accent, same furniture. If Prompt A passes and Prompt B produces generic styling, the workspace custom instructions (org-rollout Step 3) are missing or stale.
 
-## The six binary checks
+> Prompts A and B ask for "Cover, body sections 01-04, end page" **by name** — under the v2.5.0 tier rule that request makes them formal-tier builds on purpose, so Checks 3 and 6 stay meaningful. The compact default is tested separately by Prompt C.
 
-Checks 1–4 run against either prompt's output; checks 5–6 have their own procedure.
+## Prompt C — compact default (v2.5.0+)
+
+In a third fresh chat, run:
+
+```
+Generate a one-page status memo about the Python 3.13 pilot rollout.
+Output a complete, self-contained HTML file with all CSS inline in <head>.
+```
+
+Prompt C names no furniture and no formal type, so the output must be **compact**: a slim title block (wordmark, title, author · date), then content — evaluated by Check 7.
+
+## The seven binary checks
+
+Checks 1–4 run against Prompt A's or B's output; checks 5–7 have their own procedure.
 
 Open the HTML response in **View source** or save and open in a browser, then check each item.
 
@@ -111,9 +124,19 @@ View source and read `<meta name="generator" content="deccan-design v2.0 · slot
 | **Fail** | An older revision while a newer release exists and the session had network access. | The session used only the bundled copy, or a cache answered the fetch. Confirm the workspace bundle is the latest (release checklist issue), and that SKILL.md in the bundle contains the "Fetching the template — hard rule" section with the unique-query, source-integrity, and freshness-floor directives. |
 | **Fail** | The response claims the canonical copy is "stale" or "below the bundled floor" because fetched content lacked the invariant markers. | Feature-presence currency test against a fetch rendering — the markers were stripped in transit by the fetch tool, not absent from the source. The installed bundle predates v2.4.1's source-integrity rule; re-upload the latest bundle. |
 
+### Check 7 — Compact default (Prompt C)
+
+Open Prompt C's HTML in a browser.
+
+| Result | Meaning |
+|---|---|
+| **Pass** | No cover page, no end page, no revision-history or document-control block. Page one opens with the slim title block (wordmark rule + name, title in Deccan Blue, author · date meta line), and content follows on the same page. | The tier rule (SKILL.md § "Document tiers") is active. |
+| **Fail** | A full-page cover, an end page, or a revision-history/document-control table appears. | The installed bundle or instruction layer predates v2.5.0 — re-upload the skill bundle and re-paste both instruction blocks. |
+| **Fail** | The slim title block is missing entirely (bare `<h1>` with no wordmark or author line). | The compact template was not fetched or filled — same diagnosis path as Check 6's fetch failures. |
+
 ## Per-surface matrix
 
-Run **Prompt B + Checks 1 and 5** on each surface; Check 6 wherever network fetch is available.
+Run **Prompt B + Checks 1, 5, and 7** on each surface; Check 6 wherever network fetch is available.
 
 | Surface | Setup | Expected |
 |---|---|---|

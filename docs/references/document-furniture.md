@@ -2,15 +2,17 @@
 
 > **Normative source:** `skill/SKILL.md` § "The eight document-furniture rules" and `skill/references/tone-and-voice.md` / `print-rules.md`. This page is a convenience copy for repository browsing; it sits outside the release bundles and CI gates, so when the two differ, the skill wins.
 
-The eight rules every Deccan document follows, and the tone-and-voice ban-list with replacement examples.
+The eight furniture rules and the tone-and-voice ban-list with replacement examples.
+
+Since v2.5.0 the rules are tier-scoped (`SKILL.md` § "Document tiers"): rules 4 and 6–8 bind every document; rules 1–3 and 5 are **formal-tier furniture** and are deliberately absent from compact documents — the default tier, which opens with a slim title block and carries no cover, end page, revision history, or document-control block.
 
 ## The eight document-furniture rules
 
-1. **Cover page mandatory and self-contained.** Logo + title + subtitle + author + version + date + classification. No header, no footer, no page number. **Must fit on exactly one physical page in print** — see "Cover sizing in print" below.
-2. **End page mandatory and self-contained.** No header, no footer, no page number. Must fit on exactly one physical page in print.
-3. **Every H1 starts on a new page** (`page-break-before: always`).
+1. **Formal: cover page mandatory and self-contained.** Logo + title + subtitle + author + version + date + classification. No header, no footer, no page number. **Must fit on exactly one physical page in print** — see "Cover sizing in print" below.
+2. **Formal: end page mandatory and self-contained.** No header, no footer, no page number. Must fit on exactly one physical page in print.
+3. **Formal: every H1 starts on a new page** (`page-break-before: always`). Compact documents flow continuously.
 4. **Body fills the live content area.** No 60ch artificial cap in print; the live area is ≥ 80% of paper width (0.8" outside margins on Letter).
-5. **End page after a hard page break.**
+5. **Formal: end page after a hard page break.**
 6. **Footer page numbers are bare integers**, right-aligned, mono 8.5pt stone-500. Never "Page X of Y".
 7. **Pure white print background.** Stone tints only inside callouts, code blocks, banded table rows, chips.
 8. **Mono and stone travel together.** Inline `<code>` and code blocks always carry the mono face (Cascadia Mono / Consolas / SF Mono chain) and stone-100 fill.

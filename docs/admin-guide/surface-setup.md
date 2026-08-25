@@ -3,11 +3,12 @@
 Configuration per Claude surface so that deccan-design behaves identically everywhere:
 
 1. **Default-on.** The skill is invoked for any stylized deliverable, whether or not the request mentions Deccan.
-2. **Latest release, always.** Every document build fetches the canonical template from the repo's `main` branch — which a CI release gate keeps identical to the latest release — with a unique cache-busting query string per fetch.
-3. **Caches never override.** A template or skill bundle held in conversation context, memory, or an installed copy never overrides the fetched one. No network egress → fall back to the installed skill bundle, and say so.
-4. **Attribution.** "Prepared by" = stated author → the requesting user's identity → **ask**. Never a maintainer name, never a silent default.
+2. **Compact by default.** Documents carry no cover page, end page, revision history, changelog, or document-control furniture unless the user requests a formal document or an audit-grade type (policy, SOP, ISO/ISMS), which implies formal. `SKILL.md` § "Document tiers".
+3. **Latest release, always.** Every document build fetches the canonical template for the document's tier from the repo's `main` branch — which a CI release gate keeps identical to the latest release — with a unique cache-busting query string per fetch.
+4. **Caches never override.** A template or skill bundle held in conversation context, memory, or an installed copy never overrides the fetched one. No network egress → fall back to the installed skill bundle, and say so.
+5. **Attribution.** "Prepared by" = stated author → the requesting user's identity → **ask**. Never a maintainer name, never a silent default.
 
-The skill itself (`skill/SKILL.md`) carries all four rules; the per-surface work is making sure the skill is installed, current, and not fighting a stale instruction or memory layer.
+The skill itself (`skill/SKILL.md`) carries all five rules; the per-surface work is making sure the skill is installed, current, and not fighting a stale instruction or memory layer.
 
 ## Claude.ai web, Claude Desktop, iOS / Android
 
@@ -69,4 +70,4 @@ To evict: in any chat, ask Claude to forget the specific memory ("forget that v2
 
 ## Verification
 
-Run `verification-prompt.md` (Prompt B + the six checks) per surface after any configuration change. The per-surface matrix at the end of that file states what each surface should show.
+Run `verification-prompt.md` (Prompts B and C + the seven checks) per surface after any configuration change. The per-surface matrix at the end of that file states what each surface should show.

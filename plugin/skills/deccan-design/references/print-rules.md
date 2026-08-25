@@ -47,19 +47,19 @@ The `!important` on the named-page margin-box content is defensive: Chromium occ
 
 ## Running footer
 
-- **Left:** `Deccan Fine Chemicals · Confidential` in Cascadia Mono / Consolas fallback, 8.5 pt, stone-500.
+- **Left:** `Deccan Fine Chemicals · Confidential` in Cascadia Mono / Consolas fallback, 8.5 pt, stone-500. In a compact document (no classification slot) the left cell is `Deccan Fine Chemicals`.
 - **Right:** bare integer page number. Mono, 8.5 pt, stone-500. Never `Page X` and never `Page X of Y`.
 - **Centre:** empty.
 
-The footer appears only on body pages. Suppressed on the cover and on the end page.
+Formal documents: the footer appears only on body pages — suppressed on the cover and on the end page. Compact documents have no cover or end page; the footer runs on every page.
 
 ## Page breaks
 
 | Element | Rule |
 |---|---|
-| H1 | `page-break-before: always` |
-| Cover | `page-break-after: always` + `page-break-inside: avoid` |
-| End page | `page-break-before: always` + `page-break-inside: avoid` |
+| H1 (formal tier) | `page-break-before: always` — compact documents flow with no forced H1 breaks |
+| Cover (formal tier) | `page-break-after: always` + `page-break-inside: avoid` |
+| End page (formal tier) | `page-break-before: always` + `page-break-inside: avoid` |
 | Callout, code block, pull quote, table, TOC | `page-break-inside: avoid` |
 | Headings | `page-break-after: avoid` (heading + first paragraph stay together) |
 
