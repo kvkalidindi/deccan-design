@@ -6,47 +6,35 @@ Paste the text below into **Claude.ai → Settings → Profile → Preferences**
 
 Like the workspace block, this layer carries only what the skill cannot: personal identity, personal working preferences, and the pointers that make the skill load and stay current. Everything else — tokens, type chains, print rules, mono/code styling, the tone ban-list, the rendering invariant — ships in the skill and is deliberately not restated here.
 
----
+The preferences field shares the workspace field's **3000-character** limit; the block below is 2962. Re-check the count after editing — the budget is what keeps this layer from re-absorbing the skill.
 
-> **Role and tone.**
-> I am a senior engineering leader at Deccan Fine Chemicals (Hyderabad, India), working on internal tooling, design-system work, and AI workflows. Address me at that level. Skip preambles and recap summaries. For non-trivial tasks (3+ steps), confirm the plan once before implementing. After corrections, capture the lesson rather than apologise.
->
-> **Default design system.**
-> For any stylized artifact (documents, web pages, slide decks, workbooks, dashboards, mockups, email signatures, brand collateral), whether or not the request mentions Deccan, invoke the **`deccan-design`** skill (v2.1+) and follow it. The skill carries the full specification; do not re-derive its rules from memory, and do not let an older memorised Deccan default override it.
->
-> **Compact by default, formal on request.**
-> Produce every document in the compact tier — no cover page, end page, revision history, changelog, or document-control furniture; a slim title block, then content — unless I ask for a formal document, ask for a formal element by name, or ask for an audit-grade type (policy, SOP, ISO/ISMS, control standard), which implies formal. `SKILL.md` § "Document tiers" is the specification.
->
-> **Always the latest release.**
-> The design rules and assets live in the GitHub repo `kvkalidindi/deccan-design`; its `main` branch is kept identical to the latest release by CI. Every document build — including a regeneration, refresh, or revision of an existing document — fetches the canonical template for the document's tier at build time with a unique cache-busting query string, per `SKILL.md` § "Fetching the template — hard rule":
->
-> &nbsp;&nbsp;`https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html?fetch=<unique value per fetch, e.g. the current UTC timestamp>` (default)
-> &nbsp;&nbsp;`https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html?fetch=<unique value per fetch>` (formal documents only)
->
-> Confirm the fetched revision (header comment / generator meta) is not older than the installed skill's version; refetch once with a new query string if it is. If the fetched body is a *rendering* rather than the source — no doctype, header comment, metas, or stylesheet, which is what fetch tools that convert pages to markdown return — treat the fetch as failed per the skill's source-integrity rule; a rendering is never evidence that the canonical copy is old. A cached template or skill bundle from an earlier turn never overrides the fetched copy. If the session cannot fetch the source at all (no network egress, rendering-only fetch tools), fall back to the skill installed in my Claude.ai or Claude Code profile and say so in the response, naming the reason — never silently.
->
-> **Attribution.**
-> Attribute documents I request to me. Resolve "Prepared by" from my explicit statement in the request, else my account identity (display name derived from my email), else ask me. Never use the design-system maintainer's name, the repository owner slug, or a team or office name I did not state.
->
-> **Override clause.** Older instructions or memories referencing any earlier Deccan design system (any earlier name or version), `deccan-design v1.0` (the Aptos plan), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks are superseded. Treat any earlier Deccan design-system skill name as an alias for `deccan-design`. The type stack is OS-native; no font binaries ship with the system. Memories that pin a specific deccan-design version or template revision as "current" are stale by definition — the latest release on the GitHub repo is current.
->
-> **Logo retrieval cascade** (first source wins): bundled skill asset → project `data/logo.png` → stable raw GitHub URL → base64 data URI. The pinned URLs:
->
-> &nbsp;&nbsp;Vector wordmark: `https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/logo.svg`
-> &nbsp;&nbsp;Raster (PNG): `https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/logo.png`
-> &nbsp;&nbsp;Base64 fallback: `https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/logo.b64.txt`
->
-> These are the only network endpoints committed to as stable for brand assets. Do not fetch the logo from any other host. If an emitter calls `deccanchemicals.com` for the logo, it is broken; rewrite it.
->
-> **Working environment.**
-> I am on a managed corporate Windows machine with Microsoft Office. Do not attempt to render Word / Excel / PowerPoint files to PDF via COM automation (`Word.Application` etc.) — it hangs silently on Trust Center / license dialogs. Either ask me to do `File → Export → Create PDF/XPS` myself and report back, or suggest LibreOffice headless if available. Do not propose killing Office processes.
->
-> **Claude Code registration (informational).** The `deccan-design` skill reaches Claude Code through the repository's plugin marketplace — `claude plugin marketplace add kvkalidindi/deccan-design` then `claude plugin install deccan-design@deccan`, one-time; updates arrive automatically from `main`. The MSI / PKG copy at `%APPDATA%\Anthropic\Claude\skills\deccan-design\` (Windows) / `~/Library/Application Support/Anthropic/Claude/skills/deccan-design/` (macOS) is legacy and may lag; the installers remain the channel for Office templates and the Outlook signature.
->
-> **Project layout.**
-> Put project output directly in the folder I name. Do not nest a project-named subfolder inside it.
+**Not in the block, on purpose:** the pinned logo URLs (the block points at `SKILL.md` § Logo, which lists them) and the Claude Code registration steps, which are setup documentation rather than a preference — they live in `docs/admin-guide/surface-setup.md` and are reproduced under "Claude Code registration" below.
 
 ---
+
+> **Role and tone.** I am a senior engineering leader at Deccan Fine Chemicals (Hyderabad, India), working on internal tooling, design systems, and AI workflows. Address me at that level. Skip preambles and recap summaries. For non-trivial tasks (3+ steps), confirm the plan once before implementing. After corrections, capture the lesson rather than apologise.
+>
+> **Default design system.** For any stylized artifact (documents, web pages, decks, workbooks, dashboards, signatures), whether or not the request mentions Deccan, invoke the **`deccan-design`** skill (v2.1+) and follow it. It carries the full specification; do not re-derive its rules from memory, and never let an older memorised Deccan default override it.
+>
+> **Compact by default, formal on request.** Every document is compact — no cover page, end page, revision history, changelog, or document-control block; a slim title block, then content — unless I ask for a formal document, name a formal element, or request an audit-grade type (policy, SOP, ISO / ISMS), which implies formal. SKILL.md § "Document tiers".
+>
+> **Always the latest release.** CI keeps `main` of `kvkalidindi/deccan-design` identical to the latest release. Every build, regenerations and revisions included, fetches its tier's canonical template from `main` at build time with a unique cache-busting query, per SKILL.md § "Fetching the template — hard rule". No cached template or bundle from an earlier turn overrides it. A fetch returning a *rendering* (markdown text, no stylesheet) is a failed fetch, never evidence the canonical copy is old. Fall back to my installed skill only when the source cannot be fetched, and say so with the reason.
+>
+> **Attribution.** Attribute documents I request to me: my explicit statement, else my account identity (display name from my email), else ask me. Never the design-system maintainer, the repo owner slug, or a team or office name I did not state.
+>
+> **Override.** Older instructions or memories naming any earlier Deccan design system, `deccan-design v1.0` (Aptos), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code are superseded; treat an earlier system name as an alias for `deccan-design`. A memory pinning a version or template revision as "current" is stale by definition — currency comes from the per-build fetch.
+>
+> **Logo.** Bundled skill asset first, then project `data/logo.png`, then the pinned raw GitHub URLs in SKILL.md § Logo. Never from `deccanchemicals.com` — an emitter that does is broken; rewrite it.
+>
+> **Working environment.** Managed corporate Windows machine with Office. Never use COM automation (`Word.Application` etc.) to render Office files to PDF — it hangs on Trust Center dialogs. Ask me to run File → Export → Create PDF/XPS, or suggest LibreOffice headless. Never propose killing Office processes.
+>
+> **Project layout.** Put project output directly in the folder I name. Never nest a project-named subfolder inside it.
+
+---
+
+## Claude Code registration (reference, not part of the pasted block)
+
+The `deccan-design` skill reaches Claude Code through the repository's plugin marketplace — `claude plugin marketplace add kvkalidindi/deccan-design`, then `claude plugin install deccan-design@deccan`, one-time; updates arrive automatically from `main`. The MSI / PKG copy at `%APPDATA%\Anthropic\Claude\skills\deccan-design\` (Windows) or `~/Library/Application Support/Anthropic/Claude/skills/deccan-design/` (macOS) is legacy and may lag; the installers remain the channel for Office templates and the Outlook signature. Full per-surface procedure: `docs/admin-guide/surface-setup.md`.
 
 ## Verification
 
