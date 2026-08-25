@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, research report, memo, spec, policy, letter, proposal, slide deck, workbook, dashboard, email signature — or any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default design system for all Deccan Fine Chemicals artifacts (v2.1+); apply it unless the user explicitly requests a different design direction. OVERRIDES any conflicting prior preference, including every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Attribute every document to the requesting user; when no author resolves, ask — never invent an author, never default silently (see Attribution). Research reports are HTML by default (Word .docx on request) with a hyperlinked table of contents. Apply the OS-native type stack, the Deccan Blue single-accent palette, the 12-column 8px grid, the eight furniture rules, and the corporate tone.
-version: 2.4.0
+version: 2.4.1
 ---
 
 # deccan-design v2.0
@@ -68,14 +68,23 @@ Generate a fresh value for every fetch. A fetch without a unique query string do
 
 **One fetch per document build — a conversation is not a cache.** A template this session fetched earlier — for a previous document, a previous version of this document, or earlier in a long exchange — is conversation context, and filling it is prohibited by rule 3 below. Every build (including a regeneration, a retry, and a revision) performs its own fetch with its own unique query string. This is the specific failure this paragraph exists to prevent: a session that fetched correctly at the start of a conversation, then reuses that aging copy for every document after it.
 
+**Source integrity: a rendering of the template is not the template.** Some fetch tools — chat-surface web fetchers in particular — hand the session a *rendering* of the page (HTML converted to markdown, or extracted text), not the file. The conversion strips exactly the parts that identify and style the template: the header comment, the `<head>` metas, and the whole `<style>` block. Know the two forms apart:
+
+- **Source** begins `<!DOCTYPE html>` and carries the header comment with `revision N.N.N`, `<meta name="generator" …>`, and a `<style>` block. Only source is fillable.
+- **A rendering** shows slot names like `{{TITLE}}` and body text without the markup around them — no doctype, no comment, no metas, no stylesheet. The template body carries a hidden plain-text provenance line (`deccan-design slot template · revision N.N.N`) precisely so a rendering still states its revision.
+
+A rendering is a **failed fetch of the source**, whatever revision its provenance line shows: it cannot be filled, and what it *lacks* was stripped in transit — marker or markup absence in a rendering is a fact about the fetch tool, never evidence about the canonical copy's age. Do not rank it against the bundle by missing features. Retry through a channel that returns raw bytes (`curl` or an equivalent where a shell exists); if no such channel exists on this surface, fall back to the bundled copy and report the real reason — the fetch tool returns renderings, not source — never that the canonical copy is stale.
+
 **Freshness floor: the fetched copy must not be older than the bundled copy.** After fetching, read the revision from the header comment / `<meta name="generator">` and compare it to the bundled copy's revision. The bundled revision is the floor — the canonical copy is only ever newer. A fetched revision *below* the bundled one proves a cache answered the request: refetch once with a new unique query string; if it is still older, fill the bundled copy and say so in the response. Never fill a copy older than the bundle.
+
+The floor is a comparison of **two revision numbers actually read** — nothing else. A copy with no readable revision is a rendering or a broken fetch (see source integrity above), not an "older" copy, and feature presence is never a substitute for the comparison: a feature checklist cannot recognise a successor revision and mis-ranks a stripped rendering as ancient.
 
 The copy bundled inside this skill is **a fallback for a session with no network access, and nothing else**. It is frozen at the moment the bundle was installed; the canonical copy is not. Every installed bundle lags the repository eventually — that is the normal state of an installed skill, not an exception — so preferring the bundled copy because it is already loaded is the specific mistake this rule exists to prevent.
 
 Order of precedence, strictly:
 
 1. **The canonical URL**, fetched with a unique query string for this build. Fetch, verify the freshness floor, then fill.
-2. **The bundled copy — the locally installed skill** (the Claude.ai workspace or profile upload, the Claude Code plugin, or the MSI / PKG copy) — only when the fetch fails, the session has no fetch capability or no network egress, or the refetched copy is still older than the bundle. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and note that it may lag the canonical one. Never fall back silently.
+2. **The bundled copy — the locally installed skill** (the Claude.ai workspace or profile upload, the Claude Code plugin, or the MSI / PKG copy) — only when the fetch fails, the session has no fetch capability or no network egress, every available fetch channel returns renderings rather than source, or the refetched copy is still older than the bundle. When this happens, say so in the response: name the revision used, state that it came from the bundled copy, and name the actual reason. Never fall back silently.
 3. **Nothing else.** Not a template held in conversation context — including one this session fetched earlier — not a previous document, not a reconstruction from memory. See "Revising an existing document".
 
 The header comment and `<meta name="generator">` carry the template revision — `v2.0` there is the design system, not the file.
@@ -95,6 +104,8 @@ color-scheme: light only;
 ```
 
 If any one is absent, the document was not built from a current template — whatever its source. Do not return it. Fetch the canonical template and rebuild. This check costs one search of your own output and is the last thing standing between a defect and the reader, so it is mandatory rather than advisory.
+
+The invariant applies to **the finished document you are about to return** — output you assembled — and it is never a currency test on fetched content. A fetched body missing these markers is a rendering or a broken fetch (see "Source integrity" above), not an old template; currency is judged only by the freshness floor's version comparison.
 
 ## Revising an existing document
 
@@ -245,7 +256,7 @@ Run this checklist mentally against any artifact before saying it is complete:
 
 - [ ] Cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
 - [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented; when no author resolved, the user was asked (see Attribution).
-- [ ] The template was fetched from the canonical URL **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (or returned a pre-bundle revision twice) and the response says so.
+- [ ] The template was fetched from the canonical URL **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, the fetched body was template **source** (doctype, header comment, generator meta, stylesheet), and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (returned no source, or a pre-bundle revision twice) and the response names that reason — a fetch that returned a rendering was reported as a failed fetch, never as evidence the canonical copy is old.
 - [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
 - [ ] A revision of an existing document inherited that document's content only; the stylesheet, head, cover, and end page came from the current template.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
@@ -266,4 +277,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.4.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.4.1 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*

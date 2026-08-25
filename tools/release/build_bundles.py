@@ -308,6 +308,20 @@ def policy_problems(skill: str, slots: str, template: str) -> list[str]:
     if "unique query string" not in template:
         problems.append("document.html: the cache-busting fetch note is missing from the header")
 
+    # Source integrity: chat-surface fetch tools can hand the session a
+    # markdown rendering of the template — header comment, metas, and
+    # stylesheet stripped in transit. The 25 August incident: a session
+    # marker-tested such a rendering, ranked the canonical copy "below the
+    # bundled floor", and reported main as stale while it was current.
+    # The rule, the output-only scoping of the invariant, and the
+    # rendering-surviving provenance line close that misreading.
+    if "Source integrity" not in skill:
+        problems.append("SKILL.md: the source-integrity rule is missing")
+    if "never a currency test" not in skill:
+        problems.append("SKILL.md: the invariant lost its output-only scoping")
+    if 'class="template-provenance"' not in template:
+        problems.append("document.html: the fetch-rendering provenance line is missing")
+
     # The invariant is the backstop: a property of the artifact, checkable
     # without knowing what the session believed about its inputs.
     if "## The rendering invariant" not in skill:

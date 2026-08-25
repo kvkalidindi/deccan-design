@@ -14,7 +14,7 @@
 <PROJECT>
   <PROJECT_SETTINGS>
     <NAME>deccan-design</NAME>
-    <VERSION>2.4.0</VERSION>
+    <VERSION>2.4.1</VERSION>
     <IDENTIFIER>com.deccanchemicals.deccan-design</IDENTIFIER>
     <CERTIFICATE/> <!-- Empty: unsigned per Decision 5 -->
     <SIGNING_IDENTITY/>
@@ -23,7 +23,7 @@
   <PACKAGE>
     <NAME>deccan-design</NAME>
     <IDENTIFIER>com.deccanchemicals.deccan-design</IDENTIFIER>
-    <VERSION>2.4.0</VERSION>
+    <VERSION>2.4.1</VERSION>
     <INSTALL_DESTINATION>~/</INSTALL_DESTINATION>
     <REQUIRE_ADMIN>false</REQUIRE_ADMIN>
 

@@ -107,7 +107,9 @@ View source and read `<meta name="generator" content="deccan-design v2.0 · slot
 | Result | Meaning |
 |---|---|
 | **Pass** | `X.Y.Z` equals the latest release's template revision — even if the workspace bundle is a release behind. | The fetch rule (SKILL.md § "Fetching the template — hard rule") is working; bundle drift is harmless. |
-| **Fail** | An older revision while a newer release exists and the session had network access. | The session used only the bundled copy, or a cache answered the fetch. Confirm the workspace bundle is the latest (release checklist issue), and that SKILL.md in the bundle contains the "Fetching the template — hard rule" section with the unique-query and freshness-floor directives. |
+| **Pass (declared fallback)** | The bundled revision, **and** the response says the fetch tool returned a rendering of the template (not source) so the bundled copy was filled. | The surface's fetch tool converts pages to markdown; the source-integrity rule (SKILL.md § "Fetching the template — hard rule") handled it correctly. Harmless while the bundle is current — keep the bundle on the latest release. |
+| **Fail** | An older revision while a newer release exists and the session had network access. | The session used only the bundled copy, or a cache answered the fetch. Confirm the workspace bundle is the latest (release checklist issue), and that SKILL.md in the bundle contains the "Fetching the template — hard rule" section with the unique-query, source-integrity, and freshness-floor directives. |
+| **Fail** | The response claims the canonical copy is "stale" or "below the bundled floor" because fetched content lacked the invariant markers. | Feature-presence currency test against a fetch rendering — the markers were stripped in transit by the fetch tool, not absent from the source. The installed bundle predates v2.4.1's source-integrity rule; re-upload the latest bundle. |
 
 ## Per-surface matrix
 

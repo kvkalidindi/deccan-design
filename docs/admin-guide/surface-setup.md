@@ -26,6 +26,8 @@ Claude Desktop and the mobile apps inherit the Claude.ai account's workspace ski
 
 **Network note.** Claude.ai's fetch tool can reach `raw.githubusercontent.com`; the per-build fetch works on all four surfaces. If a session reports it cannot fetch, it uses the workspace-installed bundle and must say so.
 
+**Rendering note.** These surfaces' fetch tool may hand the session a *rendering* of the template — markdown-converted text with the header comment, metas, and stylesheet stripped — rather than the source. Per `SKILL.md` § source integrity that is a failed fetch: the session falls back to the workspace-installed bundle and says the fetch tool returned a rendering. A session that instead reports the canonical copy as "stale" or "below the bundled floor" because markers were absent from a fetched body is misdiagnosing (the markers were stripped in transit, and currency is a version comparison, never a feature check) — that is the exact failure the source-integrity rule exists to name. The template's hidden provenance line still states the revision inside a rendering, so the session can confirm the canonical revision even when it cannot fill the fetched copy.
+
 ## Claude Code (CLI and desktop-app terminal)
 
 The plugin marketplace is the channel — it follows `main` automatically, so no per-release action exists.
