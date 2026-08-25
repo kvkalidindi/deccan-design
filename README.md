@@ -1,8 +1,8 @@
 # deccan-design
 
-The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice, and audit-grade document furniture.
+The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice — and, since v2.5.0, two document tiers: compact by default (no cover, end page, or revision-history furniture), with the full audit-grade furniture reserved for formal documents produced on request.
 
-Design system **v2.0** · current package release **v2.4.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md). A CI release gate keeps `main` identical to the latest release, so the canonical raw URLs on `main` always serve the released content.
+Design system **v2.0** · current package release **v2.5.0** (August 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md). A CI release gate keeps `main` identical to the latest release, so the canonical raw URLs on `main` always serve the released content.
 
 ## What is in this repository
 
@@ -166,4 +166,4 @@ For commercial inquiries about Deccan Fine Chemicals: <https://www.deccanchemica
 
 ---
 
-*deccan-design v2.0 (package v2.4.0) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*
+*deccan-design v2.0 (package v2.5.0) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · August 2026.*

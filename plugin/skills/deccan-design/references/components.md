@@ -2,7 +2,20 @@
 
 Every Deccan document is assembled from this component set. Each component has one reason to exist and one rule about when to use it.
 
-## Cover page
+The cover page and end page are **formal-tier components** (`SKILL.md` § Document tiers): they appear only in a formal document. A compact document — the default — opens with the compact title block below instead, and simply ends after its last section.
+
+## Compact title block (default front matter)
+
+The whole front matter of a compact document, at the top of page one — never a page of its own. Top to bottom:
+
+1. **Wordmark.** The same 56-pixel × 3-pixel Deccan Blue rule + company name pair as the cover.
+2. **Title.** Deccan Blue, weight 350, `clamp(34px, 5vw, --fs-h1)`, letter-spacing `-0.022em`, max width 26 ch.
+3. **Subtitle (optional).** `--fs-lead`, weight 400, stone-700, max 60 ch.
+4. **Meta line.** `{{PREPARED_BY}} · {{DATE}}` in mono at 12 px stone-500, closed by a 2 px stone-900 rule that hands over to the body.
+
+Markup ships in `assets/templates/document-compact.html` (`<header class="doc-head">`); do not re-derive it.
+
+## Cover page (formal tier)
 
 Three regions, top to bottom:
 
@@ -33,7 +46,7 @@ Mandatory. No header, no footer, no page number. The first body section starts o
 </section>
 ```
 
-## End page
+## End page (formal tier)
 
 Self-contained. Centred wordmark, centred Deccan Blue rule (56px × 3px), centred contact line in `--fs-small` stone-600, classification reminder in mono caps stone-500. No header, no footer, no page number.
 

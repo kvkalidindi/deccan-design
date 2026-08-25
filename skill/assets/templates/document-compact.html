@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — slot-fill document template · revision 2.5.0
+  deccan-design v2.0 — compact document template · revision 2.5.0
 
   Canonical copy:
-  https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html
+  https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html
 
-  This is the FORMAL-tier template — cover page, end page, per-H1 page
-  breaks. Since v2.5.0 it is used only when the user requests a formal
-  document or an audit-grade type (policy, SOP, ISO/ISMS); the DEFAULT for
-  every other document is the compact template `document-compact.html` in
-  this directory. SKILL.md § "Document tiers" is the rule.
+  This is the DEFAULT template. Every document is built from it unless the
+  user explicitly requests a formal document (or an inherently audit-grade
+  type — policy, SOP, ISO/ISMS, control standard), in which case the formal
+  slot template `document.html` is used instead. A compact document carries
+  no cover page, no end page, no document-control block, and no revision
+  history — a slim title block, then content. SKILL.md § "Document tiers"
+  is the rule.
 
   "v2.0" is the design system; the revision above is this file. The system
-  version moves when the rules change (tokens, type stack, the eight
-  document-furniture rules); the revision moves whenever this template does.
+  version moves when the rules change (tokens, type stack, the document-
+  furniture rules); the revision moves whenever this template does.
   Currency is judged by VERSION COMPARISON, never by feature presence: read
   the revision here (or in <meta name="generator">) and compare it to the
   installed bundle's version. A copy at or above the bundled revision is
@@ -42,11 +44,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · slot template 2.5.0">
+  <meta name="generator" content="deccan-design v2.0 · compact template 2.5.0">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — slot-fill document template · revision 2.5.0
+       deccan-design v2.0 — compact document template · revision 2.5.0
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -128,7 +130,7 @@
        colour in this system is dark stone on a light surface, so a
        darkened canvas leaves whole sections rendering dark-on-dark —
        readable only where a block declares its own background (the TOC,
-       the cover, tables). Three defences, in order:
+       tables). Three defences, in order:
 
          1. `color-scheme: light only` plus the matching <meta> — opts the
             document out of forced darkening wherever the host honours it.
@@ -169,98 +171,64 @@
         background-color: var(--stone-50) !important;
         color: var(--stone-800) !important;
       }
-      html body .cover,
-      html body .end-page,
       html body .toc,
       html body table { background-color: var(--paper) !important; }
       html body main.body,
-      html body section.section { background-color: var(--stone-50) !important; }
+      html body section.section,
+      html body .doc-head { background-color: var(--stone-50) !important; }
       html body .callout,
       html body pre.code-block,
       html body code,
       html body thead th,
       html body tbody tr:nth-child(even) td { background-color: var(--stone-100) !important; }
       html body h1, html body h2, html body h3, html body h4,
-      html body strong, html body .mark-text, html body .end-mark,
-      html body dl.def dt, html body .cover-meta dd,
+      html body strong, html body .mark-text,
+      html body dl.def dt,
       html body code, html body pre.code-block { color: var(--stone-900) !important; }
       html body p, html body li, html body em,
       html body ul, html body ol,
       html body tbody td, html body .toc li,
       html body .toc li a { color: var(--stone-800) !important; }
-      html body .lead, html body dl.def dd, html body .pullquote p,
+      html body .lead, html body .doc-subtitle, html body dl.def dd,
+      html body .pullquote p,
       html body thead th, html body .toc-label { color: var(--stone-700) !important; }
-      html body .cover-eyebrow, html body .end-contact { color: var(--stone-600) !important; }
-      html body h1 .num, html body .cover-meta dt, html body .callout .label,
-      html body .end-classification, html body .toc li::before,
+      html body h1 .num, html body .doc-meta, html body .callout .label,
+      html body .toc li::before,
       html body li::marker { color: var(--stone-500) !important; }
-      html body .cover-title { color: var(--deccan-blue) !important; }
+      html body h1.doc-title { color: var(--deccan-blue) !important; }
       html body a { color: var(--deccan-blue) !important; }
     }
 
     img, table, th, td, pre, blockquote, hr,
-    .cover, .end-page, .callout, .swatch, .badge,
-    .toc, .pullquote, .figure { border-radius: 0; }
+    .callout, .swatch, .badge,
+    .toc, .pullquote, .figure, .doc-head { border-radius: 0; }
     .shell { max-width: var(--content-max); margin: 0 auto; padding: 0 var(--side-pad); }
 
-    /* Cover */
-    .cover {
-      background: var(--paper);
-      min-height: 100vh;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      padding: var(--s-9) var(--side-pad) var(--s-7);
-      page-break-after: always;
-      border-bottom: 1px solid var(--stone-200);
-    }
+    /* Compact title block — the whole of the document's front furniture.
+       Wordmark, title, optional subtitle, author · date. A few lines at
+       the top of page one; never a page of its own. */
+    .doc-head { padding-top: var(--s-7); }
     .mark { display: flex; align-items: center; gap: var(--s-3); }
     .mark-rule { width: 56px; height: 3px; background: var(--deccan-blue); }
     .mark-text { font-weight: 600; font-size: 18px; letter-spacing: -0.005em; color: var(--stone-900); }
     .mark-logo { height: 36px; width: auto; }
-    .cover-body { align-self: center; padding: var(--s-8) 0 var(--s-6); }
-    .cover-eyebrow {
-      font-family: var(--font-mono); font-size: var(--fs-tiny);
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--stone-600); background: var(--stone-100);
-      padding: 5px 11px; display: inline-block; margin-bottom: var(--s-6);
+    h1.doc-title {
+      font-size: clamp(34px, 5vw, var(--fs-h1));
+      font-weight: 350; letter-spacing: -0.022em; line-height: var(--lh-tight);
+      color: var(--deccan-blue); max-width: 26ch;
+      margin: var(--s-6) 0 var(--s-3); padding-bottom: 0; border-bottom: none;
+      page-break-before: auto; page-break-after: avoid;
     }
-    .cover-title {
-      font-size: clamp(40px, 6.4vw, var(--fs-display));
-      font-weight: 350; letter-spacing: -0.024em; line-height: 1.04;
-      color: var(--deccan-blue); max-width: 22ch; margin-bottom: var(--s-5);
+    .doc-subtitle {
+      font-size: var(--fs-lead); font-weight: 400; line-height: 1.45;
+      color: var(--stone-700); max-width: 60ch; margin-bottom: var(--s-4);
     }
-    .cover-subtitle {
-      font-size: 22px; font-weight: 400; line-height: 1.4;
-      color: var(--stone-700); max-width: 50ch;
+    .doc-meta {
+      font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.04em; color: var(--stone-500);
+      max-width: none; margin-bottom: 0;
+      padding-bottom: var(--s-4); border-bottom: 2px solid var(--stone-900);
     }
-      /* H1 inside the cover must NOT page-break-before — global h1 rule has
-         page-break-before:always which would otherwise push the cover-title
-         onto page 2. */
-      .cover h1,
-      h1.cover-title {
-        page-break-before: auto;
-        page-break-after: auto;
-        break-before: auto;
-        break-after: auto;
-        border-bottom: none;
-        padding-bottom: 0;
-        margin-top: 0;
-      }
-
-    .cover-meta {
-      display: grid;
-      grid-template-columns: 1.1fr 3fr 1.3fr 0.8fr 1.4fr;
-      gap: var(--gutter);
-      padding-top: var(--s-5);
-      border-top: 1px solid var(--stone-200);
-    }
-    @media (max-width: 760px) { .cover-meta { grid-template-columns: 1fr 1fr; } }
-    .cover-meta dt {
-      font-family: var(--font-mono); font-size: 10px;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--stone-500); margin-bottom: 6px;
-    }
-    .cover-meta dd { font-size: var(--fs-small); color: var(--stone-900); font-weight: 600; }
 
     /* Body */
     /* The horizontal padding is restated here rather than inherited from
@@ -270,14 +238,15 @@
        @page margins own the print gutter. */
     main.body { padding: var(--s-8) var(--side-pad) var(--s-6); }
     section.section { margin-bottom: var(--s-8); }
-    section.section:first-of-type h1 { page-break-before: auto; }
 
+    /* Compact documents flow: no forced page break per H1. The formal
+       template (document.html) owns page-break-before: always. */
     h1 {
       font-family: var(--font-sans); font-size: var(--fs-h1); font-weight: 350;
       letter-spacing: -0.022em; line-height: var(--lh-tight); color: var(--stone-900);
       margin: var(--s-5) 0 var(--s-5); padding-bottom: var(--s-4);
       border-bottom: 2px solid var(--stone-900);
-      page-break-before: always; page-break-after: avoid;
+      page-break-after: avoid;
     }
     h1 .num {
       font-family: var(--font-mono); font-size: 13px; font-weight: 500;
@@ -418,29 +387,11 @@
     }
     .toc li a:hover { color: var(--deccan-blue); text-decoration-color: var(--deccan-blue); }
 
-    .end-page {
-      background: var(--paper); min-height: 60vh;
-      display: grid; gap: var(--s-3);
-      align-content: center; justify-items: center;
-      padding: var(--s-9) var(--side-pad);
-      page-break-before: always;
-      border-top: 1px solid var(--stone-200);
-      text-align: center;
-    }
-    .end-rule { width: 56px; height: 3px; background: var(--deccan-blue); }
-    .end-mark { font-size: 21px; font-weight: 600; color: var(--stone-900); }
-    .end-contact { font-size: var(--fs-small); color: var(--stone-600); }
-    .end-classification {
-      font-family: var(--font-mono); font-size: 10px;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      color: var(--stone-500); margin-top: var(--s-2);
-    }
-
     @page {
       size: Letter;
       margin: 0.8in 0.8in 1in 0.8in;
       @bottom-left {
-        content: "Deccan Fine Chemicals · Confidential";
+        content: "Deccan Fine Chemicals";
         font-family: 'Cascadia Mono', Consolas, ui-monospace, monospace;
         font-size: 8.5pt; color: #78716C;
       }
@@ -450,54 +401,8 @@
         font-size: 8.5pt; color: #78716C;
       }
     }
-    @page :first {
-      @bottom-left  { content: ""; }
-      @bottom-right { content: ""; }
-    }
-    @page end-of-doc {
-      @bottom-left  { content: "" !important; }
-      @bottom-right { content: "" !important; }
-    }
-    .end-page { page: end-of-doc; }
 
     @media print {
-      /* Print: keep the cover and end page each on exactly one physical page.
-         100vh resolves to the full paper height in print (not the live content
-         area), so min-height:100vh causes the cover to overflow into page 2.
-         These rules override that. */
-      .cover {
-        min-height: auto;
-        height: auto;
-        display: block;            /* override grid for print */
-        grid-template-rows: none;
-        padding: var(--s-6) 0 var(--s-5);
-        border-bottom: none;
-        page-break-after: always;
-        break-after: page;
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-      .cover-body {
-        align-self: auto;
-        padding: var(--s-5) 0 var(--s-4);
-      }
-      .cover-title { font-size: 28pt; max-width: none; }
-      .cover-subtitle { font-size: 13pt; }
-      .end-page {
-        min-height: auto;
-        height: auto;
-        display: block;
-        grid-template-rows: none;
-        align-content: initial;
-        justify-items: initial;
-        padding: var(--s-7) 0 var(--s-6);
-        border-top: none;
-        page-break-before: always;
-        break-before: page;
-        page-break-inside: avoid;
-        break-inside: avoid;
-      }
-
       /* Pure white paper. These selectors match the specificity and
          !important of the light-only rendering contract above so the
          stone-50 screen background never reaches print — including when
@@ -508,11 +413,15 @@
         color: var(--stone-800) !important;
       }
       html body main.body,
-      html body section.section { background-color: transparent !important; }
+      html body section.section,
+      html body .doc-head { background-color: transparent !important; }
 
       body { font-size: 10.5pt; line-height: 1.5; }
       .shell { padding: 0; max-width: 100%; }
-      main.body { padding-left: 0; padding-right: 0; }
+      main.body { padding-left: 0; padding-right: 0; padding-top: var(--s-6); }
+      .doc-head { padding-top: 0; }
+      h1.doc-title { font-size: 24pt; max-width: none; }
+      .doc-subtitle { font-size: 13pt; max-width: 100%; }
       h1 { font-size: 24pt; }
       h2 { font-size: 16pt; }
       h3 { font-size: 13pt; }
@@ -526,37 +435,21 @@
 </head>
 <body>
 
-<div class="template-provenance" aria-hidden="true">deccan-design slot template · revision 2.5.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
+<div class="template-provenance" aria-hidden="true">deccan-design compact template · revision 2.5.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
 
-<section class="cover">
+<header class="doc-head shell">
   <div class="mark">
     <div class="mark-rule"></div>
     <div class="mark-text">Deccan Fine Chemicals</div>
   </div>
-  <div class="cover-body">
-    <span class="cover-eyebrow">{{DOCUMENT_TYPE}}</span>
-    <h1 class="cover-title">{{TITLE}}</h1>
-    <p class="cover-subtitle">{{SUBTITLE}}</p>
-  </div>
-  <dl class="cover-meta">
-    <div><dt>Document type</dt><dd>{{DOCUMENT_TYPE}}</dd></div>
-    <div><dt>Prepared by</dt><dd>{{PREPARED_BY}}</dd></div>
-    <div><dt>Date</dt><dd>{{DATE}}</dd></div>
-    <div><dt>Version</dt><dd>{{VERSION}}</dd></div>
-    <div><dt>Classification</dt><dd>{{CLASSIFICATION}}</dd></div>
-  </dl>
-</section>
+  <h1 class="doc-title">{{TITLE}}</h1>
+  <p class="doc-subtitle">{{SUBTITLE}}</p>
+  <p class="doc-meta">{{PREPARED_BY}} · {{DATE}}</p>
+</header>
 
 <main class="shell body">
 {{BODY_HTML}}
 </main>
-
-<section class="end-page">
-  <div class="end-mark">Deccan Fine Chemicals</div>
-  <div class="end-rule"></div>
-  <div class="end-contact">deccanchemicals.com · Hyderabad, India</div>
-  <div class="end-classification">{{CLASSIFICATION}} · Internal use</div>
-</section>
 
 </body>
 </html>

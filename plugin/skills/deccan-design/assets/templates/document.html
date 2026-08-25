@@ -1,9 +1,15 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — slot-fill document template · revision 2.4.0
+  deccan-design v2.0 — slot-fill document template · revision 2.5.0
 
   Canonical copy:
   https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html
+
+  This is the FORMAL-tier template — cover page, end page, per-H1 page
+  breaks. Since v2.5.0 it is used only when the user requests a formal
+  document or an audit-grade type (policy, SOP, ISO/ISMS); the DEFAULT for
+  every other document is the compact template `document-compact.html` in
+  this directory. SKILL.md § "Document tiers" is the rule.
 
   "v2.0" is the design system; the revision above is this file. The system
   version moves when the rules change (tokens, type stack, the eight
@@ -20,17 +26,27 @@
   URL — a plain fetch of the bare address is routinely answered from a
   cache with a copy that predates the current release. The revision above
   is how a session verifies what it actually received.
+
+  A rendering of this file is not this file. Some fetch tools hand the
+  session a markdown-converted or text-extracted RENDERING of the page,
+  which strips this comment, the <head> metas, and the whole <style>
+  block. A body in that form cannot be filled and proves nothing about
+  the canonical copy's age — the missing markup was removed in transit,
+  not absent from the source. The visually hidden provenance line at the
+  top of <body> survives that conversion, so even a rendering states its
+  revision in plain text. Treat a rendering as a failed fetch of the
+  source, per SKILL.md § "Fetching the template — hard rule".
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · slot template 2.4.0">
+  <meta name="generator" content="deccan-design v2.0 · slot template 2.5.0">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — slot-fill document template · revision 2.4.0
+       deccan-design v2.0 — slot-fill document template · revision 2.5.0
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -131,6 +147,19 @@
       color: var(--stone-800) !important;
     }
     main.body, section.section { background-color: var(--stone-50); }
+
+    /* Provenance line: plain text that survives an HTML→markdown fetch
+       rendering, so a stripped copy still states its revision. Invisible
+       on screen, in print, and to assistive technology. */
+    .template-provenance {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
 
     /* A host that themes embedded content through the dark-mode media
        query gets the light values re-asserted here. */
@@ -496,6 +525,8 @@
   </style>
 </head>
 <body>
+
+<div class="template-provenance" aria-hidden="true">deccan-design slot template · revision 2.5.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
 
 <section class="cover">
   <div class="mark">

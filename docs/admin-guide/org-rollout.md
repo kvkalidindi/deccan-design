@@ -110,7 +110,7 @@ Questions: <your IT contact>.
 
 ## Step 5 — Verify activation
 
-Use the procedure in `verification-prompt.md` (next to this file). Hand Prompt B to any non-admin teammate — it deliberately omits the word "Deccan" — run through the six binary checks (including attribution and freshness), and report back. The per-surface matrix at the end of that file covers web, Desktop, mobile, and Claude Code.
+Use the procedure in `verification-prompt.md` (next to this file). Hand Prompt B to any non-admin teammate — it deliberately omits the word "Deccan" — run through the seven binary checks (including attribution, freshness, and the compact default), and report back. The per-surface matrix at the end of that file covers web, Desktop, mobile, and Claude Code.
 
 ## Maintenance
 
