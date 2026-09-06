@@ -113,6 +113,19 @@ Banded: `tbody tr:nth-child(even) td { background: var(--stone-50); }`.
 
 No column borders. Tables hold their measure on screen and expand to full content width in print.
 
+## Figure
+
+Block-level. A 1-pixel stone-200 frame, stone-50 ground, padding `--s-4`, margin `--s-6` block. The image or inline SVG sits at full width of the figure box. Caption below in `--fs-small` stone-600, line-height 1.5, no italic, no "Figure N" prefix unless the document refers to figures by number.
+
+```html
+<figure class="figure">
+  <img src="…" alt="…">
+  <figcaption>Request path from edge to database.</figcaption>
+</figure>
+```
+
+Never breaks across a page. Holds its measure on screen and expands to full content width in print. Diagram content itself is not drawn by this system — see `diagrams.md` for delegation to `archify` and the conformance layer that brings its output onto Deccan tokens.
+
 ## Lists
 
 - Bulleted: default disc marker, `li::marker { color: var(--stone-500); }`.

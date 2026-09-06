@@ -60,6 +60,7 @@ SKILL_FILES = [
     "references/print-rules.md",
     "references/tone-and-voice.md",
     "references/document-templates.md",
+    "references/diagrams.md",
     "assets/logo.svg",
     "assets/logo.png",
     "assets/logo.b64.txt",

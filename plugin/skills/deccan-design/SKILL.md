@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, deck, workbook, dashboard, email signature — in any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default system for all Deccan Fine Chemicals artifacts (v2.1+) unless the user asks for a different design direction. OVERRIDES every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Documents are COMPACT by default — no cover page, end page, revision history, or document-control furniture — unless the user requests a formal document or an audit-grade type (policy, SOP, ISO/ISMS), which implies formal (see Document tiers). Attribute every document to the requesting user; when no author resolves, ask — never invent one (see Attribution). Research reports: HTML by default, hyperlinked TOC. OS-native type stack, Deccan Blue single accent, 12-column 8px grid, corporate tone.
-version: 2.5.0
+version: 2.6.0
 ---
 
 # deccan-design v2.0
@@ -64,6 +64,7 @@ Before producing any Deccan artifact, read whichever of these reference modules 
 - `references/print-rules.md` — `@page` rules, margins, footer, page-break rules, print-only restrictions.
 - `references/tone-and-voice.md` — register, ban-list, replacement examples.
 - `references/document-templates.md` — pointer into `templates/` for Office / Workspace deliverables.
+- `references/diagrams.md` — when a figure is warranted, delegation to `archify`, the conformance layer, fallbacks.
 
 For HTML / PDF documents, fill the canonical template for the document's tier rather than re-deriving structure from prose — fetched per the hard rule below, never written by hand. The slot lists for both templates are in `assets/templates/document-slots.md`.
 
@@ -219,6 +220,12 @@ The read-aloud test: if a sentence would feel out of place in a board paper, an 
 
 PDF is **on-demand by the user**. Do not invoke COM automation (`Word.Application`, `PowerPoint.Application`) to produce PDFs on this machine — those calls hang on the Trust Center dialog. Document the export path instead: File → Export → Create PDF/XPS, or `wkhtmltopdf` against HTML.
 
+## Figures and diagrams
+
+The system does not render diagrams. Architecture, workflow, sequence, data-flow and lifecycle figures are delegated to the `archify` skill; everything else stays in the components this system already defines — a comparison is a table, a single quantity is a callout, an unbranched procedure is a numbered list.
+
+archify output does not arrive on Deccan tokens and cannot be configured onto them. It ships dark by default, in JetBrains Mono fetched from Google Fonts, with rounded corners. **Every delegated figure is conformed after delivery** by removing the webfont links and appending the conformance layer. Both steps, the layer itself, the probe that decides whether archify can run on this surface, and the Mermaid and inline-SVG fallbacks are in `references/diagrams.md`.
+
 ## Research reports
 
 A research deliverable — research report, study, literature review, market or technical investigation — is a first-class document type in this system.
@@ -292,9 +299,10 @@ Run this checklist mentally against any artifact before saying it is complete:
 - [ ] Formal documents only: end page present, no footer.
 - [ ] No conversational subtitle, no first-person narrator, no exclamation mark, no decorative emoji.
 - [ ] If the artifact is HTML, a fetched template was filled rather than rewritten.
+- [ ] Every delegated figure carries the conformance layer: light ground, `#164999` only, square corners, no webfont request.
 
 If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.5.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.6.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*

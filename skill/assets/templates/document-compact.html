@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — compact document template · revision 2.5.0
+  deccan-design v2.0 — compact document template · revision 2.6.0
 
   Canonical copy:
   https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html
@@ -44,11 +44,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · compact template 2.5.0">
+  <meta name="generator" content="deccan-design v2.0 · compact template 2.6.0">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — compact document template · revision 2.5.0
+       deccan-design v2.0 — compact document template · revision 2.6.0
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -324,6 +324,27 @@
     .callout p:last-child { margin-bottom: 0; }
     .callout.muted { border-left-color: var(--stone-700); }
 
+    /* Figure. Block-level; the diagram content itself is not drawn by this
+       system — see references/diagrams.md for delegation and conformance. */
+    figure.figure {
+      margin: var(--s-6) 0; padding: var(--s-4);
+      background: var(--stone-50); border: 1px solid var(--stone-200);
+      max-width: var(--measure); page-break-inside: avoid;
+    }
+    figure.figure > img, figure.figure > svg {
+      display: block; width: 100%; height: auto;
+    }
+    /* Structural corners stay square inside inline SVG too. CSS geometry
+       properties outrank the rx/ry presentation attributes an author or a
+       generator may emit, so a hand-drawn figure cannot drift off the rule. */
+    figure.figure svg rect { rx: 0; ry: 0; }
+
+    figure.figure figcaption {
+      margin-top: var(--s-3); font-size: var(--fs-small);
+      color: var(--stone-600); line-height: 1.5;
+      page-break-before: avoid;
+    }
+
     .pullquote {
       margin: var(--s-7) 0; padding: 0 0 0 var(--s-6);
       border-left: 3px solid var(--deccan-blue); max-width: 60ch;
@@ -428,14 +449,14 @@
       h4 { font-size: 11pt; }
       p { font-size: 10.5pt; max-width: 100%; }
       .lead { font-size: 12pt; max-width: 100%; }
-      pre.code-block, .callout, .pullquote, table, ul, ol { max-width: 100%; }
+      pre.code-block, .callout, .pullquote, table, ul, ol, .figure { max-width: 100%; }
       a { color: var(--deccan-blue); text-decoration: underline; }
     }
   </style>
 </head>
 <body>
 
-<div class="template-provenance" aria-hidden="true">deccan-design compact template · revision 2.5.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
+<div class="template-provenance" aria-hidden="true">deccan-design compact template · revision 2.6.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document-compact.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
 
 <header class="doc-head shell">
   <div class="mark">

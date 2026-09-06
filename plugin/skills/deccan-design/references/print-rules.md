@@ -214,3 +214,16 @@ The two supported routes:
 2. **From HTML** — `wkhtmltopdf` against the HTML deliverable on a machine that has the resident fonts available, or print-to-PDF from a modern browser with "Print backgrounds" enabled.
 
 Sandbox-rendered PDFs are not committed to the repository.
+
+## Figures
+
+```css
+@media print {
+  .figure { page-break-inside: avoid; max-width: 100%; }
+  .figure figcaption { page-break-before: avoid; }
+}
+```
+
+A figure never splits across a page, and its caption never separates from it. Interactive
+diagram artifacts do not print — embed a static export in the document and keep the
+interactive file as a separate deliverable.
