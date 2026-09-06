@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — slot-fill document template · revision 2.6.0
+  deccan-design v2.0 — slot-fill document template · revision 2.6.1
 
   Canonical copy:
   https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html
@@ -42,11 +42,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · slot template 2.6.0">
+  <meta name="generator" content="deccan-design v2.0 · slot template 2.6.1">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — slot-fill document template · revision 2.6.0
+       deccan-design v2.0 — slot-fill document template · revision 2.6.1
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -362,6 +362,11 @@
       background: var(--stone-50); border: 1px solid var(--stone-200);
       max-width: var(--measure); page-break-inside: avoid;
     }
+    /* A delegated diagram is wider than the body measure; at 70ch its labels
+       stop being legible. The wide variant lets a figure use the full content
+       column on screen, as tables already do in print. */
+    figure.figure.wide { max-width: 100%; }
+
     figure.figure > img, figure.figure > svg {
       display: block; width: 100%; height: auto;
     }
@@ -547,7 +552,7 @@
 </head>
 <body>
 
-<div class="template-provenance" aria-hidden="true">deccan-design slot template · revision 2.6.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
+<div class="template-provenance" aria-hidden="true">deccan-design slot template · revision 2.6.1 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
 
 <section class="cover">
   <div class="mark">

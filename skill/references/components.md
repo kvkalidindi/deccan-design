@@ -124,7 +124,7 @@ Block-level. A 1-pixel stone-200 frame, stone-50 ground, padding `--s-4`, margin
 </figure>
 ```
 
-Never breaks across a page. Holds its measure on screen and expands to full content width in print. Diagram content itself is not drawn by this system — see `diagrams.md` for delegation to `archify` and the conformance layer that brings its output onto Deccan tokens.
+Variant `.figure.wide`: the figure uses the full content column instead of the body measure. Use it for any delegated diagram — constrained to 70 ch a diagram’s labels stop being legible. Never breaks across a page. Holds its measure on screen and expands to full content width in print. Diagram content itself is not drawn by this system — see `diagrams.md` for delegation to `archify` and the conformance layer that brings its output onto Deccan tokens.
 
 ## Lists
 

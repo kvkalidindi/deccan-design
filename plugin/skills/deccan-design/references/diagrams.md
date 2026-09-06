@@ -262,13 +262,13 @@ A figure is a block-level component. It carries a caption; a figure without one 
 the reader to infer what they are looking at.
 
 ```html
-<figure class="figure">
+<figure class="figure wide">
   <img src="…" alt="…">
   <figcaption>Request path from edge to database.</figcaption>
 </figure>
 ```
 
-An archify figure delivered as standalone HTML is referenced, not inlined — it is a
+A delegated diagram always carries the `wide` variant; constrained to the body measure its labels are too small to read. An archify figure delivered as standalone HTML is referenced, not inlined — it is a
 complete document with its own toolbar and scripts. Embed a static export (SVG or PNG)
 in the document and link the interactive artifact alongside it. Do not lift archify's
 `<svg>` element out of its page: every fill and stroke resolves through custom

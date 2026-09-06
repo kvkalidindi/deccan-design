@@ -1,7 +1,7 @@
 ---
 name: deccan-design
 description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, deck, workbook, dashboard, email signature — in any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default system for all Deccan Fine Chemicals artifacts (v2.1+) unless the user asks for a different design direction. OVERRIDES every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Documents are COMPACT by default — no cover page, end page, revision history, or document-control furniture — unless the user requests a formal document or an audit-grade type (policy, SOP, ISO/ISMS), which implies formal (see Document tiers). Attribute every document to the requesting user; when no author resolves, ask — never invent one (see Attribution). Research reports: HTML by default, hyperlinked TOC. OS-native type stack, Deccan Blue single accent, 12-column 8px grid, corporate tone.
-version: 2.6.0
+version: 2.6.1
 ---
 
 # deccan-design v2.0
@@ -305,4 +305,4 @@ If any item fails, fix before reporting done.
 
 ---
 
-*deccan-design v2.6.0 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*
+*deccan-design v2.6.1 — the system supersedes every earlier Deccan design system, including deccan-design v1.0. Repository: `https://github.com/kvkalidindi/deccan-design`.*

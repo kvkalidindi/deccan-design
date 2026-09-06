@@ -9,6 +9,10 @@ Two release lines share this repository:
 
 ---
 
+## v2.6.1 — 6 September 2026
+
+**Figures carrying a diagram get the full content column.** v2.6.0 gave `.figure` the body measure, which is right for a photograph or a small inline drawing and wrong for a delegated diagram: at 70 characters an archify architecture or workflow figure scales down until its node labels are unreadable, and the reader is left with a picture of a diagram rather than a diagram. The `.figure.wide` variant lifts that cap to the full content column. `diagrams.md` now instructs the variant on every delegated figure and `components.md` documents it, so the default stays conservative while the case that actually needs width gets it. Found on first real use — building the Hermes federation documents — not in review.
+
 ## v2.6.0 — 6 September 2026
 
 **Figures are a component, and diagrams are delegated to archify.** Through v2.5.x the system had no figure component at all: `components.md` listed none, and `.figure` existed in both templates only inside a `border-radius: 0` reset — a hook with no layout, caption, or print rules behind it. v2.6.0 adds the **Figure** component (stone-50 ground, stone-200 frame, caption in `--fs-small` stone-600, never breaks across a page) and a new reference module, `references/diagrams.md`, that routes the drawing itself to the `archify` skill. Five figure kinds delegate — architecture, workflow, sequence, dataflow, lifecycle. Everything else stays in the components the system already defines: a comparison is a table, a single quantity is a callout, an unbranched procedure is a numbered list. A routing rule that only said "delegate" would produce diagrams of things that should have been tables, so the module states both directions.
