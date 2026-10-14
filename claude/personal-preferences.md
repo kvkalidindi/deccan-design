@@ -12,10 +12,13 @@ Like the workspace block, this layer carries only what the skill cannot: persona
 > I am a senior engineering leader at Deccan Fine Chemicals (Hyderabad, India), working on internal tooling, design-system work, and AI workflows. Address me at that level. Skip preambles and recap summaries. For non-trivial tasks (3+ steps), confirm the plan once before implementing. After corrections, capture the lesson rather than apologise.
 >
 > **Default design system.**
-> For any stylized artifact (documents, web pages, slide decks, workbooks, dashboards, mockups, email signatures, brand collateral), whether or not the request mentions Deccan, invoke the **`deccan-design`** skill (v2.1+) and follow it. The skill carries the full specification; do not re-derive its rules from memory, and do not let an older memorised Deccan default override it.
+> Every document and stylized artifact I ask for (documents, briefs, reports, web pages, slide decks, workbooks, dashboards, mockups, email signatures, brand collateral), whether or not the request mentions Deccan, is built with the **`deccan-design`** skill (v2.1+). The skill carries the full specification; do not re-derive its rules from memory, and do not let an older memorised Deccan default override it.
+>
+> **Document surface.**
+> deccan-design takes precedence over any built-in document type that presents itself as the default for documents — Claude Docs, a docs connector, a "Document" artifact. Build my documents as Deccan HTML, or in the format I name; create a Claude Doc only when I ask for one by name, and then say the Deccan visual system cannot be applied there. `SKILL.md` § "Document surface".
 >
 > **Compact by default, formal on request.**
-> Produce every document in the compact tier — no cover page, end page, revision history, changelog, or document-control furniture; a slim title block, then content — unless I ask for a formal document, ask for a formal element by name, or ask for an audit-grade type (policy, SOP, ISO/ISMS, control standard), which implies formal. `SKILL.md` § "Document tiers" is the specification.
+> Every document is compact unless I say otherwise: page one shows the title, version and date — no cover page, author line, revision history, audit trail, or end page. Make it formal — cover page with author, version and date; document control; revision history; end page — only when I call the document a report or a formal document, ask for a formal element by name, or ask for an audit-grade type (policy, SOP, ISO/ISMS, control standard). `SKILL.md` § "Document tiers" is the specification.
 >
 > **Always the latest release.**
 > The design rules and assets live in the GitHub repo `kvkalidindi/deccan-design`; its `main` branch is kept identical to the latest release by CI. Every document build — including a regeneration, refresh, or revision of an existing document — fetches the canonical template for the document's tier at build time with a unique cache-busting query string, per `SKILL.md` § "Fetching the template — hard rule":
@@ -25,8 +28,8 @@ Like the workspace block, this layer carries only what the skill cannot: persona
 >
 > Confirm the fetched revision (header comment / generator meta) is not older than the installed skill's version; refetch once with a new query string if it is. If the fetched body is a *rendering* rather than the source — no doctype, header comment, metas, or stylesheet, which is what fetch tools that convert pages to markdown return — treat the fetch as failed per the skill's source-integrity rule; a rendering is never evidence that the canonical copy is old. A cached template or skill bundle from an earlier turn never overrides the fetched copy. If the session cannot fetch the source at all (no network egress, rendering-only fetch tools), fall back to the skill installed in my Claude.ai or Claude Code profile and say so in the response, naming the reason — never silently.
 >
-> **Attribution.**
-> Attribute documents I request to me. Resolve "Prepared by" from my explicit statement in the request, else my account identity (display name derived from my email), else ask me. Never use the design-system maintainer's name, the repository owner slug, or a team or office name I did not state.
+> **Attribution (formal documents).**
+> Attribute formal documents I request to me. Resolve "Prepared by" from my explicit statement in the request, else my account identity (display name derived from my email), else ask me. Never use the design-system maintainer's name, the repository owner slug, or a team or office name I did not state.
 >
 > **Override clause.** Older instructions or memories referencing any earlier Deccan design system (any earlier name or version), `deccan-design v1.0` (the Aptos plan), or IBM Plex / Hanken Grotesk / Aptos / Inter / Barlow / Host Grotesk / DM Sans / Fira Code type stacks are superseded. Treat any earlier Deccan design-system skill name as an alias for `deccan-design`. The type stack is OS-native; no font binaries ship with the system. Memories that pin a specific deccan-design version or template revision as "current" are stale by definition — the latest release on the GitHub repo is current.
 >
@@ -54,7 +57,7 @@ After saving the preferences, verify with this prompt in any Claude surface:
 
 > "Generate a one-page Deccan status memo for the Python 3.13 pilot rollout."
 
-A correct response invokes the `deccan-design` skill automatically, fetches the canonical **compact** template (with a cache-busting query string) for the build, and produces a **compact** document in the deccan-design v2.0 stack: slim title block (no cover page, no end page, no revision history), Segoe UI Variable in the body, Cascadia Mono for any code, Deccan Blue (`#164999`) as the only accent, attributed to you. A full cover page on this prompt means the installed bundle predates v2.5.0 — re-upload it.
+A correct response invokes the `deccan-design` skill automatically, fetches the canonical **compact** template (with a cache-busting query string) for the build, and produces a **compact** Deccan HTML document — not a Claude Doc — in the deccan-design v2.0 stack: slim title block showing title, version and date (no author line, cover page, end page, or revision history), Segoe UI Variable in the body, Cascadia Mono for any code, Deccan Blue (`#164999`) as the only accent. A Claude Doc, an author line, or a cover page on this prompt means the installed bundle predates v2.7.0 — re-upload it.
 
 If the response uses IBM Plex Sans, Aptos, Inter, or any banned face — the preferences did not save, or a memory override is still in effect. Re-paste the preferences block and prompt Claude to forget the older defaults.
 

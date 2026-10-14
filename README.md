@@ -1,8 +1,8 @@
 # deccan-design
 
-The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice — and, since v2.5.0, two document tiers: compact by default (no cover, end page, or revision-history furniture), with the full audit-grade furniture reserved for formal documents produced on request.
+The corporate design system of Deccan Fine Chemicals. Documents, slide decks, web pages, UI mockups, brand artifacts, and email signatures produced under this system conform to one rule set: OS-native type stack, single Deccan Blue accent, 12-column 8-pixel grid, no rounded structural corners, corporate tone of voice — and, since v2.5.0, two document tiers: compact by default (page one shows title, version, and date — no cover, author line, end page, or revision-history furniture), with the full furniture — cover with author, version, and date, document control, revision history, end page — reserved for documents the user calls a report or a formal document, or an audit-grade type. Since v2.7.0, documents are built as Deccan output even on surfaces whose built-in document type (Claude Docs) claims document requests by default.
 
-Design system **v2.0** · current package release **v2.6.1** (September 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md). A CI release gate keeps `main` identical to the latest release, so the canonical raw URLs on `main` always serve the released content.
+Design system **v2.0** · current package release **v2.7.0** (September 2026). The system version moves when the rules change; package releases carry the skill, templates, and tooling. History: [`CHANGELOG.md`](CHANGELOG.md). A CI release gate keeps `main` identical to the latest release, so the canonical raw URLs on `main` always serve the released content.
 
 ## What is in this repository
 
@@ -166,4 +166,4 @@ For commercial inquiries about Deccan Fine Chemicals: <https://www.deccanchemica
 
 ---
 
-*deccan-design v2.0 (package v2.6.1) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · September 2026.*
+*deccan-design v2.0 (package v2.7.0) · Deccan IT and Digital Transformation Team · Deccan Fine Chemicals Pvt. Ltd. · September 2026.*

@@ -37,11 +37,32 @@ Generate a one-page status memo about the Python 3.13 pilot rollout.
 Output a complete, self-contained HTML file with all CSS inline in <head>.
 ```
 
-Prompt C names no furniture and no formal type, so the output must be **compact**: a slim title block (wordmark, title, author · date), then content — evaluated by Check 7.
+Prompt C names no furniture and no formal type, so the output must be **compact**: a slim title block (wordmark, title, `Version · Date`), then content — evaluated by Check 7.
 
-## The seven binary checks
+## Prompt D — document surface (v2.7.0+)
 
-Checks 1–4 run against Prompt A's or B's output; checks 5–7 have their own procedure.
+In a fourth fresh chat on Claude.ai web, Desktop, or mobile, run:
+
+```
+Write a one-page executive brief on the security risks of running
+Windows 11 on PCs that bypass the TPM 2.0 requirement.
+```
+
+Prompt D names no format and no design. Claude.ai offers a built-in document type (Claude Docs) that claims every document request by default; a working setup builds the brief as a compact Deccan HTML document instead — evaluated by Check 8. This is the October 2026 failure case: the brief came back as a Claude Doc with no Deccan styling.
+
+## Prompt E — a report is formal (v2.7.0+)
+
+In a fifth fresh chat, run:
+
+```
+Write a short report on the Python 3.13 pilot rollout.
+```
+
+Prompt E calls the document a report and names no furniture, so the output must be **formal** — evaluated by Check 9.
+
+## The nine binary checks
+
+Checks 1–4 run against Prompt A's or B's output; checks 5–9 have their own procedure.
 
 Open the HTML response in **View source** or save and open in a browser, then check each item.
 
@@ -72,6 +93,8 @@ Open the HTML in a browser. The first viewport (or page 1 of print preview) must
 3. The title `Python 3.13 pilot rollout` in Deccan Blue.
 4. A one-line subtitle in stone-700.
 5. A five-column metadata strip — Document type · Prepared by · Date · Version · Classification.
+
+Page 2 (v2.7.0+) is the document-control page: a **Document control** list (Document ID · Owner · Approver · Effective date · Review cycle) and a **Revision history** table (Version · Date · Author · Summary of change · Approver). The first body section starts on page 3.
 
 The cover must carry **no footer and no page number**. Verify by switching to Print Preview (Ctrl+P) — the page count should be ≥ 2 and the first page's footer area should be empty.
 
@@ -130,13 +153,31 @@ Open Prompt C's HTML in a browser.
 
 | Result | Meaning |
 |---|---|
-| **Pass** | No cover page, no end page, no revision-history or document-control block. Page one opens with the slim title block (wordmark rule + name, title in Deccan Blue, author · date meta line), and content follows on the same page. | The tier rule (SKILL.md § "Document tiers") is active. |
+| **Pass** | No cover page, no end page, no author line, no revision-history or document-control block. Page one opens with the slim title block (wordmark rule + name, title in Deccan Blue, `Version 1.0 · <date>` meta line), and content follows on the same page. | The tier rule (SKILL.md § "Document tiers") is active. |
 | **Fail** | A full-page cover, an end page, or a revision-history/document-control table appears. | The installed bundle or instruction layer predates v2.5.0 — re-upload the skill bundle and re-paste both instruction blocks. |
-| **Fail** | The slim title block is missing entirely (bare `<h1>` with no wordmark or author line). | The compact template was not fetched or filled — same diagnosis path as Check 6's fetch failures. |
+| **Fail** | The meta line reads `<name> · <date>` (an author, no version). | The installed bundle or instruction layer predates v2.7.0 — re-upload the skill bundle and re-paste both instruction blocks. |
+| **Fail** | The slim title block is missing entirely (bare `<h1>` with no wordmark or meta line). | The compact template was not fetched or filled — same diagnosis path as Check 6's fetch failures. |
+
+### Check 8 — Document surface (Prompt D)
+
+| Result | Meaning |
+|---|---|
+| **Pass** | The brief arrives as a Deccan HTML artifact: compact title block (title, `Version 1.0 · <date>`), Segoe UI Variable, Deccan Blue headings. | The Document surface rule (SKILL.md § "Document surface") is active. |
+| **Fail** | The brief arrives as a "Document" card (Claude Docs) in Claude's own house style. | The skill never ran: the host's built-in docs default won. Either the workspace skill predates v2.7.0 (its description does not name Claude Docs — see Failure escalation step 3) or the workspace custom instructions lack the "Document surface" clause. Re-upload the bundle and re-paste `claude/workspace-instructions.md`. |
+| **Fail** | Deccan HTML, but with a cover page or an author line. | Routing works; the tier rule is stale — see Check 7. |
+
+Also confirm the exception: *"Make this a Claude Doc I can comment on"* → a Claude Doc, with one line saying the Deccan visual system cannot be applied there.
+
+### Check 9 — A report is formal (Prompt E)
+
+| Result | Meaning |
+|---|---|
+| **Pass** | Cover with the five-column metadata strip, "Prepared by" resolved per Check 5; document-control page with a revision-history row (1.0, date, author, "Initial issue", approver); body; end page. | The report-implies-formal rule is active. |
+| **Fail** | A compact document. | The installed bundle predates v2.7.0, where "report" was still compact — re-upload it. |
 
 ## Per-surface matrix
 
-Run **Prompt B + Checks 1, 5, and 7** on each surface; Check 6 wherever network fetch is available.
+Run **Prompt B + Checks 1, 5, 7, 8, and 9** on each surface; Check 6 wherever network fetch is available. Check 8 applies where the surface offers Claude Docs (Claude.ai web, Desktop, mobile).
 
 | Surface | Setup | Expected |
 |---|---|---|
@@ -149,7 +190,8 @@ Run **Prompt B + Checks 1, 5, and 7** on each surface; Check 6 wherever network 
 
 | Checks passing | Action |
 |---|---|
-| 6 of 6 | Deployment is correct. Tell the team to start using it. |
+| All checks | Deployment is correct. Tell the team to start using it. |
+| Check 8 alone failing | The host's built-in docs default is winning — workspace skill or instructions predate v2.7.0. |
 | Check 5 alone failing | Attribution leak — see Check 5's fail row; almost always the workspace-instructions paste. |
 | Prompt A passes, Prompt B fails | Default-application gap — workspace custom instructions missing or stale (Step 3). |
 | 2 of 6 or fewer | Likely the skill or the custom instructions are not actually applied. Re-do `org-rollout.md` Steps 2 and 3 from a clean admin session; confirm the bundle was uploaded under Workspace scope, not Personal. |
@@ -171,5 +213,5 @@ If checks fail after re-doing the rollout steps:
 
 1. Confirm the bundle zip on the GitHub release is intact (13 files; SHA-256 visible on the release page and in SHA256SUMS.txt).
 2. Confirm the workspace's custom instructions field contains the full `claude/workspace-instructions.md` block (not the personal block, not a truncated paste).
-3. Open a fresh chat and prompt Claude directly: *"List the skills available in this workspace and which ones are auto-activated."* The response should include `deccan-design`.
+3. Open a fresh chat and prompt Claude directly: *"List the skills available in this workspace, which ones are auto-activated, and quote the deccan-design skill's description."* The response should include `deccan-design`, and its description must mention Claude Docs. A description beginning "Use whenever the user asks for a Deccan Fine Chemicals document…" is the v2.0.0 bundle — it triggers only in a Deccan context and has no compact tier or routing rule. Replace it with the latest bundle; never leave two deccan-design skills installed.
 4. Escalate to Tier 3 (design system owner — Deccan IT and Digital Transformation Team) per `admin-guide.html` §12.

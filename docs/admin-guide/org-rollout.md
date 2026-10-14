@@ -110,13 +110,13 @@ Questions: <your IT contact>.
 
 ## Step 5 — Verify activation
 
-Use the procedure in `verification-prompt.md` (next to this file). Hand Prompt B to any non-admin teammate — it deliberately omits the word "Deccan" — run through the seven binary checks (including attribution, freshness, and the compact default), and report back. The per-surface matrix at the end of that file covers web, Desktop, mobile, and Claude Code.
+Use the procedure in `verification-prompt.md` (next to this file). Hand Prompt B to any non-admin teammate — it deliberately omits the word "Deccan" — run through the nine binary checks (including attribution, freshness, the compact default, Deccan-over-Claude-Docs routing, and report-implies-formal), and report back. The per-surface matrix at the end of that file covers web, Desktop, mobile, and Claude Code.
 
 ## Maintenance
 
 - **Skill updates.** When a new version of `deccan-design` ships, push the `v*` tag: the `release-design-system` workflow builds `deccan-design-skill-bundle.zip` from the tagged tree, attaches it to the release, and **opens a checklist issue assigned to the workspace admin** with the re-upload steps — the manual step cannot be silently forgotten. Re-upload via **Settings → Workspace → Skills → deccan-design → Replace bundle**; members pick up the new version on next session, and the frontmatter `version` in the skill list confirms which bundle is live. Additionally set **Watch → Custom → Releases** on the repository.
 
-  Drift is bounded either way: the skill's "Fetching the template — hard rule" section has sessions fetch the canonical slot template from the repository on every document build (with a unique cache-busting query string and the bundled revision as a freshness floor), so even a lagging workspace bundle produces current documents. The bundled copy is used only when the session cannot fetch, and the session says so.
+  Drift is bounded either way: the skill's "Fetching the template — hard rule" section has sessions fetch the canonical slot template from the repository on every document build (with a unique cache-busting query string and the bundled revision as a freshness floor), so a lagging workspace bundle still produces current templates. The bound has a floor: the bundle must itself carry the rules that do the fetching and the routing. A bundle older than v2.3.1 does not fetch at all, and one older than v2.7.0 lets Claude.ai's built-in document type (Claude Docs) take document requests so the skill never runs. Confirm the live bundle's `version` in the workspace skill list after every release. The bundled copy is used only when the session cannot fetch, and the session says so.
 
   Claude Code needs nothing per release — the plugin channel follows `main` automatically. The MSI / PKG skill copy is legacy (see Step 3b) and no longer part of the release loop.
 - **Preferences updates.** Edit the workspace custom instructions in place. Changes take effect immediately for new sessions.

@@ -301,8 +301,32 @@ def policy_problems(skill: str, slots: str, template: str, compact: str) -> list
             problems.append("SKILL.md: Document tiers lost the type-implies-formal rule")
         if "never ship unrequested furniture" not in tiers:
             problems.append("SKILL.md: Document tiers lost the no-unrequested-furniture rule")
+        if "calls the document a report" not in tiers:
+            problems.append("SKILL.md: Document tiers lost the report-implies-formal rule")
     if "document-compact.html" not in slots:
         problems.append("document-slots.md: the compact template is not documented")
+
+    # Tier front matter, checked in the templates themselves: compact page
+    # one is title, version, and date with no author line; formal carries
+    # the author on the cover and the audit trail on a document-control page.
+    if "Version {{VERSION}} · {{DATE}}" not in compact:
+        problems.append("document-compact.html: the title/version/date meta line is missing")
+    if "{{PREPARED_BY}}" in compact:
+        problems.append("document-compact.html: compact documents carry no author line")
+    for marker in ("{{PREPARED_BY}}", 'class="doc-control"', "{{REVISION_ROWS}}"):
+        if marker not in template:
+            problems.append(f"document.html: formal furniture marker missing: {marker!r}")
+
+    # Document surface: a host's built-in document type (Claude Docs) has its
+    # own fixed style and cannot carry this system. Without an explicit
+    # precedence rule the host's "default for any document" wins and the
+    # skill is never invoked — the October 2026 executive-brief incident.
+    if "## Document surface" not in skill:
+        problems.append("SKILL.md: '## Document surface' section missing")
+    elif "takes precedence over a surface's generic document default" not in skill:
+        problems.append("SKILL.md: Document surface lost the precedence rule")
+    if "Claude Docs" not in skill.split("---", 2)[1]:
+        problems.append("SKILL.md: description no longer claims the built-in docs route")
 
     # The skill is the org default for any stylized artifact, not only
     # Deccan-named requests.
@@ -492,8 +516,23 @@ def build(out_dir: Path) -> None:
         print(f"  built {name}  ({len(entries)} files, {path.stat().st_size:,} bytes)")
 
 
+WORKSPACE_LIMIT = 3000
+
+
+def check_workspace_instructions() -> list[str]:
+    """The workspace block must fit Claude.ai's custom-instructions field."""
+    text = (REPO / "claude" / "workspace-instructions.md").read_text("utf-8")
+    block = text.split("\n---\n", 1)[1].strip() if "\n---\n" in text else ""
+    if not block:
+        return ["claude/workspace-instructions.md: no instructions block after '---'"]
+    if len(block) > WORKSPACE_LIMIT:
+        return [f"claude/workspace-instructions.md: block is {len(block)} characters; "
+                f"Claude.ai's limit is {WORKSPACE_LIMIT}"]
+    return []
+
+
 def check(out_dir: Path) -> None:
-    problems = check_plugin() + check_versions()
+    problems = check_plugin() + check_versions() + check_workspace_instructions()
     for name, entries in bundles().items():
         path = out_dir / name
         if not path.is_file():

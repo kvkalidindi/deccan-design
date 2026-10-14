@@ -4,7 +4,7 @@
 
 The eight furniture rules and the tone-and-voice ban-list with replacement examples.
 
-Since v2.5.0 the rules are tier-scoped (`SKILL.md` § "Document tiers"): rules 4 and 6–8 bind every document; rules 1–3 and 5 are **formal-tier furniture** and are deliberately absent from compact documents — the default tier, which opens with a slim title block and carries no cover, end page, revision history, or document-control block.
+Since v2.5.0 the rules are tier-scoped (`SKILL.md` § "Document tiers"): rules 4 and 6–8 bind every document; rules 1–3 and 5 are **formal-tier furniture** and are deliberately absent from compact documents — the default tier, which opens with a slim title block (title, then version and date) and carries no cover, author line, end page, revision history, or document-control block. Formal documents add a document-control page with the revision history between the cover and the body (v2.7.0).
 
 ## The eight document-furniture rules
 
