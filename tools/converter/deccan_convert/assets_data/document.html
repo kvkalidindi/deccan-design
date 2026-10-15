@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <!--
-  deccan-design v2.0 — slot-fill document template · revision 2.4.0
+  deccan-design v2.0 — slot-fill document template · revision 2.7.0
 
   Canonical copy:
   https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html
+
+  This is the FORMAL-tier template — cover page with author, version and
+  date; a document-control page carrying the revision history (the audit
+  trail); per-H1 page breaks; end page. It is used only when the user
+  calls the document a report or a formal document, names a formal
+  element, or asks for an audit-grade type (policy, SOP, ISO/ISMS); the
+  DEFAULT for every other document is the compact template
+  `document-compact.html` in this directory. SKILL.md § "Document tiers"
+  is the rule.
 
   "v2.0" is the design system; the revision above is this file. The system
   version moves when the rules change (tokens, type stack, the eight
@@ -20,17 +29,27 @@
   URL — a plain fetch of the bare address is routinely answered from a
   cache with a copy that predates the current release. The revision above
   is how a session verifies what it actually received.
+
+  A rendering of this file is not this file. Some fetch tools hand the
+  session a markdown-converted or text-extracted RENDERING of the page,
+  which strips this comment, the <head> metas, and the whole <style>
+  block. A body in that form cannot be filled and proves nothing about
+  the canonical copy's age — the missing markup was removed in transit,
+  not absent from the source. The visually hidden provenance line at the
+  top of <body> survives that conversion, so even a rendering states its
+  revision in plain text. Treat a rendering as a failed fetch of the
+  source, per SKILL.md § "Fetching the template — hard rule".
 -->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="color-scheme" content="light">
-  <meta name="generator" content="deccan-design v2.0 · slot template 2.4.0">
+  <meta name="generator" content="deccan-design v2.0 · slot template 2.7.0">
   <title>{{TITLE}}</title>
   <style>
     /* ================================================================
-       deccan-design v2.0 — slot-fill document template · revision 2.4.0
+       deccan-design v2.0 — slot-fill document template · revision 2.7.0
        ================================================================ */
     :root {
       color-scheme: light only;
@@ -131,6 +150,19 @@
       color: var(--stone-800) !important;
     }
     main.body, section.section { background-color: var(--stone-50); }
+
+    /* Provenance line: plain text that survives an HTML→markdown fetch
+       rendering, so a stripped copy still states its revision. Invisible
+       on screen, in print, and to assistive technology. */
+    .template-provenance {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
 
     /* A host that themes embedded content through the dark-mode media
        query gets the light values re-asserted here. */
@@ -326,6 +358,32 @@
     .callout p:last-child { margin-bottom: 0; }
     .callout.muted { border-left-color: var(--stone-700); }
 
+    /* Figure. Block-level; the diagram content itself is not drawn by this
+       system — see references/diagrams.md for delegation and conformance. */
+    figure.figure {
+      margin: var(--s-6) 0; padding: var(--s-4);
+      background: var(--stone-50); border: 1px solid var(--stone-200);
+      max-width: var(--measure); page-break-inside: avoid;
+    }
+    /* A delegated diagram is wider than the body measure; at 70ch its labels
+       stop being legible. The wide variant lets a figure use the full content
+       column on screen, as tables already do in print. */
+    figure.figure.wide { max-width: 100%; }
+
+    figure.figure > img, figure.figure > svg {
+      display: block; width: 100%; height: auto;
+    }
+    /* Structural corners stay square inside inline SVG too. CSS geometry
+       properties outrank the rx/ry presentation attributes an author or a
+       generator may emit, so a hand-drawn figure cannot drift off the rule. */
+    figure.figure svg rect { rx: 0; ry: 0; }
+
+    figure.figure figcaption {
+      margin-top: var(--s-3); font-size: var(--fs-small);
+      color: var(--stone-600); line-height: 1.5;
+      page-break-before: avoid;
+    }
+
     .pullquote {
       margin: var(--s-7) 0; padding: 0 0 0 var(--s-6);
       border-left: 3px solid var(--deccan-blue); max-width: 60ch;
@@ -388,6 +446,21 @@
       text-underline-offset: 3px;
     }
     .toc li a:hover { color: var(--deccan-blue); text-decoration-color: var(--deccan-blue); }
+
+    /* Document control — formal tier only. The audit trail: control
+       metadata and the revision history on their own page between the
+       cover and the first body section. A div, not a section, so the
+       first body section keeps its no-break-before rule. */
+    .doc-control {
+      margin-bottom: var(--s-8);
+      page-break-after: always; break-after: page;
+    }
+    .doc-control h2:first-child { margin-top: 0; }
+    .doc-control dl.def {
+      display: grid; grid-template-columns: max-content 1fr;
+      column-gap: var(--s-5); row-gap: var(--s-2);
+    }
+    .doc-control dl.def dt, .doc-control dl.def dd { margin: 0; }
 
     .end-page {
       background: var(--paper); min-height: 60vh;
@@ -490,12 +563,14 @@
       h4 { font-size: 11pt; }
       p { font-size: 10.5pt; max-width: 100%; }
       .lead { font-size: 12pt; max-width: 100%; }
-      pre.code-block, .callout, .pullquote, table, ul, ol { max-width: 100%; }
+      pre.code-block, .callout, .pullquote, table, ul, ol, .figure { max-width: 100%; }
       a { color: var(--deccan-blue); text-decoration: underline; }
     }
   </style>
 </head>
 <body>
+
+<div class="template-provenance" aria-hidden="true">deccan-design slot template · revision 2.7.0 · canonical source: https://raw.githubusercontent.com/kvkalidindi/deccan-design/main/skill/assets/templates/document.html — if this line appears as plain text in fetched content, the fetch returned a rendering of the template, not its source.</div>
 
 <section class="cover">
   <div class="mark">
@@ -517,6 +592,23 @@
 </section>
 
 <main class="shell body">
+<div class="doc-control">
+  <h2>Document control</h2>
+  <dl class="def">
+    <dt>Document ID</dt><dd>{{DOCUMENT_ID}}</dd>
+    <dt>Owner</dt><dd>{{OWNER}}</dd>
+    <dt>Approver</dt><dd>{{APPROVER}}</dd>
+    <dt>Effective date</dt><dd>{{EFFECTIVE_DATE}}</dd>
+    <dt>Review cycle</dt><dd>{{REVIEW_CYCLE}}</dd>
+  </dl>
+  <h2>Revision history</h2>
+  <table>
+    <thead><tr><th>Version</th><th>Date</th><th>Author</th><th>Summary of change</th><th>Approver</th></tr></thead>
+    <tbody>
+{{REVISION_ROWS}}
+    </tbody>
+  </table>
+</div>
 {{BODY_HTML}}
 </main>
 

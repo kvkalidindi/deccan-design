@@ -21,6 +21,8 @@ Two release lines share this repository:
 
 **The gate enforces it.** `build_bundles.py --check` fails if the Document surface section or its precedence rule is dropped, if the description stops naming Claude Docs, if the report-implies-formal rule is lost, if the compact template regains an author slot or loses its version/date line, if the formal template loses its document-control page or revision rows, or if the workspace instructions block exceeds Claude.ai's 3,000-character limit.
 
+**Deccan Convert's bundled assets are resynced.** `tools/converter/sync_assets.py --check` had been failing on main since before v2.5.0: the converter's runtime template and offline kit lagged the skill. They now match v2.7.0, and the HTML writer fills the six document-control slots with the defaults from `document-slots.md`. The converter still always produces the formal tier; compact output is a separate change.
+
 ## v2.6.1 — 6 September 2026
 
 **Figures carrying a diagram get the full content column.** v2.6.0 gave `.figure` the body measure, which is right for a photograph or a small inline drawing and wrong for a delegated diagram: at 70 characters an archify architecture or workflow figure scales down until its node labels are unreadable, and the reader is left with a picture of a diagram rather than a diagram. The `.figure.wide` variant lifts that cap to the full content column. `diagrams.md` now instructs the variant on every delegated figure and `components.md` documents it, so the default stays conservative while the case that actually needs width gets it. Found on first real use — building the Hermes federation documents — not in review.

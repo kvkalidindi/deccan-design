@@ -1,7 +1,8 @@
 """HTML writer: DocumentIR -> styled deccan-design HTML.
 
-Fills the eight placeholders of the bundled document.html exactly as
-document-slots.md prescribes. The surrounding markup and CSS (tokens, print
+Fills the placeholders of the bundled formal document.html exactly as
+document-slots.md prescribes, including the document-control page (v2.7.0)
+with its stated defaults — never an invented name. The surrounding markup and CSS (tokens, print
 contract, @media print overrides) are never modified.
 """
 
@@ -37,8 +38,19 @@ def render_html(ir: DocumentIR, logo: bool = False) -> str:
             1,
         )
     esc = html_escape.escape
+    revision_row = (
+        f"<tr><td>{esc(meta.version)}</td><td>{esc(meta.date)}</td>"
+        f"<td>{esc(meta.prepared_by)}</td><td>Initial issue</td>"
+        f"<td>Pending approval</td></tr>"
+    )
     return (
-        template.replace("{{TITLE}}", esc(meta.title))
+        template.replace("{{DOCUMENT_ID}}", "Not assigned")
+        .replace("{{OWNER}}", esc(meta.prepared_by))
+        .replace("{{APPROVER}}", "Pending approval")
+        .replace("{{EFFECTIVE_DATE}}", esc(meta.date))
+        .replace("{{REVIEW_CYCLE}}", "Not set")
+        .replace("{{REVISION_ROWS}}", revision_row)
+        .replace("{{TITLE}}", esc(meta.title))
         .replace("{{SUBTITLE}}", esc(meta.subtitle))
         .replace("{{DOCUMENT_TYPE}}", esc(meta.document_type))
         .replace("{{PREPARED_BY}}", esc(meta.prepared_by))
