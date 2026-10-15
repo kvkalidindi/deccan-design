@@ -1,7 +1,7 @@
 ---
 name: deccan-design
-description: Use for ANY stylized or formatted deliverable — document, report, memo, spec, policy, letter, proposal, deck, workbook, dashboard, email signature — in any Word / Excel / PowerPoint / PDF / HTML / Google Workspace output, whether or not Deccan is mentioned. deccan-design is the default system for all Deccan Fine Chemicals artifacts (v2.1+) unless the user asks for a different design direction. OVERRIDES every earlier Deccan design system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter type stacks. Documents are COMPACT by default — no cover page, end page, revision history, or document-control furniture — unless the user requests a formal document or an audit-grade type (policy, SOP, ISO/ISMS), which implies formal (see Document tiers). Attribute every document to the requesting user; when no author resolves, ask — never invent one (see Attribution). Research reports: HTML by default, hyperlinked TOC. OS-native type stack, Deccan Blue single accent, 12-column 8px grid, corporate tone.
-version: 2.6.1
+description: Use for ANY stylized or formatted deliverable — document, brief, report, memo, spec, policy, letter, proposal, deck, workbook, dashboard, signature — in HTML / PDF / Word / Excel / PowerPoint / Google Workspace, whether or not Deccan is mentioned. Also use for any document a surface would build as a built-in Document or docs artifact (Claude Docs): build it with this system instead. Default for all Deccan Fine Chemicals artifacts (v2.1+) unless the user asks for a different design direction; OVERRIDES every earlier Deccan system and the IBM Plex / Hanken Grotesk / Fira Code / Aptos / Inter stacks. Documents are COMPACT by default — page one shows title, version and date; no cover, author line, revision history or audit trail. FORMAL (cover with author, version, date; document control; revision history; end page) only when the user calls it a report or a formal document, or asks for an audit-grade type (policy, SOP, ISO/ISMS). OS-native type, Deccan Blue single accent, 12-column 8px grid, corporate tone.
+version: 2.7.0
 ---
 
 # deccan-design v2.0
@@ -23,24 +23,37 @@ If a user instruction directly conflicts with this skill, follow the user. If a 
 
 ## Document tiers — compact by default, formal on request
 
-Every document produced under this system is one of two tiers. This rule binds every output format — HTML, PDF, Word, Google Docs — and every Claude surface.
+Every document produced under this system inherits the full design system — type stack, palette, grid, tone, the rendering invariant — whatever its tier and whatever surface it is built on. The tier decides only the front matter and the audit furniture. This rule binds every output format — HTML, PDF, Word, Google Docs — and every Claude surface.
 
-**Compact — the default.** A compact document carries no cover page, no end page, no document-control block, no revision-history table, no changelog, and no other audit furniture. Its whole front matter is a slim title block at the top of page one: wordmark, title, optional subtitle, and an author · date line. Everything else about the system applies unchanged — type stack, palette, grid, tone, the rendering invariant, attribution. Build it from the compact template (`assets/templates/document-compact.html`); in Word, use `deccan-document.dotx` without the cover, end, document-control, or revision-history pages.
+**Compact — the default.** Page one opens with a slim title block: wordmark, title, optional subtitle, and one meta line — `Version 1.0 · October 2026`. That is the entire front matter. A compact document carries no cover page, no end page, no author or "Prepared by" line, no document-control block, no revision-history table, no changelog, and no other audit furniture. Build it from the compact template (`assets/templates/document-compact.html`); in Word, use `deccan-document.dotx` without the cover, end, document-control, or revision-history pages, with the title, version, and date at the top of page one.
 
-**Formal — only when requested.** A formal document carries the full furniture: self-contained cover page with the metadata strip, end page, per-H1 page breaks, and — for audit-grade types — the complete document-control apparatus (see "Formal deliverables are audit-grade"). Build it from the formal slot template (`assets/templates/document.html`) or the full Word template family.
+**Formal — only when requested.** A formal document carries the full furniture: a self-contained cover page with the metadata strip (document type, prepared by, date, version, classification); a document-control page carrying the control metadata and the revision-history table — the audit trail; per-H1 page breaks; and an end page. Audit-grade types additionally carry the content apparatus in "Formal deliverables are audit-grade". Build it from the formal slot template (`assets/templates/document.html`) or the full Word template family.
 
 **What counts as a request for formal.** Any of:
 
-1. The user says so — "formal", "issue-ready", or asks for any formal element by name (a cover page, an end page, a revision history, a document-control block, a classification page). Asking for a formal element makes the document formal.
-2. **The document type implies it.** An inherently audit-grade type is formal by definition, with no keyword needed: policy, procedure / SOP, control standard, ISMS / ISO / governance deliverable, or any document the user says will be issued, audited, signed, or submitted to a regulator or customer.
+1. **The user calls the document a report** — "report", "research report", "status report", "assessment report", or any deliverable the user names as a report. The user's word is the trigger: a brief or memo whose content reports on something stays compact.
+2. **The user calls it formal** — "formal", "issue-ready" — or asks for any formal element by name: a cover or title page, author attribution or a "prepared by" line, a version history or revision history, an audit trail, a document-control block, an end page, a classification page. Asking for a formal element makes the document formal.
+3. **The document type implies it.** An inherently audit-grade type is formal by definition, with no keyword needed: policy, procedure / SOP, control standard, ISMS / ISO / governance deliverable, or any document the user says will be issued, audited, signed, or submitted to a regulator or customer.
 
-Nothing else does. A "report", "memo", "brief", "summary", "research report", or unspecified document is compact. When in doubt, produce compact and say the formal tier is available on request — never ship unrequested furniture, and never ask before producing the compact default.
+Nothing else does. A brief, executive brief, one-pager, memo, note, summary, write-up, analysis, or unspecified document is compact. When in doubt, produce compact and say the formal tier is available on request — never ship unrequested furniture, and never ask before producing the compact default.
+
+**Version on every document.** Both tiers state a version. A new document is 1.0; a revision increments it — 1.1 for an amendment, 2.0 for a rewrite — unless the user states one.
 
 **Revisions keep their tier.** A new version of an existing document inherits the tier of the request that created it: revising a formal document stays formal; revising a compact one stays compact unless the user asks otherwise.
 
+## Document surface — Deccan output, never a built-in doc
+
+Some Claude surfaces offer a built-in document type with its own fixed house style: Claude Docs (the "Document" artifact on Claude.ai, created through a docs connector), and any docs skill or platform rule that presents itself as "the default for any document". Those renderers cannot carry this system — no stylesheet, no type stack, no Deccan Blue, no title block. A document routed there leaves the design system entirely. That routing is the failure this section exists to prevent.
+
+**This skill takes precedence over a surface's generic document default.** It is the organisation's designated document system. Any document request — a brief, one-pager, memo, report, research write-up, a chat answer the user asks to turn into a document, or an unspecified "document" — is built as a Deccan document: in the format the user names, otherwise as an HTML artifact filled from the tier's template. Do not create a Claude Doc or a docs-connector document for it.
+
+**The one exception: the user asks for that surface by name.** When the user explicitly asks for a Claude Doc, or for a live doc to co-edit and comment on in Claude, build it there and carry what the surface can hold: the tier's structure (compact: title, then version and date; formal: the document-control and revision-history content as sections), tone and voice, and — formal only — attribution. Say in one line that the Deccan visual system cannot be applied in that format, and offer the Deccan HTML version. A request naming Google Docs follows "Output formats".
+
+A question answered in chat stays chat. The rule binds from the moment a document is produced.
+
 ## Attribution — resolving "Prepared by"
 
-Every document is attributed to the person who asked for it. Resolve `{{PREPARED_BY}}` — and any other author line — in this order:
+Author lines are formal-tier furniture: the cover's "Prepared by", the document-control owner, and the revision-history author column. A compact document carries no author line (see Document tiers). Every formal document is attributed to the person who asked for it. Resolve `{{PREPARED_BY}}` — and any other author line — in this order:
 
 1. **An explicit statement** in the user's request or attached content ("prepared by the QHSE team", "under my director's name", front matter `author:`). This always wins.
 2. **The invoking user's session identity.** On Claude.ai, Claude Desktop, and the mobile apps, derive a display name from the account email in session context: `priya.sharma@deccanchemicals.com` → "Priya Sharma". If the local-part is not clearly `firstname.lastname` (initials, a shared mailbox, a service account), show the derivation and confirm it before generating. In Claude Code, use `git config user.name`, then the git email's local-part.
@@ -211,8 +224,9 @@ The read-aloud test: if a sentence would feel out of place in a board paper, an 
 | Output | What to use |
 |---|---|
 | HTML document / PDF source | Fill `assets/templates/document-compact.html` (default) or `assets/templates/document.html` (formal — see Document tiers) |
-| Research report | HTML by default (compact template with hyperlinked TOC; formal slot template with `DOCUMENT_TYPE` "Research Report" only when the user requests formal); Word `.docx` only when the user chooses it — see "Research reports" |
-| Word `.docx` | Inherit `templates/word/deccan-document.dotx` (or one of the three specialised variants); compact tier omits the cover, end, document-control, and revision-history pages |
+| Claude Docs / docs connector | Not used for a document request; build a Deccan document instead — only when the user asks for a Claude Doc by name, see "Document surface" |
+| Research report | HTML by default (formal slot template with `DOCUMENT_TYPE` "Research Report" and a hyperlinked TOC; a research deliverable not called a report uses the compact template with a hyperlinked TOC); Word `.docx` only when the user chooses it — see "Research reports" |
+| Word `.docx` | Inherit `templates/word/deccan-document.dotx` (or one of the three specialised variants); compact tier omits the cover, end, document-control, and revision-history pages and opens with title, version, and date |
 | Excel `.xlsx` | Inherit `templates/excel/deccan-workbook.xltx` |
 | PowerPoint `.pptx` | Inherit `templates/powerpoint/deccan-deck.potx` |
 | Outlook signature | Use `templates/outlook/deccan-signature.htm` with the four placeholders filled in |
@@ -232,7 +246,7 @@ A research deliverable — research report, study, literature review, market or 
 
 **Output format.** HTML is the default; produce a Word `.docx` instead only when the user chooses it. Both carry the same structure. PDF stays on-demand: print the HTML from a browser with backgrounds enabled, or export the `.docx` from Word (File → Export → Create PDF/XPS).
 
-**Structure.** Compact by default (see Document tiers): slim title block → table of contents → first section opening with an executive-summary lead → numbered sections (background, method, findings, analysis, conclusions as applicable) → references / appendices. Only when the user requests a formal research report: cover (`DOCUMENT_TYPE` "Research Report") and end page around the same structure.
+**Structure.** A research report is a report, so it is formal by definition (Document tiers, rule 1): cover (`DOCUMENT_TYPE` "Research Report") → document-control page with revision history → table of contents → first section opening with an executive-summary lead → numbered sections (background, method, findings, analysis, conclusions as applicable) → references / appendices → end page. A research deliverable the user does not call a report — a study, a literature review, an investigation write-up — is compact: slim title block → table of contents → the same section structure.
 
 **Hyperlinked table of contents — mandatory.** Every TOC entry links to its section:
 
@@ -243,10 +257,8 @@ A research deliverable — research report, study, literature review, market or 
 
 ## Formal deliverables are audit-grade
 
-A management-system, standards, or governance document — ISMS, ISO, policy, procedure, control standard, SOP — is written to be audited, not skimmed. Summary-level output fails these on contact with an assessor. **These types are formal-tier by definition** — asking for one is the explicit request (see Document tiers); no "formal" keyword is needed. When the user asks for one, produce all of:
+A management-system, standards, or governance document — ISMS, ISO, policy, procedure, control standard, SOP — is written to be audited, not skimmed. Summary-level output fails these on contact with an assessor. **These types are formal-tier by definition** — asking for one is the explicit request (see Document tiers); no "formal" keyword is needed. Every formal document already carries the document-control page and revision history (the formal template's `doc-control` block). For an audit-grade type, fill those with real values — ask for the owner, approver, and review cycle when they are not stated — and also produce all of:
 
-- **Document-control block** on or immediately after the cover: owner, approver, effective date, review cycle, document ID.
-- **Revision history** table: version, date, author, summary of change, approver.
 - **Numbered clauses** (1, 1.1, 1.1.1) so every statement is individually citable.
 - **Enforceable language**: "shall" for requirements, "should" for recommendations, "may" for options — used consistently and never interchangeably.
 - **Defined terms** section for every term carrying normative weight in the document.
@@ -280,14 +292,15 @@ When this skill runs on a managed Deccan Windows endpoint with Microsoft Office 
 
 Run this checklist mentally against any artifact before saying it is complete:
 
-- [ ] The tier is right: compact unless the user requested a formal document or an audit-grade type (see Document tiers). No cover page, end page, revision history, changelog, or document-control block appears unrequested; a compact document opens with the slim title block only.
-- [ ] Formal documents only: cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number.
-- [ ] `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented; when no author resolved, the user was asked (see Attribution).
+- [ ] The document is a Deccan document, not a built-in Claude Doc or docs-connector document, unless the user asked for that surface by name (see Document surface).
+- [ ] The tier is right: compact unless the user called it a report or a formal document, named a formal element, or asked for an audit-grade type (see Document tiers). No cover page, end page, author line, revision history, changelog, or document-control block appears unrequested; a compact document opens with the slim title block — title, then version and date — only.
+- [ ] Formal documents only: cover present, with logo + title + subtitle + author + version + date + classification, and no footer / page number; the document-control page with the revision history follows it.
+- [ ] Formal documents only: `{{PREPARED_BY}}` names the requesting user or their explicitly stated author — never the repo maintainer, never invented; when no author resolved, the user was asked (see Attribution).
 - [ ] The template was fetched from the canonical URL for the document's tier **for this build** — not reused from earlier in the conversation — with a unique cache-busting query string, the fetched body was template **source** (doctype, header comment, generator meta, stylesheet), and its revision is not older than the bundled copy's. If the bundled copy was used instead, the fetch genuinely failed (returned no source, or a pre-bundle revision twice) and the response names that reason — a fetch that returned a rendering was reported as a failed fetch, never as evidence the canonical copy is old.
 - [ ] The rendering invariant holds: the output contains all five markers (generator meta, color-scheme meta, `color-scheme: light only`, the pinned `:root` canvas rule, the dark-mode block). Absent any one, the document renders dark-on-dark on iOS and Android — rebuild, do not ship.
 - [ ] A revision of an existing document inherited that document's content and tier only; the stylesheet, head, and any cover / end page came from the current template for that tier.
 - [ ] If the artifact is an ISMS / ISO / policy / procedure deliverable, it is audit-grade: document control, revision history, numbered clauses, "shall" statements, defined terms, RACI, records and retention, control cross-references, worked appendices.
-- [ ] If the artifact is a research report, the TOC is present and every entry hyperlinks to its section — anchors in HTML, a `TOC \h` field in Word — and the output is HTML unless the user chose Word.
+- [ ] If the artifact is a research deliverable, the TOC is present and every entry hyperlinks to its section — anchors in HTML, a `TOC \h` field in Word — and the output is HTML unless the user chose Word.
 - [ ] Formal documents only: every H1 forces a page break before. Compact documents flow without forced breaks.
 - [ ] Sans face declared with the v2.0 chain.
 - [ ] Mono face declared with the v2.0 chain.

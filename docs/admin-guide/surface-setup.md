@@ -3,12 +3,13 @@
 Configuration per Claude surface so that deccan-design behaves identically everywhere:
 
 1. **Default-on.** The skill is invoked for any stylized deliverable, whether or not the request mentions Deccan.
-2. **Compact by default.** Documents carry no cover page, end page, revision history, changelog, or document-control furniture unless the user requests a formal document or an audit-grade type (policy, SOP, ISO/ISMS), which implies formal. `SKILL.md` § "Document tiers".
+2. **Compact by default.** Page one shows title, version, and date; documents carry no cover page, author line, end page, revision history, or document-control furniture unless the user calls the document a report or a formal document, names a formal element, or asks for an audit-grade type (policy, SOP, ISO/ISMS). `SKILL.md` § "Document tiers".
 3. **Latest release, always.** Every document build fetches the canonical template for the document's tier from the repo's `main` branch — which a CI release gate keeps identical to the latest release — with a unique cache-busting query string per fetch.
 4. **Caches never override.** A template or skill bundle held in conversation context, memory, or an installed copy never overrides the fetched one. No network egress → fall back to the installed skill bundle, and say so.
-5. **Attribution.** "Prepared by" = stated author → the requesting user's identity → **ask**. Never a maintainer name, never a silent default.
+5. **Attribution (formal documents).** "Prepared by" = stated author → the requesting user's identity → **ask**. Never a maintainer name, never a silent default.
+6. **Deccan before built-in docs.** A document request is built as a Deccan document, never as the host's built-in document type (Claude Docs), unless the user asks for that type by name. `SKILL.md` § "Document surface".
 
-The skill itself (`skill/SKILL.md`) carries all five rules; the per-surface work is making sure the skill is installed, current, and not fighting a stale instruction or memory layer.
+The skill itself (`skill/SKILL.md`) carries all six rules; the per-surface work is making sure the skill is installed, current, and not fighting a stale instruction or memory layer.
 
 ## Claude.ai web, Claude Desktop, iOS / Android
 
@@ -24,6 +25,8 @@ Claude Desktop and the mobile apps inherit the Claude.ai account's workspace ski
 
 1. Paste the block from `claude/personal-preferences.md` into **Settings → Profile → Preferences**.
 2. Run the "Memory update" procedure at the end of that file to evict stale defaults.
+
+**Claude Docs note.** Claude.ai's built-in document type (Claude Docs — the "Document" card) ships with its own skill and connector, and both claim every document request by default. Claude Docs has no theming hook, so a document built there cannot carry any of this system. Three layers keep documents on Deccan output, and all three must be current: the workspace skill at v2.7.0 or later (its description names the Claude Docs route, so the skill triggers on it), the "Document surface" clause in the workspace custom instructions, and the same clause in personal preferences. Verify with Prompt D / Check 8 in `verification-prompt.md`.
 
 **Network note.** Claude.ai's fetch tool can reach `raw.githubusercontent.com`; the per-build fetch works on all four surfaces. If a session reports it cannot fetch, it uses the workspace-installed bundle and must say so.
 
@@ -70,4 +73,4 @@ To evict: in any chat, ask Claude to forget the specific memory ("forget that v2
 
 ## Verification
 
-Run `verification-prompt.md` (Prompts B and C + the seven checks) per surface after any configuration change. The per-surface matrix at the end of that file states what each surface should show.
+Run `verification-prompt.md` (Prompts B–E + the nine checks) per surface after any configuration change. The per-surface matrix at the end of that file states what each surface should show.
